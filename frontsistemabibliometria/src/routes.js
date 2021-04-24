@@ -17,6 +17,13 @@ const dashboardRoutes = [
     layout: "/admin",
   },
   {
+    path: "/nuevoingreso",
+    name: "Nuevo Ingreso",
+    icon: "nc-icon nc-cloud-upload-94",
+    component: UserProfile,
+    layout: "/admin",
+  },
+  {
     path: "/publicaciones",
     name: "Publicaciones",
     icon: "nc-icon nc-single-copy-04",
@@ -37,7 +44,15 @@ const dashboardRoutes = [
     component: Typography,
     layout: "/admin",
   },
-  /*{
+  {
+    path: "/analisis",
+    name: "Ejecutar Análisis",
+    icon: "nc-icon nc-button-play",
+    component: UserProfile,
+    layout: "/admin",
+  },
+  /*
+  {
     path: "/icons",
     name: "Icons",
     icon: "nc-icon nc-atom",
