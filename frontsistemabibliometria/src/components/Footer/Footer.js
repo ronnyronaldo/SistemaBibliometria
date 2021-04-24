@@ -25,31 +25,10 @@ class Footer extends Component {
         <Container fluid>
           <nav>
             <ul className="footer-menu">
-              <li>
-                <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                  Home
-                </a>
-              </li>
-              <li>
-                <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                  Company
-                </a>
-              </li>
-              <li>
-                <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                  Portfolio
-                </a>
-              </li>
-              <li>
-                <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                  Blog
-                </a>
-              </li>
             </ul>
             <p className="copyright text-center">
               © {new Date().getFullYear()}{" "}
-              <a href="http://www.creative-tim.com">Creative Tim</a>, made with
-              love for a better web
+              <a href="http://www.creative-tim.com">Tania Landivar, Ronaldo Rendón</a>, Prototipo de Sistema Informático para el Descubrimiento de Patrones de Publicación y Citación en la Producción Científica de la Universidad de Cuenca a través de indicadores bibliométricos y técnicas de minería de datos.
             </p>
           </nav>
         </Container>

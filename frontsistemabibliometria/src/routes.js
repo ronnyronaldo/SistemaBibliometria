@@ -1,5 +1,6 @@
 import Dashboard from "views/Dashboard.js";
 import UserProfile from "views/UserProfile.js";
+import Publicaciones from "views/Publicaciones";
 import TableList from "views/TableList.js";
 import Typography from "views/Typography.js";
 import Icons from "views/Icons.js";
@@ -19,7 +20,7 @@ const dashboardRoutes = [
     path: "/publicaciones",
     name: "Publicaciones",
     icon: "nc-icon nc-single-copy-04",
-    component: UserProfile,
+    component: Publicaciones,
     layout: "/admin",
   },
   {

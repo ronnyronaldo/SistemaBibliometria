@@ -18,7 +18,6 @@
     "react-scripts": "4.0.1"
   },
   "optionalDependencies": {
-    "jquery": "3.5.1",
     "reactstrap": "8.9.0",
     "typescript": "4.1.3"
   },
