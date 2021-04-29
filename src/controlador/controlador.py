@@ -1,18 +1,7 @@
-import flask
+import sys
+sys.path.append("src")
+from app import app, mysql
 from flask import request, jsonify
-from flaskext.mysql import MySQL
-
-app = flask.Flask(__name__)
-mysql = MySQL()
-
-# MySQL configurations
-app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = ''
-app.config['MYSQL_DATABASE_DB'] = 'bd_tesis'
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
-
-mysql.init_app(app)
-app.config["DEBUG"] = True
 
 # Get principal para ver y documentar el estado de la API
 @app.route('/', methods=['GET'])
@@ -49,4 +38,3 @@ def api_busqueda():
             resultados.append(id_ar)
     # Con jsonify convertimos nuestro diccionario en JSON
     return jsonify(resultados)
-app.run()
