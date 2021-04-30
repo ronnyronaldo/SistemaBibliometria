@@ -13,8 +13,7 @@ app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 app.config["DEBUG"] = True
 mysql = MySQL(app)
 
-cur = mysql.connect().cursor()
-consulta_select = cur.execute('''select * from bd_tesis.scopus''')
+
 
 from controlador.controlador import *
 

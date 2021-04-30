@@ -1,6 +1,6 @@
 import sys
 sys.path.append("src")
-from app import app, mysql, cur, consulta_select
+from app import app, mysql
 from flask import request, jsonify
 
 # Get principal para ver y documentar el estado de la API
@@ -12,7 +12,8 @@ def home():
 # Get para recuperar todos los articulos
 @app.route('/scopus', methods=['GET'])
 def scopus():
-    consulta_select
+    cur = mysql.connect().cursor()
+    cur.execute('''select * from bd_tesis.scopus''')
     r = [dict((cur.description[i][0], value)
                 for i, value in enumerate(row)) for row in cur.fetchall()]
     return jsonify({'Articulos de Scopus' : r})
@@ -25,8 +26,9 @@ def api_busqueda():
         id = int(request.args['id'])
     else:
         return "Error: No se ha especificado por que parametro desea buscar. Por Favor ingrese ej id=1."
-
-    consulta_select
+    # Recorremos toda nuestra base primero
+    cur = mysql.connect().cursor()
+    cur.execute('''select * from bd_tesis.scopus''')
     bd = [dict((cur.description[i][0], value) for i, value in enumerate(row)) for row in cur.fetchall()]
     # Se crea una lista vacia para los resultados obtenidos
     resultados = []
