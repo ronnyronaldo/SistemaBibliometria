@@ -1,4 +1,3 @@
-
 from modelos.Product import Product
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify, make_response
