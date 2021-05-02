@@ -1,4 +1,3 @@
-
 #from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 
@@ -49,3 +48,4 @@ class Articulo(db.Model):
     def __repr__(self):
         return '' % self.id_article
 #db.create_all() # Para crear la tabla
+
