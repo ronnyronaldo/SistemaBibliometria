@@ -24,14 +24,14 @@ def listaArticulosReferencias():
     return make_response(jsonify({"referencias": articulosRef}))
 
 def obtenerDetalleReferencias():
-    get_articulos = ArticuloReferencias.query.all()
+    get_articulos = ArticuloReferencias.query.filter((ArticuloReferencias.id >= 1) & (ArticuloReferencias.id <= 100))
     articulos_schema = ArticuloReferenciaSchema(many=True)
     articulosRef = articulos_schema.dump(get_articulos)
     for articulo in articulosRef:
-        print("Ingreso al bucle")
+        #print("Ingreso al bucle")
         id_articleRef = articulo["id"]
         print(id_articleRef)
-        print("Referencia procesando..." + articulo["reference"])
+        #print("Referencia procesando..." + articulo["reference"])
         search_queryAux = scholarly.search_pubs(articulo["reference"])
         detalleReferencia = search_queryAux.__next__()
         # Extraer detalle de la referencia
