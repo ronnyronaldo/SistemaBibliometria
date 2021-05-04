@@ -1,19 +1,19 @@
 
-from flask import Flask, render_template
+#from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 
-app = Flask(__name__)
+#app = Flask(__name__)
 #MySQL configurations
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root@localhost/bd_tesis'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root@localhost/bd_tesis'
+#app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
+db = SQLAlchemy()
 
 ###Models####
 class Referencia(db.Model):
     __tablename__ = "referencia"
     id = db.Column(db.Integer, primary_key=True)
-    id_article = db.Column(db.Integer)
+    id_articleRef  = db.Column(db.Integer)
     container_type = db.Column(db.String(200))
     source = db.Column(db.String(200))
     filled = db.Column(db.String(30))
@@ -35,8 +35,9 @@ class Referencia(db.Model):
       db.session.add(self)
       db.session.commit()
       return self
-    def __init__(self, id_article, container_type, source, filled, gsrank, pub_url, author_id, num_citations, url_scholarbib, url_add_sclib, citedby_url, url_related_articles, title, author, pub_year, venue, abstract):
-      self.id_article = id_article
+
+    def __init__(self, id_articleRef , container_type, source, filled, gsrank, pub_url, author_id, num_citations, url_scholarbib, url_add_sclib, citedby_url, url_related_articles, title, author, pub_year, venue, abstract):
+      self.id_articleRef  = id_articleRef 
       self.container_type = container_type
       self.source = source 
       self.filled = filled
@@ -56,4 +57,4 @@ class Referencia(db.Model):
     def __repr__(self):
         return '' % self.id
 
-db.create_all() # Para crear la tabla
+#db.create_all() # Para crear la tabla
