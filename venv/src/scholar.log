@@ -166,3 +166,13 @@ INFO:werkzeug: * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
 INFO:werkzeug:127.0.0.1 - - [03/May/2021 22:05:53] "[35m[1mGET /referencia/detalleReferencia HTTP/1.1[0m" 500 -
 INFO:werkzeug: * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
 INFO:werkzeug:127.0.0.1 - - [03/May/2021 22:07:34] "[35m[1mGET /referencia/detalleReferencia HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+INFO:werkzeug: * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+INFO:werkzeug: * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+INFO:werkzeug: * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+INFO:werkzeug:127.0.0.1 - - [06/May/2021 11:02:23] "[37mGET /articulo/listar HTTP/1.1[0m" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/May/2021 11:02:48] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [06/May/2021 11:46:39] "[37mGET /articulo/referencias HTTP/1.1[0m" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/May/2021 11:56:52] "[37mGET /referencia/listar HTTP/1.1[0m" 200 -
+INFO:werkzeug: * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+INFO:werkzeug:127.0.0.1 - - [06/May/2021 12:05:17] "[37mGET /referencia/detalleReferencia HTTP/1.1[0m" 200 -

@@ -24,7 +24,7 @@ def listaArticulosReferencias():
     return make_response(jsonify({"referencias": articulosRef}))
 
 def obtenerDetalleReferencias():
-    get_articulos = ArticuloReferencias.query.filter((ArticuloReferencias.id >= 1) & (ArticuloReferencias.id <= 100))
+    get_articulos = ArticuloReferencias.query.filter((ArticuloReferencias.id >= 1) & (ArticuloReferencias.id <= 1))
     articulos_schema = ArticuloReferenciaSchema(many=True)
     articulosRef = articulos_schema.dump(get_articulos)
     for articulo in articulosRef:

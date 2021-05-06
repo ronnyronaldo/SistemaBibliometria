@@ -1,9 +1,5 @@
 from flask import Flask, render_template
 from flask_migrate import Migrate
-#Objeto Producto
-from modelos.Product import db
-from rutas.product_bp import product_bp
-#Objeto Producto
 #Objeto Articulo
 from modelos.Articulo import db
 from rutas.articulo_bp import articulo_bp
@@ -23,7 +19,6 @@ migrate = Migrate(app, db)
 # Fin de la configuracion
 
 # Registrar los objetos para poder navegar
-app.register_blueprint(product_bp, url_prefix='/product')
 app.register_blueprint(articulo_bp, url_prefix='/articulo')
 app.register_blueprint(articuloReferencia_bp, url_prefix='/referencia')
 
