@@ -1,11 +1,12 @@
 Configuracion proyecto python
-1. mkdir flaskdbexample  
-2. cd flaskdbexample
+1. mkdir SistemaBibliometria 
+2. cd SistemaBibliometria 
 3. virtualenv venv 'O' py -3 -m venv venv 
-4. C:\TESISTL\flaskdbexample\venv\Scripts\activate (Ejecutar) C:\TESISTL\SistemaBibliometria\venv\Scripts\activate
+4. C:\TESISTL\SistemaBibliometria\venv\Scripts\activate o  C:\TESIS\PythonBibliometria\venv\Scripts\activate (Ejecutar) 
 5. pip install flask flask-sqlalchemy
 6. pip install pymysql
 7. pip install marshmallow-sqlalchemy
-8. C:\TESISTL\SistemaBibliometria\venv\src >> set FLASK_APP=app.py 
-9. flask run
-10. pip3 install scholarly
+8. pip install Flask-Migrate
+9. pip3 install scholarly
+10. C:\TESISTL\SistemaBibliometria\venv\src >> set FLASK_APP=app.py 
+11. flask run
