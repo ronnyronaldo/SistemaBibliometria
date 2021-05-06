@@ -10,6 +10,7 @@ from rutas.articuloReferencia_bp import articuloReferencia_bp
 #Objeto ArticuloReferencias
 #Objeto Referencia
 from modelos.Referencia import db
+from rutas.referencia_bp import referencia_bp
 #Objeto Referencia
 #Configuracion de la aplicacion y de la base de datos
 app = Flask(__name__)
@@ -21,6 +22,7 @@ migrate = Migrate(app, db)
 # Registrar los objetos para poder navegar
 app.register_blueprint(articulo_bp, url_prefix='/articulo')
 app.register_blueprint(articuloReferencia_bp, url_prefix='/referencia')
+app.register_blueprint(referencia_bp, url_prefix='/referenciaDetalle')
 
 # Correr la aplicacion
 app.run()

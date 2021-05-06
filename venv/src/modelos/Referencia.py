@@ -11,7 +11,7 @@ db = SQLAlchemy()
 
 ###Models####
 class Referencia(db.Model):
-    __tablename__ = "referencia"
+    __tablename__ = "referenciaaux"
     id = db.Column(db.Integer, primary_key=True)
     id_articleRef  = db.Column(db.Integer)
     container_type = db.Column(db.String(200))
