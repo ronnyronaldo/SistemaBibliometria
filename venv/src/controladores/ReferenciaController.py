@@ -37,10 +37,9 @@ def listaReferencias():
     return make_response(jsonify({"referencias": referencias}))
 
 def verificacionReferencia():
-    get_referencias = Referencia.query(Referencia, ArticuloReferencias).join(Referencia.id_articleRef, ArticuloReferencias.id).all()
-    referencia_schema = ReferenciaSchema(many=True)
-    referencias = referencia_schema.dump(get_referencias)
-
-    for referencia in  referencias:
-        print(referencia)
-    return make_response(jsonify({"Comparadas titulo de las referencias": "True"}))
+    referencias = (db.session.query(ArticuloReferencias, Referencia)
+        .join(Referencia.articulosReferencia)
+        ).all()
+    for referencia in referencias:
+        print(referencia.ArticuloReferencias.id)
+    return make_response(jsonify({"Comparadas titulo de las referencias": "referencias"}))
