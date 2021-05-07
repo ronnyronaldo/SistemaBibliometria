@@ -1,7 +1,7 @@
 
 #from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
-
+from modelos.ArticuloReferencias import ArticuloReferencias
 #app = Flask(__name__)
 #MySQL configurations
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root@localhost/bd_tesis'
@@ -13,7 +13,7 @@ db = SQLAlchemy()
 class Referencia(db.Model):
     __tablename__ = "referenciaaux"
     id = db.Column(db.Integer, primary_key=True)
-    id_articleRef  = db.Column(db.Integer)
+    id_articleRef  = db.Column(db.Integer, db.ForeignKey(ArticuloReferencias.id))
     container_type = db.Column(db.String(200))
     source = db.Column(db.String(200))
     filled = db.Column(db.String(30))
@@ -30,6 +30,8 @@ class Referencia(db.Model):
     pub_year = db.Column(db.Integer)
     venue = db.Column(db.String(100))
     abstract = db.Column(db.String(350))
+    
+    articulosReferencia = db.relationship(ArticuloReferencias, foreign_keys="Referencia.id_articleRef")
 
     def create(self):
       db.session.add(self)
@@ -54,7 +56,7 @@ class Referencia(db.Model):
       self.pub_year = pub_year 
       self.venue = venue
       self.abstract = abstract
-    def __repr__(self):
-        return '' % self.id
+    #def __repr__(self):
+        #return '' % self.id
 
 #db.create_all() # Para crear la tabla
