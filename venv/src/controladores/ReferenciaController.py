@@ -1,6 +1,7 @@
 from modelos.Referencia import Referencia
 from modelos.ArticuloReferencias import ArticuloReferencias
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql.functions import concat
 from flask import Flask, request, jsonify, make_response
 from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
@@ -39,7 +40,8 @@ def listaReferencias():
 def verificacionReferencia():
     referencias = (db.session.query(ArticuloReferencias, Referencia)
         .join(Referencia.articulosReferencia)
-        ).all()
+        ).filter((ArticuloReferencias.reference.like(concat('%',Referencia.title,'%'))) & (ArticuloReferencias.reference.like(concat('%', Referencia.pub_year, '%')))).all()
+    print(len(referencias))
     for referencia in referencias:
         print(referencia.ArticuloReferencias.id)
     return make_response(jsonify({"Comparadas titulo de las referencias": "referencias"}))
