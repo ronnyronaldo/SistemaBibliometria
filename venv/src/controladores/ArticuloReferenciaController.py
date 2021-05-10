@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify, make_response
 from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
-from scholarly import scholarly
+#from scholarly import scholarly
 
 db = SQLAlchemy()
 
@@ -27,7 +27,7 @@ def obtenerDetalleReferencias():
     get_articulos = ArticuloReferencias.query.filter((ArticuloReferencias.id >= 1) & (ArticuloReferencias.id <= 1))
     articulos_schema = ArticuloReferenciaSchema(many=True)
     articulosRef = articulos_schema.dump(get_articulos)
-    for articulo in articulosRef:
+    """for articulo in articulosRef:
         #print("Ingreso al bucle")
         id_articleRef = articulo["id"]
         print(id_articleRef)
@@ -57,5 +57,5 @@ def obtenerDetalleReferencias():
         author_id_string = ";".join(author_id)
         author_string =  ";".join(author)
         #Transformar a string una lista
-        Referencia(id_articleRef, container_type, source, filled, gsrank, pub_url, author_id_string, num_citations, url_scholarbib, url_add_sclib, citedby_url, url_related_articles, title, author_string, pub_year, venue, abstract).create()
+        Referencia(id_articleRef, container_type, source, filled, gsrank, pub_url, author_id_string, num_citations, url_scholarbib, url_add_sclib, citedby_url, url_related_articles, title, author_string, pub_year, venue, abstract).create()"""
     return make_response(jsonify({"referencias": "Buscando scholarly"}))

@@ -12,6 +12,15 @@ from rutas.articuloReferencia_bp import articuloReferencia_bp
 from modelos.Referencia import db
 from rutas.referencia_bp import referencia_bp
 #Objeto Referencia
+#Objeto ReferenciaCompleta
+from modelos.ReferenciaCompleta import db
+#Objeto ReferenciaCompleta
+#Objeto ReferenciaNoEncontradas
+from modelos.ReferenciasNoEncontradas import db
+#Objeto ReferenciasNoEncontradas
+#Objeto ReferenciaErroneas
+from modelos.ReferenciasErroneas import db
+#Objeto ReferenciasErronas
 #Configuracion de la aplicacion y de la base de datos
 app = Flask(__name__)
 app.config.from_object('config')
