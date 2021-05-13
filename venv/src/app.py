@@ -1,5 +1,6 @@
 from flask import Flask, render_template
 from flask_migrate import Migrate
+from flask_cors import CORS
 #Objeto Articulo
 from modelos.Articulo import db
 from rutas.articulo_bp import articulo_bp
@@ -23,6 +24,7 @@ from modelos.ReferenciasErroneas import db
 #Objeto ReferenciasErronas
 #Configuracion de la aplicacion y de la base de datos
 app = Flask(__name__)
+CORS(app)
 app.config.from_object('config')
 db.init_app(app)
 migrate = Migrate(app, db)
