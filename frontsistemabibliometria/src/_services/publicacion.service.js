@@ -1,8 +1,7 @@
 import { fetchWrapper} from '../_helpers/fetch-wrapper';
 import endpoints from "./endpoints";
 
-
-export const articuloService = {
+export const publicacionService = {
     listar
 };
 

@@ -25,7 +25,7 @@ function Sidebar({ color, image, routes }) {
             className="simple-text logo-mini mx-1"
           >
             <div className="logo-img">
-              <i class="fas fa-book-reader fa-3x"></i>
+              <i className="fas fa-book-reader fa-3x"></i>
               
             </div>
           </a>
