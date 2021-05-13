@@ -11,3 +11,4 @@ Configuracion proyecto python
 10. C:\TESISTL\SistemaBibliometria\venv\src >> set FLASK_APP=app.py 
 11. flask run
 pip install scraperapi-sdk
+ pip install -U flask-cors
