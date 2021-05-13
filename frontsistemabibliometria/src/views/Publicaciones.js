@@ -1,4 +1,5 @@
 import React from "react";
+import {articuloService} from '../_services/articulo.service';
 
 // react-bootstrap components
 import {
@@ -70,6 +71,9 @@ function TableList() {
     await tablaPaginacionService.paginacion('#dataTablePublicaciones');
   }
   React.useEffect(() => {
+    articuloService.listar().then(value => {
+      console.log(value)
+    });
     handleCargarDatosPublicaciones();
   }, []);
   return (
