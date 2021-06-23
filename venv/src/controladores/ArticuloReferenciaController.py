@@ -1,17 +1,17 @@
 from scraper_api import ScraperAPIClient
-from modelos.ArticuloReferencias import ArticuloReferencias
-from modelos.Referencia import Referencia
+from modelos.ArticuloReferenciaScopus import ArticuloReferenciaScopus
+from modelos.DetalleReferenciaScopus import DetalleReferenciaScopus
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify, make_response
 from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
-from scholarly import scholarly, ProxyGenerator 
+#from scholarly import scholarly, ProxyGenerator 
 
 db = SQLAlchemy()
 
-class ArticuloReferenciaSchema(ModelSchema):
+class ArticuloReferenciaScopusSchema(ModelSchema):
     class Meta(ModelSchema.Meta):
-        model = ArticuloReferencias
+        model = ArticuloReferenciaScopus
         sqla_session = db.session
     id = fields.Number(dump_only=True)
     id_article_pwh = fields.Number(dump_only=True)
@@ -19,24 +19,24 @@ class ArticuloReferenciaSchema(ModelSchema):
     references = fields.String(required=True)
 
 def listaArticulosReferencias():
-    get_articulos = ArticuloReferencias.query.all()
-    articulos_schema = ArticuloReferenciaSchema(many=True)
+    get_articulos = ArticuloReferenciaScopus.query.all()
+    articulos_schema = ArticuloReferenciaScopusSchema(many=True)
     articulosRef = articulos_schema.dump(get_articulos)
     return make_response(jsonify({"referencias": articulosRef}))
 
 def obtenerDetalleReferencias():
-    pg = ProxyGenerator()
-    pg.ScraperAPI('2331b2faa00476efc29d1a21a7486ced')
-    scholarly.use_proxy(pg)
-    get_articulos = ArticuloReferencias.query.filter((ArticuloReferencias.id >= 511) & (ArticuloReferencias.id <= 520))
-    articulos_schema = ArticuloReferenciaSchema(many=True)
+    #pg = ProxyGenerator()
+    #pg.ScraperAPI('b2b3bd83b1aabff21cfdca39bf18a0dd')
+    #scholarly.use_proxy(pg)
+    get_articulos = ArticuloReferenciaScopus.query.filter((ArticuloReferenciaScopus.id >= 2271)&(ArticuloReferenciaScopus.id <= 5000))
+    articulos_schema = ArticuloReferenciaScopusSchema(many=True)
     articulosRef = articulos_schema.dump(get_articulos)
     for articulo in articulosRef:
         #print("Ingreso al bucle")
         id_articleRef = articulo["id"]
         print(id_articleRef)
-        #print("Referencia procesando..." + articulo["reference"])
-        try:
+        print(articulo["reference"])
+        """try:
             search_queryAux = scholarly.search_pubs(articulo["reference"])
             detalleReferencia = search_queryAux.__next__()
             # Extraer detalle de la referencia
@@ -62,8 +62,8 @@ def obtenerDetalleReferencias():
             author_id_string = ";".join(author_id)
             author_string =  ";".join(author)
             #Transformar a string una lista
-            Referencia(id_articleRef, container_type, source, filled, gsrank, pub_url, author_id_string, num_citations, url_scholarbib, url_add_sclib, citedby_url, url_related_articles, title, author_string, pub_year, venue, abstract).create()
+            DetalleReferenciaScopus(id_articleRef, container_type, source, filled, gsrank, pub_url, author_id_string, num_citations, url_scholarbib, url_add_sclib, citedby_url, url_related_articles, title, author_string, pub_year, venue, abstract).create()
         except:
-            pass
+            pass"""
         
     return make_response(jsonify({"referencias": "Buscando scholarly"}))

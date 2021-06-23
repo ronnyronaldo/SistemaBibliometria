@@ -1,8 +1,8 @@
-from modelos.Referencia import Referencia
-from modelos.ReferenciaCompleta import ReferenciaCompleta
-from modelos.ArticuloReferencias import ArticuloReferencias
-from modelos.ReferenciasNoEncontradas import ReferenciasNoEncontradas
-from modelos.ReferenciasErroneas import ReferenciasErroneas
+from modelos.DetalleReferenciaScopus import DetalleReferenciaScopus
+from modelos.ReferenciaCorrectaScopus import ReferenciaCorrectaScopus
+from modelos.ArticuloReferenciaScopus import ArticuloReferenciaScopus
+from modelos.ReferenciaNoEncontradaScopus import ReferenciaNoEncontradaScopus
+from modelos.ReferenciaErroneaScopus import ReferenciaErroneaScopus
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql.functions import concat
 from flask import Flask, request, jsonify, make_response
@@ -11,9 +11,9 @@ from marshmallow import fields
 
 db = SQLAlchemy()
 
-class ReferenciaSchema(ModelSchema):
+class DetalleReferenciaScopusSchema(ModelSchema):
     class Meta(ModelSchema.Meta):
-        model = Referencia
+        model = DetalleReferenciaScopus
         sqla_session = db.session
     id = fields.Number(dump_only=True)
     id_articleRef  = fields.Number(required=True)
@@ -35,34 +35,34 @@ class ReferenciaSchema(ModelSchema):
     abstract = fields.String(required=True)
 
 def listaReferencias():
-    get_referencias = Referencia.query.all()
-    referencia_schema = ReferenciaSchema(many=True)
+    get_referencias = DetalleReferenciaScopus.query.all()
+    referencia_schema = DetalleReferenciaScopusSchema(many=True)
     referencias = referencia_schema.dump(get_referencias)
     return make_response(jsonify({"referencias": referencias}))
 
 def verificacionReferencia():
-    referencias = (db.session.query(ArticuloReferencias, Referencia)
-        .join(Referencia.articulosReferencia)
-        ).filter((ArticuloReferencias.reference.like(concat('%',Referencia.title,'%'))) & (ArticuloReferencias.reference.like(concat('%', Referencia.pub_year, '%')))).all()
+    referencias = (db.session.query(ArticuloReferenciaScopus, DetalleReferenciaScopus)
+        .join(DetalleReferenciaScopus.articulosReferencia)
+        ).filter((ArticuloReferenciaScopus.reference.like(concat('%',DetalleReferenciaScopus.title,'%'))) & (ArticuloReferenciaScopus.reference.like(concat('%', DetalleReferenciaScopus.pub_year, '%')))).all()
     for referencia in referencias:
-        ReferenciaCompleta(referencia.Referencia.id_articleRef , referencia.Referencia.id, referencia.Referencia.container_type, "null", referencia.Referencia.filled, referencia.Referencia.gsrank, referencia.Referencia.pub_url, referencia.Referencia.author_id, referencia.Referencia.num_citations, referencia.Referencia.url_scholarbib, referencia.Referencia.url_add_sclib, referencia.Referencia.citedby_url, referencia.Referencia.url_related_articles, referencia.Referencia.title, referencia.Referencia.author, referencia.Referencia.pub_year, referencia.Referencia.venue, referencia.Referencia.abstract).create()
+        ReferenciaCorrectaScopus(referencia.DetalleReferenciaScopus.id_articleRef , referencia.DetalleReferenciaScopus.id, referencia.DetalleReferenciaScopus.container_type, "null", referencia.DetalleReferenciaScopus.filled, referencia.DetalleReferenciaScopus.gsrank, referencia.DetalleReferenciaScopus.pub_url, referencia.DetalleReferenciaScopus.author_id, referencia.DetalleReferenciaScopus.num_citations, referencia.DetalleReferenciaScopus.url_scholarbib, referencia.DetalleReferenciaScopus.url_add_sclib, referencia.DetalleReferenciaScopus.citedby_url, referencia.DetalleReferenciaScopus.url_related_articles, referencia.DetalleReferenciaScopus.title, referencia.DetalleReferenciaScopus.author, referencia.DetalleReferenciaScopus.pub_year, referencia.DetalleReferenciaScopus.venue, referencia.DetalleReferenciaScopus.abstract).create()
 
     return make_response(jsonify({"Comparadas titulo de las referencias": "referencias"}))
 
 def listarReferenciasNoEncontradas():
-    subquery = (db.session.query(ArticuloReferencias, Referencia).with_entities(ArticuloReferencias.id)
-        .join(Referencia.articulosReferencia))
-    query = db.session.query(ArticuloReferencias).filter(ArticuloReferencias.id.notin_(subquery)).filter(ArticuloReferencias.id <= 181)
+    subquery = (db.session.query(ArticuloReferenciaScopus, DetalleReferenciaScopus).with_entities(ArticuloReferenciaScopus.id)
+        .join(DetalleReferenciaScopus.articulosReferencia))
+    query = db.session.query(ArticuloReferenciaScopus).filter(ArticuloReferenciaScopus.id.notin_(subquery))
     referencias = query.all()
     for referencia in referencias:
         ReferenciasNoEncontradas(referencia.id,referencia.id_article_pwh, referencia.id_article, referencia.reference).create()
     return make_response(jsonify({"Listando referencias no encontradas": "referencias"}))
 
 def listarReferenciasErroneasEncontradas():
-    subquery = (db.session.query(Referencia, ReferenciaCompleta).with_entities(Referencia.id_articleRef)
-        .join(ReferenciaCompleta, Referencia.id_articleRef == ReferenciaCompleta.id_articleRef))
-    query = db.session.query(Referencia, ArticuloReferencias).filter(Referencia.id_articleRef.notin_(subquery)).filter((Referencia.id_articleRef <= 181) & (ArticuloReferencias.id == Referencia.id_articleRef))
+    subquery = (db.session.query(DetalleReferenciaScopus, ReferenciaCompleta).with_entities(DetalleReferenciaScopus.id_articleRef)
+        .join(ReferenciaCompleta, DetalleReferenciaScopus.id_articleRef == ReferenciaCompleta.id_articleRef))
+    query = db.session.query(DetalleReferenciaScopus, ArticuloReferenciaScopus).filter(DetalleReferenciaScopus.id_articleRef.notin_(subquery)).filter((ArticuloReferenciaScopus.id == DetalleReferenciaScopus.id_articleRef))
     referencias = query.all()
     for referencia in referencias:
-        ReferenciasErroneas(referencia.ArticuloReferencias.id, referencia.ArticuloReferencias.id_article_pwh, referencia.ArticuloReferencias.id_article, referencia.ArticuloReferencias.reference).create()
+        ReferenciasErroneas(referencia.ArticuloReferenciaScopus.id, referencia.ArticuloReferenciaScopus.id_article_pwh, referencia.ArticuloReferenciaScopus.id_article, referencia.ArticuloReferenciaScopus.reference).create()
     return make_response(jsonify({"Referencias erroneas": "referencias"}))

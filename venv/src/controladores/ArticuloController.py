@@ -1,5 +1,5 @@
-from modelos.Articulo import Articulo
-from modelos.ArticuloReferencias import ArticuloReferencias
+from modelos.ArticuloScopus import ArticuloScopus
+from modelos.ArticuloReferenciaScopus import ArticuloReferenciaScopus
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify, make_response
 from marshmallow_sqlalchemy import ModelSchema
@@ -7,15 +7,11 @@ from marshmallow import fields
 
 db = SQLAlchemy()
 
-class ArticuloSchema(ModelSchema):
+class ArticuloScopusSchema(ModelSchema):
     class Meta(ModelSchema.Meta):
-        model = Articulo
+        model = ArticuloScopus
         sqla_session = db.session
-    id_article_pwh = fields.Number(dump_only=True)
-    id_article = fields.Number(required=True)
-    version = fields.Number(required=True)
-    date_from = fields.Date(required=True)
-    date_to = fields.Date(required=True)
+    id_article = fields.Number(dump_only=True)
     Authors = fields.String(required=True)
     Authors_ID = fields.String(required=True)
     Title = fields.String(required=True)
@@ -24,7 +20,10 @@ class ArticuloSchema(ModelSchema):
     Volume = fields.String(required=True)
     Issue = fields.String(required=True)
     Art_No = fields.String(required=True)
-    Cited_by = fields.Number(required=True)
+    Page_start = fields.String(required=True)
+    Page_end = fields.String(required=True)
+    Page_count = fields.String(required=True)
+    Cited_by = fields.String(required=True)
     DOI = fields.String(required=True)
     Link = fields.String(required=True)
     Abstract = fields.String(required=True)
@@ -36,23 +35,23 @@ class ArticuloSchema(ModelSchema):
     Source = fields.String(required=True)
     EID = fields.String(required=True)
 
-class ArticuloReferenciasSchema(ModelSchema):
+class ArticuloReferenciaScopusSchema(ModelSchema):
     class Meta(ModelSchema.Meta):
-        model = Articulo
+        model = ArticuloScopus
         sqla_session = db.session
     id_article_pwh = fields.Number(dump_only=True)
     id_article = fields.Number(required=True)
     References = fields.String(required=True)
 
 def listaArticulos():
-    get_articulos = Articulo.query.all()
-    articulos_schema = ArticuloSchema(many=True)
+    get_articulos = ArticuloScopus.query.all()
+    articulos_schema = ArticuloScopusSchema(many=True)
     articulos = articulos_schema.dump(get_articulos)
     return make_response(jsonify({"articulos": articulos}))
 
 def extraerReferencias():
-    get_articulos = Articulo.query.with_entities(Articulo.id_article_pwh ,Articulo.id_article, Articulo.References)
-    articulos_schema = ArticuloReferenciasSchema(many=True)
+    get_articulos = ArticuloScopus.query.with_entities(ArticuloScopus.id_article_pwh ,ArticuloScopus.id_article, ArticuloScopus.References)
+    articulos_schema = ArticuloReferenciaScopusSchema(many=True)
     articulos = articulos_schema.dump(get_articulos)
     for articulo in articulos:
         id_article_pwh = articulo["id_article_pwh"]
@@ -62,5 +61,5 @@ def extraerReferencias():
         if not referencesString == None: 
             referencesList = referencesString.split(';')
             for reference in referencesList:
-                ArticuloReferencias(id_article_pwh,  id_article, reference).create()
+                ArticuloReferenciaScopus(id_article_pwh,  id_article, reference).create()
     return make_response(jsonify({"extraerReferencias": "True"}))
