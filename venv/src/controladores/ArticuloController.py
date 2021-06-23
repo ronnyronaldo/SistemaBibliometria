@@ -50,16 +50,15 @@ def listaArticulos():
     return make_response(jsonify({"articulos": articulos}))
 
 def extraerReferencias():
-    get_articulos = ArticuloScopus.query.with_entities(ArticuloScopus.id_article_pwh ,ArticuloScopus.id_article, ArticuloScopus.References)
+    get_articulos = ArticuloScopus.query.with_entities(ArticuloScopus.id_article, ArticuloScopus.References)
     articulos_schema = ArticuloReferenciaScopusSchema(many=True)
     articulos = articulos_schema.dump(get_articulos)
     for articulo in articulos:
-        id_article_pwh = articulo["id_article_pwh"]
         id_article = articulo["id_article"]
         referencesString = articulo["References"]
         referencesList = []
         if not referencesString == None: 
             referencesList = referencesString.split(';')
             for reference in referencesList:
-                ArticuloReferenciaScopus(id_article_pwh,  id_article, reference).create()
+                ArticuloReferenciaScopus(id_article, reference).create()
     return make_response(jsonify({"extraerReferencias": "True"}))

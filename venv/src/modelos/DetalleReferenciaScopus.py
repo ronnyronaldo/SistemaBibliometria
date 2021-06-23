@@ -11,9 +11,9 @@ db = SQLAlchemy()
 
 ###Models####
 class DetalleReferenciaScopus(db.Model):
-    __tablename__ = "detalleReferenciaLatindex"
+    __tablename__ = "detalleReferenciaScopus"
     id = db.Column(db.Integer, primary_key=True)
-    id_articleRef  = db.Column(db.Integer, db.ForeignKey(ArticuloReferenciaScopus.id))
+    id_articleRef  = db.Column(db.Integer, db.ForeignKey(ArticuloReferenciaScopus.id_referencia))
     container_type = db.Column(db.String(200))
     source = db.Column(db.String(200))
     filled = db.Column(db.String(30))

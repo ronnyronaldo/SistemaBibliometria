@@ -13,7 +13,7 @@ db = SQLAlchemy()
 class ReferenciaCorrectaScopus(db.Model):
     __tablename__ = "referenciaCorrectaLatindex"
     id = db.Column(db.Integer, primary_key=True)
-    id_articleRef  = db.Column(db.Integer, db.ForeignKey(ArticuloReferenciaScopus.id))
+    id_articleRef  = db.Column(db.Integer, db.ForeignKey(ArticuloReferenciaScopus.id_referencia))
     id_ReferenciaAux  = db.Column(db.Integer)
     container_type = db.Column(db.String(200))
     source = db.Column(db.String(200))

@@ -13,10 +13,9 @@ class ArticuloReferenciaScopusSchema(ModelSchema):
     class Meta(ModelSchema.Meta):
         model = ArticuloReferenciaScopus
         sqla_session = db.session
-    id = fields.Number(dump_only=True)
-    id_article_pwh = fields.Number(dump_only=True)
-    id_article = fields.Number(required=True)
-    references = fields.String(required=True)
+    id_referencia = fields.Number(dump_only=True)
+    id_articulo = fields.Number(required=True)
+    referencia = fields.String(required=True)
 
 def listaArticulosReferencias():
     get_articulos = ArticuloReferenciaScopus.query.all()
@@ -28,14 +27,14 @@ def obtenerDetalleReferencias():
     #pg = ProxyGenerator()
     #pg.ScraperAPI('b2b3bd83b1aabff21cfdca39bf18a0dd')
     #scholarly.use_proxy(pg)
-    get_articulos = ArticuloReferenciaScopus.query.filter((ArticuloReferenciaScopus.id >= 2271)&(ArticuloReferenciaScopus.id <= 5000))
+    get_articulos = ArticuloReferenciaScopus.query.filter((ArticuloReferenciaScopus.id_referencia>= 3922)&(ArticuloReferenciaScopus.id_referencia <= 7000))
     articulos_schema = ArticuloReferenciaScopusSchema(many=True)
     articulosRef = articulos_schema.dump(get_articulos)
     for articulo in articulosRef:
         #print("Ingreso al bucle")
-        id_articleRef = articulo["id"]
+        id_articleRef = articulo["id_referencia"]
         print(id_articleRef)
-        print(articulo["reference"])
+        print(articulo["referencia"])
         """try:
             search_queryAux = scholarly.search_pubs(articulo["reference"])
             detalleReferencia = search_queryAux.__next__()
