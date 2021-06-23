@@ -10,7 +10,7 @@ db = SQLAlchemy()
 
 ###Models####
 class Articulo(db.Model):
-    __tablename__ = "scopus"
+    __tablename__ = "articulo"
     id_article_pwh = db.Column(db.Integer, primary_key=True)
     id_article = db.Column(db.Integer)
     version = db.Column(db.Integer)
