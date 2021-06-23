@@ -9,7 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 ###Models####
-class ReferenciasErroneas(db.Model):
+class ReferenciaErroneaScopus(db.Model):
     __tablename__ = "referencias_erroneas"
     id = db.Column(db.Integer, primary_key=True)
     id_articleRef = db.Column(db.Integer)

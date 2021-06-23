@@ -9,7 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 ###Models####
-class ReferenciasNoEncontradas(db.Model):
+class ReferenciaNoEncontradaScopus(db.Model):
     __tablename__ = "referencias_no_encontradas"
     id = db.Column(db.Integer, primary_key=True)
     id_articleRef = db.Column(db.Integer)

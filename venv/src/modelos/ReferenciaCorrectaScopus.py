@@ -1,7 +1,7 @@
 
 #from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
-from modelos.ArticuloReferencias import ArticuloReferencias
+from modelos.ArticuloReferenciaScopus import ArticuloReferenciaScopus
 #app = Flask(__name__)
 #MySQL configurations
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root@localhost/bd_tesis'
@@ -10,10 +10,10 @@ from modelos.ArticuloReferencias import ArticuloReferencias
 db = SQLAlchemy()
 
 ###Models####
-class ReferenciaCompleta(db.Model):
-    __tablename__ = "referencia"
+class ReferenciaCorrectaScopus(db.Model):
+    __tablename__ = "referenciaCorrectaLatindex"
     id = db.Column(db.Integer, primary_key=True)
-    id_articleRef  = db.Column(db.Integer, db.ForeignKey(ArticuloReferencias.id))
+    id_articleRef  = db.Column(db.Integer, db.ForeignKey(ArticuloReferenciaScopus.id))
     id_ReferenciaAux  = db.Column(db.Integer)
     container_type = db.Column(db.String(200))
     source = db.Column(db.String(200))
@@ -32,7 +32,7 @@ class ReferenciaCompleta(db.Model):
     venue = db.Column(db.String(100))
     abstract = db.Column(db.String(350))
     
-    articulosReferencia = db.relationship(ArticuloReferencias, foreign_keys="ReferenciaCompleta.id_articleRef")
+    articulosReferencia = db.relationship(ArticuloReferenciaScopus, foreign_keys="ReferenciaCorrectaScopus.id_articleRef")
    
     def create(self):
       db.session.add(self)

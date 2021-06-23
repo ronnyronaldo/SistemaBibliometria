@@ -9,8 +9,8 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 ###Models####
-class ArticuloReferencias(db.Model):
-    __tablename__ = "articuloReferencias"
+class ArticuloReferenciaScopus(db.Model):
+    __tablename__ = "articuloreferenciaslatindex"
     id = db.Column(db.Integer, primary_key=True)
     id_article_pwh = db.Column(db.Integer)
     id_article = db.Column(db.Integer)
