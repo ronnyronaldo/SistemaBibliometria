@@ -2,25 +2,25 @@ from flask import Flask, render_template
 from flask_migrate import Migrate
 from flask_cors import CORS
 #Objeto Articulo
-from modelos.Articulo import db
+from modelos.ArticuloScopus import db
 from rutas.articulo_bp import articulo_bp
 #Objeto Articulo
 #Objeto ArticuloReferencias
-from modelos.ArticuloReferencias import db
+from modelos.ArticuloReferenciaScopus import db
 from rutas.articuloReferencia_bp import articuloReferencia_bp
 #Objeto ArticuloReferencias
 #Objeto Referencia
-from modelos.Referencia import db
+from modelos.DetalleReferenciaScopus import db
 from rutas.referencia_bp import referencia_bp
 #Objeto Referencia
 #Objeto ReferenciaCompleta
-from modelos.ReferenciaCompleta import db
+from modelos.ReferenciaCorrectaScopus import db
 #Objeto ReferenciaCompleta
 #Objeto ReferenciaNoEncontradas
-from modelos.ReferenciasNoEncontradas import db
+from modelos.ReferenciaNoEncontradaScopus import db
 #Objeto ReferenciasNoEncontradas
 #Objeto ReferenciaErroneas
-from modelos.ReferenciasErroneas import db
+from modelos.ReferenciaErroneaScopus import db
 #Objeto ReferenciasErronas
 #Configuracion de la aplicacion y de la base de datos
 app = Flask(__name__)
