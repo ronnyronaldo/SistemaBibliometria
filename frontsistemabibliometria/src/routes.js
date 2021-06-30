@@ -1,7 +1,8 @@
 import Dashboard from "views/Dashboard.js";
 import UserProfile from "views/UserProfile.js";
 import Publicaciones from "views/Publicaciones";
-import TableList from "views/TableList.js";
+import BaseDatosDigital from "views/BaseDatosDigital";
+import MedioPublicacion from "views/MedioPublicacion";
 import Typography from "views/Typography.js";
 import Icons from "views/Icons.js";
 import Maps from "views/Maps.js";
@@ -34,14 +35,14 @@ const dashboardRoutes = [
     path: "/revistas",
     name: "Revistas",
     icon: "nc-icon nc-paper-2",
-    component: TableList,
+    component: MedioPublicacion,
     layout: "/admin",
   },
   {
     path: "/estadisticasProveedores",
     name: "Est. Proveedores",
     icon: "nc-icon nc-notes",
-    component: Typography,
+    component: BaseDatosDigital,
     layout: "/admin",
   },
   {
