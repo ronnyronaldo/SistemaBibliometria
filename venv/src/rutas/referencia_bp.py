@@ -1,5 +1,5 @@
 from flask import Blueprint
-from controladores.ReferenciaController import listaReferencias, verificacionReferencia, listarReferenciasNoEncontradas, listarReferenciasErroneasEncontradas
+from controladores.ReferenciaaaController import listaReferencias, verificacionReferencia, listarReferenciasNoEncontradas, listarReferenciasErroneasEncontradas
 referencia_bp = Blueprint('referencia_bp', __name__)
 
 @referencia_bp.route('/listar', methods=['GET']) 

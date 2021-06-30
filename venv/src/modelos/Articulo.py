@@ -11,30 +11,32 @@ db = SQLAlchemy()
 ###Models####
 class Articulo(db.Model):
     __tablename__ = "articulo"
-    id_article_pwh = db.Column(db.Integer, primary_key=True)
-    id_article = db.Column(db.Integer)
-    version = db.Column(db.Integer)
-    date_from = db.Column(db.Date)
-    date_to = db.Column(db.Date)
-    Authors = db.Column(db.String(300))
-    Authors_ID = db.Column(db.String(300))
-    Title = db.Column(db.String(200))
-    Year = db.Column(db.Integer)
-    Source_Title = db.Column(db.String(100))
-    Volume = db.Column(db.String(50))
-    Issue = db.Column(db.String(50))
-    Art_No = db.Column(db.String(100))
-    Cited_by = db.Column(db.Integer)
-    DOI = db.Column(db.String(50))
-    Link = db.Column(db.String(500))
-    Abstract = db.Column(db.String(1000))
-    Index_Keywords = db.Column(db.String(500))
-    References = db.Column(db.String(100000))
-    Document_Type = db.Column(db.String(20))
-    Publication_Stage = db.Column(db.String(50))
-    Open_Access = db.Column(db.String(100))
-    Source = db.Column(db.String(100))
-    EID = db.Column(db.String(100))
+    id_articulo = db.Column(db.Integer, primary_key=True)
+    id_base_datos_digital = db.Column(db.Integer)
+    id_area_unesco = db.Column(db.Integer)
+    id_area_frascati = db.Column(db.Integer)
+    id_medio_publicacion = db.Column(db.Integer)
+    url_dspace = db.Column(db.String(250))
+    titulo = db.Column(db.String(500))
+    titulo_alternativo = db.Column(db.String(500))
+    palabras_clave = db.Column(db.String(500))
+    abstract = db.Column(db.String(10000))
+    resumen = db.Column(db.String(5000))
+    nombre_area_frascati_amplio = db.Column(db.String(100))
+    nombre_area_unesco_amplio = db.Column(db.String(100))
+    tipo_publicacion = db.Column(db.String(50))
+    anio_publicacion = db.Column(db.Integer)
+    link_revista = db.Column(db.String(700))
+    doi = db.Column(db.String(100))
+    estado_publicacion = db.Column(db.String(45))
+    enlace_documento = db.Column(db.String(250))
+    factor_impacto = db.Column(db.String(45))
+    cuartil = db.Column(db.String(45))
+    autor_identificación = db.Column(db.String(45))
+    orden_autor = db.Column(db.Integer)
+    nombres = db.Column(db.String(100))
+    nombre_afiliacion = db.Column(db.String(200))
+    nombre_medio_publicacion = db.Column(db.String(150))
 
     def create(self):
       db.session.add(self)
@@ -46,6 +48,6 @@ class Articulo(db.Model):
         self.productBrand = productBrand
         self.price = price"""
     def __repr__(self):
-        return '' % self.id_article
+        return '' % self.id_articulo
 #db.create_all() # Para crear la tabla
 

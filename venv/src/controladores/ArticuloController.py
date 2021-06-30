@@ -1,5 +1,8 @@
-from modelos.ArticuloScopus import ArticuloScopus
-from modelos.ArticuloReferenciaScopus import ArticuloReferenciaScopus
+from modelos.Articulo import Articulo
+from modelos.BaseDatosDigital import BaseDatosDigital
+from modelos.MedioPublicacion import MedioPublicacion
+from modelos.AreaFrascati import AreaFrascati
+from modelos.AreaUnesco import AreaUnesco 
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify, make_response
 from marshmallow_sqlalchemy import ModelSchema
@@ -7,58 +10,63 @@ from marshmallow import fields
 
 db = SQLAlchemy()
 
-class ArticuloScopusSchema(ModelSchema):
+class ArticuloSchema(ModelSchema):
     class Meta(ModelSchema.Meta):
-        model = ArticuloScopus
+        model = Articulo
         sqla_session = db.session
-    id_article = fields.Number(dump_only=True)
-    Authors = fields.String(required=True)
-    Authors_ID = fields.String(required=True)
-    Title = fields.String(required=True)
-    Year = fields.Number(required=True)
-    Source_Title = fields.String(required=True)
-    Volume = fields.String(required=True)
-    Issue = fields.String(required=True)
-    Art_No = fields.String(required=True)
-    Page_start = fields.String(required=True)
-    Page_end = fields.String(required=True)
-    Page_count = fields.String(required=True)
-    Cited_by = fields.String(required=True)
-    DOI = fields.String(required=True)
-    Link = fields.String(required=True)
-    Abstract = fields.String(required=True)
-    Index_Keywords = fields.String(required=True)
-    References = fields.String(required=True)
-    Document_Type = fields.String(required=True)
-    Publication_Stage = fields.String(required=True)
-    Open_Access = fields.String(required=True)
-    Source = fields.String(required=True)
-    EID = fields.String(required=True)
-
-class ArticuloReferenciaScopusSchema(ModelSchema):
-    class Meta(ModelSchema.Meta):
-        model = ArticuloScopus
-        sqla_session = db.session
-    id_article_pwh = fields.Number(dump_only=True)
-    id_article = fields.Number(required=True)
-    References = fields.String(required=True)
+    id_articulo = fields.Number(dump_only=True)
+    id_base_datos_digital = fields.Number(required=True)
+    id_area_unesco = fields.Number(required=True)
+    id_area_frascati = fields.Number(required=True)
+    id_medio_publicacion = fields.Number(required=True)
+    url_dspace = fields.String(required=True)
+    titulo = fields.String(required=True)
+    titulo_alternativo = fields.String(required=True)
+    palabras_clave = fields.String(required=True)
+    abstract = fields.String(required=True)
+    resumen = fields.String(required=True)
+    nombre_area_frascati_amplio = fields.String(required=True)
+    nombre_area_unesco_amplio = fields.String(required=True)
+    tipo_publicacion = fields.String(required=True)
+    anio_publicacion = fields.Number(required=True)
+    link_revista = fields.String(required=True)
+    doi = fields.String(required=True)
+    estado_publicacion = fields.String(required=True)
+    enlace_documento = fields.String(required=True)
+    factor_impacto = fields.String(required=True)
+    cuartil = fields.String(required=True)
+    autor_identificación = fields.String(required=True)
+    orden_autor = fields.Number(required=True)
+    nombres = fields.String(required=True)
+    nombre_afiliacion = fields.String(required=True)
+    nombre_medio_publicacion = fields.String(required=True)
 
 def listaArticulos():
-    get_articulos = ArticuloScopus.query.all()
-    articulos_schema = ArticuloScopusSchema(many=True)
-    articulos = articulos_schema.dump(get_articulos)
+    articulosRespuesta = (db.session.query(Articulo, BaseDatosDigital, MedioPublicacion, AreaFrascati, AreaUnesco)
+        .with_entities(Articulo.id_articulo, Articulo.nombres, Articulo.orden_autor, Articulo.titulo, Articulo.anio_publicacion, Articulo.doi, BaseDatosDigital.nombre_base_datos_digital, Articulo.tipo_publicacion, Articulo.url_dspace, MedioPublicacion.nombre, AreaUnesco.descripcion_unesco, AreaFrascati.descripcion)
+        .join(BaseDatosDigital, Articulo.id_base_datos_digital == BaseDatosDigital.id_base_datos_digital)
+        .join(MedioPublicacion, Articulo.id_medio_publicacion == MedioPublicacion.id_medio_publicacion)
+        .join(AreaFrascati, Articulo.id_area_frascati == AreaFrascati.id_area_frascati )
+        .join(AreaUnesco, Articulo.id_area_unesco == AreaUnesco.id_area_unesco)).all()
+    #db.session.close()
+    db.session.remove()
+    articulos = []
+    for articulo in articulosRespuesta:
+        articulos.append(dict(articulo)) # Serializo cada fila
     return make_response(jsonify({"articulos": articulos}))
 
-def extraerReferencias():
-    get_articulos = ArticuloScopus.query.with_entities(ArticuloScopus.id_article, ArticuloScopus.References)
-    articulos_schema = ArticuloReferenciaScopusSchema(many=True)
-    articulos = articulos_schema.dump(get_articulos)
-    for articulo in articulos:
-        id_article = articulo["id_article"]
-        referencesString = articulo["References"]
-        referencesList = []
-        if not referencesString == None: 
-            referencesList = referencesString.split(';')
-            for reference in referencesList:
-                ArticuloReferenciaScopus(id_article, reference).create()
-    return make_response(jsonify({"extraerReferencias": "True"}))
+def asignarMedioPublicacion():
+    articulosRespuesta = (db.session.query(Articulo, MedioPublicacion)
+        .with_entities(Articulo.id_articulo, Articulo.nombre_medio_publicacion, MedioPublicacion.nombre, MedioPublicacion.id_medio_publicacion)
+        .join(MedioPublicacion, Articulo.nombre_medio_publicacion == MedioPublicacion.nombre)).all()
+    
+    for articulo in articulosRespuesta:
+        #print(articulo.id_articulo)
+        #print(articulo.id_medio_publicacion)
+        articuloRespuesta = Articulo.query.get_or_404(articulo.id_articulo)
+        #articuloEncontrado = Articulo.query.filter(Articulo.id_articulo == articulo.id_articulo).all()
+        articuloRespuesta.id_medio_publicacion = articulo.id_medio_publicacion
+        Articulo.create(articuloRespuesta)
+    db.session.remove()
+        #print(articuloRespuesta.id_medio_publicacion)
+    return make_response(jsonify({"articulos": ""}))
