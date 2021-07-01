@@ -15,7 +15,6 @@ import {
 } from "react-bootstrap";
 function MedioPublicacion() {
   const [mediosPublicacion, setMediosPublicacion] = React.useState([]);
-
   async function handleCargarMediosPublicacion() {
     await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacion');
     await medioPublicacionService.listar().then(value => {
@@ -30,7 +29,7 @@ function MedioPublicacion() {
     <>
       <Container fluid>
         <Row>
-        <Col md="12">
+          <Col md="12">
             <Card className="strpied-tabled-with-hover">
               <Card.Header>
                 <Card.Title as="h4">Medios de Publicación</Card.Title>
