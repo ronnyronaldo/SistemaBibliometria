@@ -17,6 +17,10 @@ from rutas.servicio_base_datos_digital import servicio_base_datos_digital
 from modelos.MedioPublicacion import db
 from rutas.servicio_medio_publicacion import servicio_medio_publicacion
 #Objeto Medio de Publicacion
+#Objeto Estadisticas de Uso
+from modelos.EstadisticasUso import db
+from rutas.servicio_estadisticas_uso import servicio_estadisticas_uso
+#Objeto Estadisticas de Uso
 #Objeto Articulo
 from modelos.ArticuloScopus import db
 from rutas.articulo_bp import articulo_bp
@@ -51,6 +55,7 @@ app.register_blueprint(servicio_articulo, url_prefix='/articulo')
 app.register_blueprint(servicio_referencia, url_prefix='/referencia')
 app.register_blueprint(servicio_base_datos_digital, url_prefix='/baseDatosDigital')
 app.register_blueprint(servicio_medio_publicacion, url_prefix='/medioPublicacion')
+app.register_blueprint(servicio_estadisticas_uso, url_prefix='/estadisticasUso') 
 app.register_blueprint(articulo_bp, url_prefix='/articuloScopus')
 app.register_blueprint(articuloReferencia_bp, url_prefix='/referencia')
 app.register_blueprint(referencia_bp, url_prefix='/referenciaDetalle')
