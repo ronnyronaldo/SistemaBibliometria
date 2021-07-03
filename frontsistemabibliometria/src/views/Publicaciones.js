@@ -122,20 +122,19 @@ function Publicaciones() {
         baseDatosDigitalService.validarBaseDatosDigitalPorNombre(nuevoIngreso.nombre).then(value=>{
           if (value.base_datos_digital.length !== 0){
             let id_base_datos_digital = value.base_datos_digital[0].id_base_datos_digital;
-            console.log(id_base_datos_digital)
+            //console.log(id_base_datos_digital)
             areaFrascatiService.validarAreaFrascatiPorNombre(nuevoIngreso.nombre_area_frascati_especifico).then(value => {
               if(value.area_frascati.length !== 0){
                 let id_area_frascati = value.area_frascati[0].id_area_frascati;
-                console.log(id_area_frascati)
+                //console.log(id_area_frascati)
                 areaUnescoService.validarAreaUnescoPorNombre(nuevoIngreso.nombre_area_unesco_especifico).then(value => {
                   if(value.area_unesco.length !== 0){
                     let id_area_unesco = value.area_unesco[0].id_area_unesco;
-                    console.log(id_area_unesco)
+                   // console.log(id_area_unesco)
                     medioPublicacionService.validarMedioPublicacionPorNombre(nuevoIngreso.nombre_medio_publicacion).then(value => {
                       if(value.mediosPublicacion.length !== 0){
                         let id_medio_publicacion = value.mediosPublicacion[0].id_medio_publicacion;
-                        console.log(id_medio_publicacion)
-
+                        //console.log(id_medio_publicacion)
                         publicacionService.insertar({
                           "id_base_datos_digital": id_base_datos_digital,
                           "id_area_unesco" : id_area_unesco,

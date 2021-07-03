@@ -6,7 +6,6 @@ export const areaFrascatiService = {
 };
 
 async function validarAreaFrascatiPorNombre(nombre) {
-    console.log(nombre)
     return fetchWrapper.get(`${endpoints.baseUrlAreaFrascati}/validarAreaFrascatiPorNombre/`+ nombre);
 }
 

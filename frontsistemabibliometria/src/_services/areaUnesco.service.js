@@ -6,7 +6,6 @@ export const areaUnescoService = {
 };
 
 async function validarAreaUnescoPorNombre(nombre) {
-    console.log(nombre)
     return fetchWrapper.get(`${endpoints.baseUrlAreaUnesco}/validarAreaUnescoPorNombre/`+ nombre);
 }
 
