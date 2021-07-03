@@ -3,7 +3,8 @@ import endpoints from "./endpoints";
 
 export const baseDatosDigitalService = {
     listar,
-    listarBaseDatosDigitalPorId
+    listarBaseDatosDigitalPorId,
+    validarBaseDatosDigitalPorNombre
 };
 
 async function listar() {
@@ -12,6 +13,10 @@ async function listar() {
 
 async function listarBaseDatosDigitalPorId(id_base_datos_digital) {
     return fetchWrapper.get(`${endpoints.baseUrlBaseDatosDigital}/buscarBaseDatosDigitalPorId/`+ id_base_datos_digital);
+}
+
+async function validarBaseDatosDigitalPorNombre(nombre_base_datos_digital) {
+    return fetchWrapper.get(`${endpoints.baseUrlBaseDatosDigital}/validarBaseDatosDigitalPorNombre/`+ nombre_base_datos_digital);
 }
 
 
