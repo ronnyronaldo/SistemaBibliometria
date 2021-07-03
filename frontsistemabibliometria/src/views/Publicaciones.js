@@ -74,7 +74,16 @@ function Publicaciones() {
   const [publicaciones, setPublicaciones] = React.useState([]);
   const [publicacion, setPublicacion] = React.useState({});
   const [referencias, setReferencias] = React.useState([]);
-  const [tituloPublicacion, setTituloPublicacion] = React.useState("");
+  const [tipoIngresoReferencias, setTipoIngresoReferencias] = React.useState({
+    ingresoManual: true,
+    ingresoAutomatico: false
+  });
+
+  const [publicacionSeleccionada, setPublicacionSeleccionada] = React.useState({
+    titulo_publicacion:"",
+    autor:"",
+    anio_publicacion:""
+  });
   const [nuevasPublicaciones, setNuevasPublicaciones] = React.useState([]);
   async function handleReadExcel(file) {
     const promise = new Promise((resolve, reject) => {
@@ -106,13 +115,35 @@ function Publicaciones() {
     await tablaPaginacionService.paginacion('#dataTablePublicaciones');
   }
 
-  async function handleCargarReferencias(id_articulo, titulo) {
-    setTituloPublicacion(titulo);
+  async function handleCargarReferencias(id_articulo, titulo, autor, anio_publicacion) {
+    setPublicacionSeleccionada({
+      ...publicacionSeleccionada,
+      titulo_publicacion: titulo,
+      autor: autor,
+      anio_publicacion:anio_publicacion
+    })
+
     await tablaPaginacionService.destruirTabla('#dataTableReferencias');
     await referenciaService.listarReferenciasPorIdArticulo(id_articulo).then(value => {
       setReferencias(value.referencias);
     });
     await tablaPaginacionService.paginacion('#dataTableReferencias');
+  }
+
+  const handleOnChangeIngresoManual = (event) => {
+    setTipoIngresoReferencias({
+      ...tipoIngresoReferencias,
+      ingresoManual : true,
+      ingresoAutomatico: false
+    })
+  }
+
+  const handleOnChangeIngresoAutomatico = (event) => {
+    setTipoIngresoReferencias({
+      ...tipoIngresoReferencias,
+      ingresoManual : false,
+      ingresoAutomatico: true
+    })
   }
 
   async function handleIngresarPublicaciones() {
@@ -221,11 +252,12 @@ function Publicaciones() {
                               const file = e.target.files[0];
                               handleReadExcel(file)
                           }} className="col-sm-12 col-md-8"></input> 
-                           <Link to="#" id="ingresarPublicacion" className="link col-sm-12 col-md-2" onClick={handleIngresarPublicaciones}><Button variant="primary">Ingresar <i className="fas fa-file-upload fa-2x"/></Button></Link>
+                          <Link to="#" id="ingresarPublicacion" className="link col-sm-12 col-md-3" onClick={handleIngresarPublicaciones}><Button variant="primary">Ingresar <i className="fas fa-file-upload fa-2x"/></Button></Link>
                         </FormGroup>
                       </Form.Group>
                     </Col>
                   </Row>
+                  
                 </Form>
               </Card.Body>
             </Card>
@@ -255,7 +287,7 @@ function Publicaciones() {
                   </thead>
                   <tbody>
                     {publicaciones.map(item => (
-                      <tr className="small" key={item.id_articulo} onClick={() => handleCargarReferencias(item.id_articulo, item.titulo)}>
+                      <tr className="small" key={item.id_articulo} onClick={() => handleCargarReferencias(item.id_articulo, item.titulo, item.nombres, item.anio_publicacion)}>
                         <td width="15%">{item.nombres}</td>
                         <td width="20%">{item.titulo}</td>
                         <td width="5%">{item.anio_publicacion}</td>
@@ -275,11 +307,120 @@ function Publicaciones() {
             </Card>
           </Col>
           <Col md="12">
+            <Card className="strpied-tabled-with-hover">
+              <Card.Header>
+                <Card.Title as="h4">Ingreso Referencias</Card.Title>
+                <Row>
+                  <Col className="pr-1" md="5">
+                    <Form.Group>
+                      <label>TITULO PUBLICACION</label>
+                      <Form.Control
+                        value={publicacionSeleccionada.titulo_publicacion}
+                        disabled
+                        type="text"
+                      ></Form.Control>
+                    </Form.Group>
+                  </Col>
+                  <Col className="px-1" md="2">
+                    <Form.Group>
+                      <label>AUTOR AFILIADO</label>
+                      <Form.Control
+                        value={publicacionSeleccionada.autor}
+                        disabled
+                        type="text"
+                      ></Form.Control>
+                    </Form.Group>
+                  </Col>
+                  <Col className="px-1" md="2">
+                    <Form.Group>
+                      <label>AÑO DE PUBLICACION</label>
+                      <Form.Control
+                        value={publicacionSeleccionada.anio_publicacion}
+                        disabled 
+                        type="text"
+                      ></Form.Control>
+                    </Form.Group>
+                  </Col>
+                  <Col className="px-1" md="1">
+                    <Form.Group>
+                      <label>MANUAL</label>
+                      <Form.Control
+                        id="ingresoManual"
+                        type="radio"
+                        onChange={handleOnChangeIngresoManual}
+                        checked={tipoIngresoReferencias.ingresoManual}
+                      ></Form.Control>
+                    </Form.Group>
+                  </Col>
+                  <Col className="px-1" md="1">
+                    <Form.Group>
+                      <label>AUTOMÁTICO</label>
+                      <Form.Control
+                        id="ingresoAutomatico"
+                        type="radio"
+                        onChange={handleOnChangeIngresoAutomatico}
+                        checked={tipoIngresoReferencias.ingresoAutomatico}
+                      ></Form.Control>
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col className="pr-1" md="5">
+                    <Form.Group>
+                      <label>INGRESE LA REFERENCIA</label>
+                      <Form.Control
+                        value=""
+                        type="text"
+                        disabled={tipoIngresoReferencias.ingresoAutomatico}
+                      ></Form.Control>
+                    </Form.Group>
+                  </Col>
+                  <Col className="pr-1" md="3">
+                    <Form.Group>
+                      <label></label>
+                      <Form.Control
+                        value="AGREGAR"
+                        type="button"
+                        className="btn-outline-success"
+                        disabled={tipoIngresoReferencias.ingresoAutomatico}
+                      ></Form.Control>
+                    </Form.Group>
+                  </Col>
+                  <Col className="pr-1" md="3">
+                    <Form.Group>
+                      <label></label>
+                      <Form.Control
+                        value="CARGAR"
+                        type="button"
+                        ic
+                        className="btn-outline-success"
+                        disabled={tipoIngresoReferencias.ingresoManual}
+                      ></Form.Control>
+                    </Form.Group>
+                  </Col>
+                </Row>
+              </Card.Header>
+              <Card.Body>
+                <Form>
+                  <Row>
+                    <Col className="pr-1" md="5">
+                      <Form.Group>
+                        <label> </label>
+                        <FormGroup>
+                        </FormGroup>
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                </Form>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col md="12">
             <Card className="card-plain table-plain-bg">
               <Card.Header>
                 <Card.Title as="h4">Referencias</Card.Title>
                 <p className="card-category">
-                  {tituloPublicacion}
+                  {publicacionSeleccionada.titulo_publicacion}
                 </p>
               </Card.Header>
               <Card.Body className="table-full-width table-responsive px-3">
