@@ -16,6 +16,7 @@ class BaseDatosDigitalSchema(ModelSchema):
     costo_actual = fields.Number(required=True)
     suscripcion_descripcion = fields.String(required=True)
     area_servicio = fields.String(required=True)
+    esUtilizadaEstudio = fields.String(required=True)
 
 def listarBaseDatosDigital():
     get_base_datos_digital = BaseDatosDigital.query.all()
@@ -25,6 +26,12 @@ def listarBaseDatosDigital():
 
 def buscarBaseDatosDigitalPorId(id_base_datos_digital):
     get_base_datos_digital = BaseDatosDigital.query.filter(BaseDatosDigital.id_base_datos_digital == id_base_datos_digital)
+    base_datos_digital_schema = BaseDatosDigitalSchema(many=True)
+    base_datos_digital = base_datos_digital_schema.dump(get_base_datos_digital)
+    return make_response(jsonify({"base_datos_digital": base_datos_digital}))
+
+def validarBaseDatosDigitalPorNombre(nombre_base_datos_digital):
+    get_base_datos_digital = BaseDatosDigital.query.filter((BaseDatosDigital.nombre_base_datos_digital == nombre_base_datos_digital) & (BaseDatosDigital.esUtilizadaEstudio == 1))
     base_datos_digital_schema = BaseDatosDigitalSchema(many=True)
     base_datos_digital = base_datos_digital_schema.dump(get_base_datos_digital)
     return make_response(jsonify({"base_datos_digital": base_datos_digital}))

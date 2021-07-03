@@ -37,16 +37,41 @@ class Articulo(db.Model):
     nombres = db.Column(db.String(100))
     nombre_afiliacion = db.Column(db.String(200))
     nombre_medio_publicacion = db.Column(db.String(150))
+    nombre_area_frascati_especifico	= db.Column(db.String(100))
+    nombre_area_unesco_especifico = db.Column(db.String(100))
 
     def create(self):
       db.session.add(self)
       db.session.commit()
       return self
-    """def __init__(self,title,productDescription,productBrand,price):
-        self.title = title
-        self.productDescription = productDescription
-        self.productBrand = productBrand
-        self.price = price"""
+    def __init__(self, id_base_datos_digital, id_area_unesco, id_area_frascati, id_medio_publicacion, url_dspace, titulo, titulo_alternativo, palabras_clave, abstract, resumen, nombre_area_frascati_amplio, nombre_area_unesco_amplio, tipo_publicacion, anio_publicacion, link_revista, doi, estado_publicacion, enlace_documento, factor_impacto, cuartil, autor_identificación, orden_autor, nombres, nombre_afiliacion, nombre_medio_publicacion, nombre_area_frascati_especifico, nombre_area_unesco_especifico):
+        self.id_base_datos_digital = id_base_datos_digital
+        self.id_area_unesco = id_area_unesco 
+        self.id_area_frascati = id_area_frascati
+        self.id_medio_publicacion = id_medio_publicacion
+        self.url_dspace = url_dspace
+        self.titulo = titulo 
+        self.titulo_alternativo = titulo_alternativo
+        self.palabras_clave = palabras_clave
+        self.abstract = abstract 
+        self.resumen = resumen 
+        self.nombre_area_frascati_amplio = nombre_area_frascati_amplio 
+        self.nombre_area_unesco_amplio = nombre_area_unesco_amplio
+        self.tipo_publicacion = tipo_publicacion
+        self.anio_publicacion = anio_publicacion
+        self.link_revista = link_revista
+        self.doi = doi 
+        self.estado_publicacion = estado_publicacion
+        self.enlace_documento = enlace_documento
+        self.factor_impacto = factor_impacto
+        self.cuartil = cuartil
+        self.autor_identificación = autor_identificación
+        self.orden_autor = orden_autor 
+        self.nombres = nombres 
+        self.nombre_afiliacion = nombre_afiliacion
+        self.nombre_medio_publicacion = nombre_medio_publicacion 
+        self.nombre_area_frascati_especifico	= nombre_area_frascati_especifico
+        self.nombre_area_unesco_especifico = nombre_area_unesco_especifico
     def __repr__(self):
         return '' % self.id_articulo
 #db.create_all() # Para crear la tabla

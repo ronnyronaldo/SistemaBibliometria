@@ -21,6 +21,15 @@ from rutas.servicio_medio_publicacion import servicio_medio_publicacion
 from modelos.EstadisticasUso import db
 from rutas.servicio_estadisticas_uso import servicio_estadisticas_uso
 #Objeto Estadisticas de Uso
+#Objeto AreaUnesco
+from modelos.AreaUnesco import db
+from rutas.servicio_area_unesco import servicio_area_unesco
+#Objeto AreaUnesco
+#Objeto AreaFrascati
+from modelos.AreaFrascati import db
+from rutas.servicio_area_frascati import servicio_area_frascati
+#Objeto AreaFrascati
+
 #Objeto Articulo
 from modelos.ArticuloScopus import db
 from rutas.articulo_bp import articulo_bp
@@ -44,7 +53,7 @@ from modelos.ReferenciaErroneaScopus import db
 #Objeto ReferenciasErronas
 #Configuracion de la aplicacion y de la base de datos
 app = Flask(__name__)
-CORS(app)
+CORS(app, allow_headers=["Content-Type", "Authorization", "Access-Control-Allow-Credentials"], supports_credentials=True)
 app.config.from_object('config')
 db.init_app(app)
 migrate = Migrate(app, db)
@@ -56,6 +65,8 @@ app.register_blueprint(servicio_referencia, url_prefix='/referencia')
 app.register_blueprint(servicio_base_datos_digital, url_prefix='/baseDatosDigital')
 app.register_blueprint(servicio_medio_publicacion, url_prefix='/medioPublicacion')
 app.register_blueprint(servicio_estadisticas_uso, url_prefix='/estadisticasUso') 
+app.register_blueprint(servicio_area_frascati, url_prefix='/areaFrascati') 
+app.register_blueprint(servicio_area_unesco, url_prefix='/areaUnesco') 
 app.register_blueprint(articulo_bp, url_prefix='/articuloScopus')
 app.register_blueprint(articuloReferencia_bp, url_prefix='/referencia')
 app.register_blueprint(referencia_bp, url_prefix='/referenciaDetalle')

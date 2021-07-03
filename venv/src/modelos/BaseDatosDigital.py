@@ -17,6 +17,7 @@ class BaseDatosDigital(db.Model):
     costo_actual = db.Column(db.Float)
     suscripcion_descripcion = db.Column(db.String(500))
     area_servicio = db.Column(db.String(1000))
+    esUtilizadaEstudio = db.Column(db.String(2))
     def create(self):
       db.session.add(self)
       db.session.commit()

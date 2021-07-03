@@ -40,6 +40,47 @@ class ArticuloSchema(ModelSchema):
     nombres = fields.String(required=True)
     nombre_afiliacion = fields.String(required=True)
     nombre_medio_publicacion = fields.String(required=True)
+    nombre_area_frascati_especifico = fields.String(required=True)
+    nombre_area_unesco_especifico = fields.String(required=True)
+
+def insertarArticulo(nuevoArticulo):
+    print(nuevoArticulo['titulo_alternativo'])
+    get_articulo = Articulo.query.filter((Articulo.id_base_datos_digital == nuevoArticulo['id_base_datos_digital']) & (Articulo.titulo == nuevoArticulo['titulo']) & (Articulo.anio_publicacion == nuevoArticulo['anio_publicacion']))
+    articulo_schema = ArticuloSchema(many=True)
+    articulos = articulo_schema.dump(get_articulo)
+    numeroArticulos = len(articulos)
+    if numeroArticulos == 0:
+        Articulo(nuevoArticulo['id_base_datos_digital'],
+        nuevoArticulo['id_area_unesco'],
+        nuevoArticulo['id_area_frascati'],
+        nuevoArticulo['id_medio_publicacion'],
+        nuevoArticulo['url_dspace'],
+        nuevoArticulo['titulo'],
+        nuevoArticulo['titulo_alternativo'],
+        nuevoArticulo['palabras_clave'],
+        nuevoArticulo['abstract'],
+        nuevoArticulo['resumen'],
+        nuevoArticulo['nombre_area_frascati_amplio'],
+        nuevoArticulo['nombre_area_unesco_amplio'],
+        nuevoArticulo['tipo_publicacion'],
+        nuevoArticulo['anio_publicacion'],
+        nuevoArticulo['link_revista'],
+        nuevoArticulo['doi'],
+        nuevoArticulo['estado_publicacion'],
+        nuevoArticulo['enlace_documento'],
+        nuevoArticulo['factor_impacto'],
+        nuevoArticulo['cuartil'],
+        nuevoArticulo['autor_identificación'],
+        nuevoArticulo['orden_autor'],
+        nuevoArticulo['nombres'],
+        nuevoArticulo['nombre_afiliacion'],
+        nuevoArticulo['nombre_medio_publicacion'],
+        nuevoArticulo['nombre_area_frascati_especifico'],
+        nuevoArticulo['nombre_area_unesco_especifico'],
+        ).create()
+        return make_response(jsonify({"respuesta": {"valor":"Artículo ingresado correctamente", "error":"False"}}))
+    else:
+        return make_response(jsonify({"respuesta": {"valor":"El artículo ya esta registrado", "error":"True"}}))
 
 def listaArticulos():
     articulosRespuesta = (db.session.query(Articulo, BaseDatosDigital, MedioPublicacion, AreaFrascati, AreaUnesco)
