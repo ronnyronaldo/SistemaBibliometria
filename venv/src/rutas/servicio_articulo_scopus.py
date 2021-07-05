@@ -1,10 +1,10 @@
 from flask import Blueprint
 from controladores.ArticuloScopusController import listaArticulos, extraerReferencias
-articulo_bp = Blueprint('articulo_bp', __name__)
-@articulo_bp.route('/listar', methods=['GET']) 
+servicio_articulo_scopus = Blueprint('servicio_articulo_scopus', __name__)
+@servicio_articulo_scopus.route('/listar', methods=['GET']) 
 def listar():
     return listaArticulos()
 
-@articulo_bp.route('/referencias', methods=['GET']) 
+@servicio_articulo_scopus.route('/referencias', methods=['GET']) 
 def getReferencias():
     return extraerReferencias()

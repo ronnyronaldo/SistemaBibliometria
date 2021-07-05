@@ -35,3 +35,4 @@ def validarBaseDatosDigitalPorNombre(nombre_base_datos_digital):
     base_datos_digital_schema = BaseDatosDigitalSchema(many=True)
     base_datos_digital = base_datos_digital_schema.dump(get_base_datos_digital)
     return make_response(jsonify({"base_datos_digital": base_datos_digital}))
+

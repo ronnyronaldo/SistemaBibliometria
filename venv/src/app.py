@@ -29,11 +29,11 @@ from rutas.servicio_area_unesco import servicio_area_unesco
 from modelos.AreaFrascati import db
 from rutas.servicio_area_frascati import servicio_area_frascati
 #Objeto AreaFrascati
-
-#Objeto Articulo
+#Objeto Articulo Scopus
 from modelos.ArticuloScopus import db
-from rutas.articulo_bp import articulo_bp
-#Objeto Articulo
+from rutas.servicio_articulo_scopus import servicio_articulo_scopus
+#Objeto Articulo Scopus
+
 #Objeto ArticuloReferencias
 from modelos.ArticuloReferenciaScopus import db
 from rutas.articuloReferencia_bp import articuloReferencia_bp
@@ -67,7 +67,8 @@ app.register_blueprint(servicio_medio_publicacion, url_prefix='/medioPublicacion
 app.register_blueprint(servicio_estadisticas_uso, url_prefix='/estadisticasUso') 
 app.register_blueprint(servicio_area_frascati, url_prefix='/areaFrascati') 
 app.register_blueprint(servicio_area_unesco, url_prefix='/areaUnesco') 
-app.register_blueprint(articulo_bp, url_prefix='/articuloScopus')
+app.register_blueprint(servicio_articulo_scopus, url_prefix='/articuloScopus')
+
 app.register_blueprint(articuloReferencia_bp, url_prefix='/referencia')
 app.register_blueprint(referencia_bp, url_prefix='/referenciaDetalle')
 

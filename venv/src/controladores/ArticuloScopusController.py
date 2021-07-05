@@ -49,6 +49,12 @@ def listaArticulos():
     articulos = articulos_schema.dump(get_articulos)
     return make_response(jsonify({"articulos": articulos}))
 
+def buscarArticuloParaExtraerReferencias(titulo, titulo_alternativo, anio_publicacion):
+    get_articulos = ArticuloScopus.query.filter(((ArticuloScopus.Title == titulo) | (ArticuloScopus.Title == titulo_alternativo)) & (ArticuloScopus.Year == anio_publicacion)).with_entities(ArticuloScopus.id_article, ArticuloScopus.References)
+    articulos_schema = ArticuloScopusSchema(many=True)
+    articulos = articulos_schema.dump(get_articulos)
+    return make_response(jsonify({"articulo_scopus": articulos}))
+
 def extraerReferencias():
     get_articulos = ArticuloScopus.query.with_entities(ArticuloScopus.id_article, ArticuloScopus.References)
     articulos_schema = ArticuloReferenciaScopusSchema(many=True)

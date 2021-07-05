@@ -1,4 +1,7 @@
 from modelos.Referencia import Referencia
+from controladores.BaseDatosDigitalController import validarBaseDatosDigitalPorNombre
+from controladores.ArticuloController import buscarArticuloPorId
+from controladores.ArticuloScopusController import buscarArticuloParaExtraerReferencias
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify, make_response
 from marshmallow_sqlalchemy import ModelSchema
@@ -18,5 +21,46 @@ def listaReferenciasPorIdArticulo(id_articulo):
     get_referencias = Referencia.query.filter(Referencia.id_articulo == id_articulo)
     referencias_schema = ReferenciaSchema(many=True)
     referencias = referencias_schema.dump(get_referencias)
-    db.session.remove()
     return make_response(jsonify({"referencias": referencias}))
+
+def insertarReferenciaManual(nuevaReferencia):
+    get_referencia = Referencia.query.filter((Referencia.id_articulo == nuevaReferencia['id_articulo']) & (Referencia.referencia == nuevaReferencia['referencia']))
+    referencia_schema = ReferenciaSchema(many=True)
+    referencia = referencia_schema.dump(get_referencia)
+    numeroReferencias = len(referencia)
+    if numeroReferencias == 0:
+        Referencia(nuevaReferencia['id_articulo'], nuevaReferencia['referencia']).create()
+        return make_response(jsonify({"respuesta": {"valor":"Referencia ingresada correctamente.", "error":"False"}}))
+    else:
+        return make_response(jsonify({"respuesta": {"valor":"La referencia ya esta ingresada.", "error":"True"}}))
+
+def insertarReferenciaAutomatico(nuevaReferencia):
+    resultado = validarBaseDatosDigitalPorNombre(nuevaReferencia['nombre_base_datos_digital'])
+    nombre_base_datos_digital = (resultado.json['base_datos_digital'][0]['nombre_base_datos_digital'])
+    if nombre_base_datos_digital == 'SCOPUS':
+        respuestaArticulo = buscarArticuloPorId(nuevaReferencia['id_articulo'])
+        respuestaArticuloScopus = buscarArticuloParaExtraerReferencias(respuestaArticulo.json['articulo'][0]['titulo'], respuestaArticulo.json['articulo'][0]['titulo_alternativo'], respuestaArticulo.json['articulo'][0]['anio_publicacion'])
+        articulo_scopus = respuestaArticuloScopus.json['articulo_scopus'][0]
+        id_article = articulo_scopus['id_article']
+        referencesString = articulo_scopus['References']
+        referencesList = []
+        if not referencesString == None: 
+            referencesList = referencesString.split(';')
+            for reference in referencesList:
+                get_referencia = Referencia.query.filter((Referencia.id_articulo == nuevaReferencia['id_articulo']) & (Referencia.referencia == reference))
+                referencia_schema = ReferenciaSchema(many=True)
+                referencia = referencia_schema.dump(get_referencia)
+                numeroReferencias = len(referencia)
+                if numeroReferencias == 0:
+                    Referencia(nuevaReferencia['id_articulo'], reference).create()
+                else:
+                    return make_response(jsonify({"respuesta": {"valor":"Ya existen referencias ingresadas previamente.", "error":"True"}}))
+            return make_response(jsonify({"respuesta": {"valor":"Referencias ingresadas correctamente.", "error":"False"}}))
+    else:
+        return make_response(jsonify({"respuesta": {"valor":"No existen datos de referencias para cargar.", "error":"True"}}))
+    
+def eliminarReferencia(id_referencia):
+    referencia = Referencia.query.get(id_referencia)
+    Referencia.delete(referencia)
+    return make_response(jsonify({"respuesta": {"valor":"Referencia eliminada correctamente.", "error":"False"}}))
+   

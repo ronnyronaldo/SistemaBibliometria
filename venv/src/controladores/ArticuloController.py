@@ -43,6 +43,12 @@ class ArticuloSchema(ModelSchema):
     nombre_area_frascati_especifico = fields.String(required=True)
     nombre_area_unesco_especifico = fields.String(required=True)
 
+def buscarArticuloPorId(id_articulo):
+    get_articulo = Articulo.query.filter(Articulo.id_articulo == id_articulo)
+    articulo_schema = ArticuloSchema(many=True)
+    articulo = articulo_schema.dump(get_articulo)
+    return make_response(jsonify({"articulo": articulo}))
+
 def insertarArticulo(nuevoArticulo):
     print(nuevoArticulo['titulo_alternativo'])
     get_articulo = Articulo.query.filter((Articulo.id_base_datos_digital == nuevoArticulo['id_base_datos_digital']) & (Articulo.titulo == nuevoArticulo['titulo']) & (Articulo.anio_publicacion == nuevoArticulo['anio_publicacion']))
@@ -111,3 +117,8 @@ def asignarMedioPublicacion():
     db.session.remove()
         #print(articuloRespuesta.id_medio_publicacion)
     return make_response(jsonify({"articulos": ""}))
+
+def eliminarArticulo(id_articulo):
+    articulo = Articulo.query.get(id_articulo)
+    Articulo.delete(articulo)
+    return make_response(jsonify({"respuesta": {"valor":"Publicación eliminada correctamente.", "error":"False"}}))
