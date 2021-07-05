@@ -3,6 +3,8 @@ import UserProfile from "views/UserProfile.js";
 import Publicaciones from "views/Publicaciones";
 import BaseDatosDigital from "views/BaseDatosDigital";
 import MedioPublicacion from "views/MedioPublicacion";
+import Referencias from "views/Referencias";
+
 import Typography from "views/Typography.js";
 import Icons from "views/Icons.js";
 import Maps from "views/Maps.js";
@@ -16,19 +18,26 @@ const dashboardRoutes = [
     icon: "nc-icon nc-chart-pie-35",
     component: Dashboard,
     layout: "/admin",
-  },
+  },/*
   {
     path: "/nuevoingreso",
     name: "Nuevo Ingreso",
     icon: "nc-icon nc-cloud-upload-94",
     component: UserProfile,
     layout: "/admin",
-  },
+  },*/
   {
     path: "/publicaciones",
     name: "Publicaciones",
     icon: "nc-icon nc-single-copy-04",
     component: Publicaciones,
+    layout: "/admin",
+  },
+  {
+    path: "/referencias",
+    name: "Referencias",
+    icon: "nc-icon nc-bullet-list-67",
+    component: Referencias,
     layout: "/admin",
   },
   {
@@ -50,14 +59,6 @@ const dashboardRoutes = [
     name: "Ejecutar Análisis",
     icon: "nc-icon nc-button-play",
     component: UserProfile,
-    layout: "/admin",
-  },
-  /*
-  {
-    path: "/icons",
-    name: "Icons",
-    icon: "nc-icon nc-atom",
-    component: Icons,
     layout: "/admin",
   },
   /*

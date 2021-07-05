@@ -3,6 +3,7 @@ import endpoints from "./endpoints";
 
 export const referenciaService = {
     listarReferenciasPorIdArticulo,
+    listarReferenciasNoEcontradasPorIdArticulo,
     insertarManual,
     insertarAutomatico,
     eliminar
@@ -10,6 +11,10 @@ export const referenciaService = {
 
 async function listarReferenciasPorIdArticulo(id_articulo) {
     return fetchWrapper.get(`${endpoints.baseUrlReferencia}/listarReferenciasPorIdArticulo/` + id_articulo);
+}
+
+async function listarReferenciasNoEcontradasPorIdArticulo(id_articulo) {
+    return fetchWrapper.get(`${endpoints.baseUrlReferencia}/listarReferenciasNoEncontradasPorIdArticulo/` + id_articulo);
 }
 
 async function insertarManual(params) {
