@@ -1,6 +1,6 @@
 from flask import Blueprint
 from flask import request
-from controladores.ReferenciaController import listaReferenciasPorIdArticulo, insertarReferenciaManual, eliminarReferencia, insertarReferenciaAutomatico
+from controladores.ReferenciaController import listaReferenciasPorIdArticulo, insertarReferenciaManual, eliminarReferencia, insertarReferenciaAutomatico, listaReferenciasNoEncontradasPorIdArticulo
 servicio_referencia= Blueprint('servicio_referencia', __name__)
 @servicio_referencia.route('/insertarManual', methods=['POST']) 
 def insertarManual():
@@ -15,6 +15,10 @@ def insertarAutomatico():
 @servicio_referencia.route('/listarReferenciasPorIdArticulo/<int:id_articulo>', methods=['GET']) 
 def listarReferenciasPorIdArticulo(id_articulo):
     return listaReferenciasPorIdArticulo(id_articulo)
+
+@servicio_referencia.route('/listarReferenciasNoEncontradasPorIdArticulo/<int:id_articulo>', methods=['GET']) 
+def listarReferenciasNoEncontradasPorIdArticulo(id_articulo):
+    return listaReferenciasNoEncontradasPorIdArticulo(id_articulo)
 
 @servicio_referencia.route('/eliminar/<int:id_referencia>', methods=['GET']) 
 def eliminarReferenciasPorId(id_referencia):

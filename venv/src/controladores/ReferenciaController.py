@@ -1,4 +1,6 @@
+from modelos.Articulo import Articulo
 from modelos.Referencia import Referencia
+from modelos.DetalleReferencia import DetalleReferencia
 from controladores.BaseDatosDigitalController import validarBaseDatosDigitalPorNombre
 from controladores.ArticuloController import buscarArticuloPorId
 from controladores.ArticuloScopusController import buscarArticuloParaExtraerReferencias
@@ -19,6 +21,13 @@ class ReferenciaSchema(ModelSchema):
 
 def listaReferenciasPorIdArticulo(id_articulo):
     get_referencias = Referencia.query.filter(Referencia.id_articulo == id_articulo)
+    referencias_schema = ReferenciaSchema(many=True)
+    referencias = referencias_schema.dump(get_referencias)
+    return make_response(jsonify({"referencias": referencias}))
+
+def listaReferenciasNoEncontradasPorIdArticulo(id_articulo):
+    subquery = (db.session.query(Referencia, DetalleReferencia).with_entities(Referencia.id_referencia).filter((Referencia.id_articulo == id_articulo) & (Referencia.id_referencia == DetalleReferencia.id_referencia)))
+    get_referencias = Referencia.query.filter(Referencia.id_articulo == id_articulo).filter(Referencia.id_referencia.notin_(subquery))
     referencias_schema = ReferenciaSchema(many=True)
     referencias = referencias_schema.dump(get_referencias)
     return make_response(jsonify({"referencias": referencias}))
