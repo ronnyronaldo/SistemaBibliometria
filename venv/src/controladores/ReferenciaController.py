@@ -72,4 +72,18 @@ def eliminarReferencia(id_referencia):
     referencia = Referencia.query.get(id_referencia)
     Referencia.delete(referencia)
     return make_response(jsonify({"respuesta": {"valor":"Referencia eliminada correctamente.", "error":"False"}}))
+
+def obtenerDetalleReferenciaIndividual(referenciaBuscar):
+    id_referencia = referenciaBuscar['id_referencia']
+    referenciaString = referenciaBuscar['referencia']
+    
+    get_referencias = Referencia.query.filter(Referencia.id_referencia == id_referencia)
+    referencias_schema = ReferenciaSchema(many=True)
+    referencias = referencias_schema.dump(get_referencias)
+    id_articulo = referencias[0]['id_articulo']
+    respuestaArticulo = buscarArticuloPorId(id_articulo)
+    print(respuestaArticulo.json['articulo'][0]['titulo'])
+    print(id_referencia)
+    print(referenciaString)
+    return make_response(jsonify({"respuesta": {"valor":"Referencia buscada correctamente.", "error":"False"}}))
    
