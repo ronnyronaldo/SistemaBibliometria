@@ -96,11 +96,18 @@ def listaArticulos():
         .join(AreaFrascati, Articulo.id_area_frascati == AreaFrascati.id_area_frascati )
         .join(AreaUnesco, Articulo.id_area_unesco == AreaUnesco.id_area_unesco)).all()
     #db.session.close()
-    db.session.remove()
+    #db.session.remove()
     articulos = []
     for articulo in articulosRespuesta:
         articulos.append(dict(articulo)) # Serializo cada fila
     return make_response(jsonify({"articulos": articulos}))
+
+def listaArticulosMineria():
+    articulosRespuesta = (db.session.query(Articulo).with_entities(Articulo.id_area_frascati, Articulo.id_area_unesco)).all()
+    articulos = []
+    for articulo in articulosRespuesta:
+        articulos.append(dict(articulo)) # Serializo cada fila
+    return make_response(jsonify(articulos))
 
 def asignarMedioPublicacion():
     articulosRespuesta = (db.session.query(Articulo, MedioPublicacion)

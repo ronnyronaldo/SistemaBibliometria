@@ -33,7 +33,9 @@ from rutas.servicio_area_frascati import servicio_area_frascati
 from modelos.ArticuloScopus import db
 from rutas.servicio_articulo_scopus import servicio_articulo_scopus
 #Objeto Articulo Scopus
-
+#Objeto clustering
+from rutas.servicio_clustering import servicio_clustering
+#Objeto clustering
 #Objeto ArticuloReferencias
 from modelos.ArticuloReferenciaScopus import db
 from rutas.articuloReferencia_bp import articuloReferencia_bp
@@ -68,6 +70,7 @@ app.register_blueprint(servicio_estadisticas_uso, url_prefix='/estadisticasUso')
 app.register_blueprint(servicio_area_frascati, url_prefix='/areaFrascati') 
 app.register_blueprint(servicio_area_unesco, url_prefix='/areaUnesco') 
 app.register_blueprint(servicio_articulo_scopus, url_prefix='/articuloScopus')
+app.register_blueprint(servicio_clustering, url_prefix='/cluster')
 
 app.register_blueprint(articuloReferencia_bp, url_prefix='/referencia')
 app.register_blueprint(referencia_bp, url_prefix='/referenciaDetalle')
