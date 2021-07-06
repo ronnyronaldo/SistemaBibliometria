@@ -3,7 +3,7 @@ import { tablaPaginacionService } from '../utils/tablaPaginacion.service';
 import { publicacionService } from '../_services/publicacion.service';
 import { Link } from "react-router-dom";
 import { referenciaService } from '../_services/referencia.service';
-
+import NotificationAlert from "react-notification-alert";
 // react-bootstrap components
 import {
   Badge,
@@ -18,6 +18,53 @@ import {
   Form
 } from "react-bootstrap";
 function Referencias() {
+  /**Variables y funciones para mostrar alertas al usuario */
+  const [showModal, setShowModal] = React.useState(false);
+  const notificationAlertRef = React.useRef(null);
+  const [datoReferencia, setDatoReferencia] = React.useState({
+    idArticulo: 0,
+    referencia: ""
+  });
+ 
+  const notify = (place, mensaje, type) => {
+    //var color = Math.floor(Math.random() * 5 + 1);
+    //var type = "danger";
+    /*switch (color) {
+      case 1:
+        type = "primary";
+        break;
+      case 2:
+        type = "success";
+        break;
+      case 3:
+        type = "danger";
+        break;
+      case 4:
+        type = "warning";
+        break;
+      case 5:
+        type = "info";
+        break;
+      default:
+        break;
+    }*/
+    var options = {};
+    options = {
+      place: place,
+      message: (
+        <div>
+          <div>
+            {mensaje}
+          </div>
+        </div>
+      ),
+      type: type,
+      icon: "nc-icon nc-bell-55",
+      autoDismiss: 7,
+    };
+    notificationAlertRef.current.notificationAlert(options);
+  };
+   /**Fin  de las variables y funciones para mostrar alertas al usuario */
   const [publicaciones, setPublicaciones] = React.useState([]);
   const [referencias, setReferencias] = React.useState([]);
   const [publicacionSeleccionada, setPublicacionSeleccionada] = React.useState({
@@ -31,6 +78,11 @@ function Referencias() {
     referencia: ""
   });
   
+  const [tipoBusquedaReferencias, setTipoBusquedaReferencias] = React.useState({
+    ingresoTotal: false,
+    ingresoIndividual: true
+  });
+
   async function handleCargarReferencias(id_articulo, titulo, autor, anio_publicacion) {
     setPublicacionSeleccionada({
       ...publicacionSeleccionada,
@@ -39,19 +91,19 @@ function Referencias() {
       anio_publicacion : anio_publicacion
     })
 
-    await tablaPaginacionService.destruirTabla('#dataTableReferencias');
+    await tablaPaginacionService.destruirTabla('#dataTableReferenciasNoEncontradas');
     await referenciaService.listarReferenciasNoEcontradasPorIdArticulo(id_articulo).then(value => {
       setReferencias(value.referencias);
     });
-    await tablaPaginacionService.paginacion('#dataTableReferencias');
+    await tablaPaginacionService.paginacion('#dataTableReferenciasNoEncontradas');
   }
 
   async function handleCargarDatosPublicaciones() {
-    await tablaPaginacionService.destruirTabla('#dataTablePublicaciones');
+    await tablaPaginacionService.destruirTabla('#dataTablePublicacionesSeccionReferencias');
     await publicacionService.listar().then(value => {
       setPublicaciones(value.articulos);
     });
-    await tablaPaginacionService.paginacion('#dataTablePublicaciones');
+    await tablaPaginacionService.paginacion('#dataTablePublicacionesSeccionReferencias');
   }
 
   async function handleCargarReferenciaBuscar(id_referencia, referencia) {
@@ -62,12 +114,50 @@ function Referencias() {
     })
   }
 
+  const handleOnChangeIngresoIndividual = (event) => {
+    setTipoBusquedaReferencias({
+      ...tipoBusquedaReferencias,
+      ingresoIndividual: true,
+      ingresoTotal: false
+    })
+  }
+
+  const handleOnChangeIngresoTotal = (event) => {
+    setTipoBusquedaReferencias({
+      ...tipoBusquedaReferencias,
+      ingresoIndividual: false,
+      ingresoTotal: true
+    })
+  }
+
+  async function handleBuscar() {
+    if(tipoBusquedaReferencias.ingresoTotal == true){
+      console.log("Ingreso Total")
+    }
+    if(tipoBusquedaReferencias.ingresoIndividual == true){
+      if(referenciaSeleccionada.id_referencia != 0){
+        referenciaService.buscarDetalleReferenciaIndividual({
+          "id_referencia": referenciaSeleccionada.id_referencia,
+          "referencia": referenciaSeleccionada.referencia
+        }).then(value => {
+          console.log(value)
+        })
+        console.log("Ingreso individual")
+      }else{
+        notify("tr", 'No ha seleccionado ninguna referencia.', "danger");
+      }
+    }
+  }
+
   React.useEffect(() => {
     handleCargarDatosPublicaciones();
   }, []);
 
   return (
     <>
+      <div className="rna-container">
+        <NotificationAlert ref={notificationAlertRef} />
+      </div>
       <Container fluid>
         <Row>
         <Col md="12">
@@ -79,7 +169,7 @@ function Referencias() {
               </p>
             </Card.Header>
             <Card.Body className="table-full-width table-responsive px-3">
-              <table className="table table-bordered table-hover" id="dataTablePublicaciones" width="100%" cellSpacing="0">
+              <table className="table table-bordered table-hover" id="dataTablePublicacionesSeccionReferencias" width="100%" cellSpacing="0">
                 <thead className="thead-dark">
                   <tr>
                     <th>AUTOR</th>
@@ -119,7 +209,7 @@ function Referencias() {
               </p>
             </Card.Header>
             <Card.Body className="table-full-width table-responsive px-3">
-              <table className="table table-bordered" id="dataTableReferencias" width="100%" cellSpacing="0">
+              <table className="table table-bordered" id="dataTableReferenciasNoEncontradas" width="100%" cellSpacing="0">
                 <thead className="thead-dark">
                   <tr>
                     <th>ID REFERENCIA</th>
@@ -159,6 +249,8 @@ function Referencias() {
                       <Form.Control
                         id="busquedaIndividual"
                         type="radio"
+                        checked={tipoBusquedaReferencias.ingresoIndividual}
+                        onChange={handleOnChangeIngresoIndividual}
                       ></Form.Control>
                     </Form.Group>
                   </Col>
@@ -168,6 +260,8 @@ function Referencias() {
                       <Form.Control
                         id="busquedaTotal"
                         type="radio"
+                        checked={tipoBusquedaReferencias.ingresoTotal}
+                        onChange={handleOnChangeIngresoTotal}
                       ></Form.Control>
                     </Form.Group>
                   </Col>
@@ -178,6 +272,7 @@ function Referencias() {
                         defaultValue="BUSCAR"
                         type="button"
                         className="btn-outline-success"
+                        onClick={handleBuscar}
                       ></Form.Control>
                     </Form.Group>
                   </Col>

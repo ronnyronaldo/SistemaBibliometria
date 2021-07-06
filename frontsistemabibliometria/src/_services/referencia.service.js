@@ -6,6 +6,7 @@ export const referenciaService = {
     listarReferenciasNoEcontradasPorIdArticulo,
     insertarManual,
     insertarAutomatico,
+    buscarDetalleReferenciaIndividual,
     eliminar
 };
 
@@ -23,6 +24,10 @@ async function insertarManual(params) {
 
 async function insertarAutomatico(params) {
     return fetchWrapper.post(`${endpoints.baseUrlReferencia}/insertarAutomatico`, params);
+}
+
+async function buscarDetalleReferenciaIndividual(params) {
+    return fetchWrapper.post(`${endpoints.baseUrlReferencia}/obtenerDetalleReferenciaIndividual`, params);
 }
 
 async function eliminar(id_referencia) {
