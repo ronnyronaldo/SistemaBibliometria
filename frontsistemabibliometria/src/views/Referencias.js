@@ -132,7 +132,18 @@ function Referencias() {
 
   async function handleBuscar() {
     if(tipoBusquedaReferencias.ingresoTotal == true){
-      console.log("Ingreso Total")
+      for (var i = 0; i<referencias.length; i++){
+        referenciaService.buscarDetalleReferenciaIndividual({
+          "id_referencia": referencias[i].id_referencia,
+          "referencia": referencias[i].referencia
+        }).then(value => {
+          if(value.respuesta.error == "False"){
+            notify("tr", value.respuesta.valor, "primary");
+          }else{
+            notify("tr", value.respuesta.valor, "danger");
+          }
+        })
+      }
     }
     if(tipoBusquedaReferencias.ingresoIndividual == true){
       if(referenciaSeleccionada.id_referencia != 0){
@@ -140,9 +151,12 @@ function Referencias() {
           "id_referencia": referenciaSeleccionada.id_referencia,
           "referencia": referenciaSeleccionada.referencia
         }).then(value => {
-          console.log(value)
+          if(value.respuesta.error == "False"){
+            notify("tr", value.respuesta.valor, "primary");
+          }else{
+            notify("tr", value.respuesta.valor, "danger");
+          }
         })
-        console.log("Ingreso individual")
       }else{
         notify("tr", 'No ha seleccionado ninguna referencia.', "danger");
       }
@@ -205,7 +219,7 @@ function Referencias() {
             <Card.Header>
               <Card.Title as="h4">Referencias Pendiente Obtención Detalle</Card.Title>
               <p className="card-category">
-                {publicacionSeleccionada.titulo + ' ( '+publicacionSeleccionada.autor+', '+ publicacionSeleccionada.anio_publicacion+' )'}
+                {publicacionSeleccionada.titulo}
               </p>
             </Card.Header>
             <Card.Body className="table-full-width table-responsive px-3">
