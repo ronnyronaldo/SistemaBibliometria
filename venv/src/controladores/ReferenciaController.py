@@ -8,6 +8,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify, make_response
 from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
+from scraper_api import ScraperAPIClient
+from scholarly import scholarly, ProxyGenerator 
 
 db = SQLAlchemy()
 
@@ -76,7 +78,6 @@ def eliminarReferencia(id_referencia):
 def obtenerDetalleReferenciaIndividual(referenciaBuscar):
     id_referencia = referenciaBuscar['id_referencia']
     referenciaString = referenciaBuscar['referencia']
-    
     get_referencias = Referencia.query.filter(Referencia.id_referencia == id_referencia)
     referencias_schema = ReferenciaSchema(many=True)
     referencias = referencias_schema.dump(get_referencias)
@@ -85,5 +86,46 @@ def obtenerDetalleReferenciaIndividual(referenciaBuscar):
     print(respuestaArticulo.json['articulo'][0]['titulo'])
     print(id_referencia)
     print(referenciaString)
-    return make_response(jsonify({"respuesta": {"valor":"Referencia buscada correctamente.", "error":"False"}}))
+    pg = ProxyGenerator()
+    pg.ScraperAPI('b2b3bd83b1aabff21cfdca39bf18a0dd')
+    scholarly.use_proxy(pg)
+    try:
+        search_queryAux = scholarly.search_pubs(referenciaString)
+        detalleReferencia = search_queryAux.__next__()
+        # Extraer detalle de la referencia
+        print(detalleReferencia)
+        container_type = detalleReferencia.get('container_type')
+        source = detalleReferencia.get('source')
+        filled = detalleReferencia.get('filled')
+        gsrank = detalleReferencia.get('gsrank')
+        pub_url = detalleReferencia.get('pub_url')
+        author_id = detalleReferencia.get('author_id')
+        num_citations = detalleReferencia.get('num_citations')
+        url_scholarbib = detalleReferencia.get('url_scholarbib')
+        url_add_sclib = detalleReferencia.get('url_add_sclib')
+        citedby_url = detalleReferencia.get('citedby_url')
+        url_related_articles = detalleReferencia.get('url_related_articles')
+        title = (detalleReferencia.get('bib')).get('title')
+        author = (detalleReferencia.get('bib')).get('author')
+        pub_year = (detalleReferencia.get('bib')).get('pub_year')
+        venue = (detalleReferencia.get('bib')).get('venue')
+        abstract = (detalleReferencia.get('bib')).get('abstract')
+        # Extraer detalle de la referencia
+        #Transformar a string una lista
+        author_id_string = ";".join(author_id)
+        author_string =  ";".join(author)
+        #Transformar a string una lista
+        print(title)
+        print(pub_year)
+        if (title in referenciaString) and (pub_year in referenciaString):
+            DetalleReferencia(id_referencia, container_type, source, filled, gsrank, pub_url, author_id_string, num_citations, url_scholarbib, url_add_sclib, citedby_url, url_related_articles, title, author_string, pub_year, venue, abstract).create()
+            return make_response(jsonify({"respuesta": {"valor":"Referencia encontrada correctamente.", "error":"False"}}))
+        else:
+            return make_response(jsonify({"respuesta": {"valor":"Referencia no encontrada.", "error":"True"}}))
+    except:
+        return make_response(jsonify({"respuesta": {"valor":"Referencia no encontrada.", "error":"True"}}))
+
+
+    
+    
    
