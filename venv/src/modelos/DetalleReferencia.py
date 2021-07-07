@@ -35,8 +35,8 @@ class DetalleReferencia(db.Model):
       db.session.commit()
       return self
 
-    def __init__(self, id_detalle_referencia, container_type, source, filled, gsrank, pub_url, author_id, num_citations, url_scholarbib, url_add_sclib, citedby_url, url_related_articles, title, author, pub_year, venue, abstract):
-      self.id_detalle_referencia  = id_detalle_referencia 
+    def __init__(self, id_referencia, container_type, source, filled, gsrank, pub_url, author_id, num_citations, url_scholarbib, url_add_sclib, citedby_url, url_related_articles, title, author, pub_year, venue, abstract):
+      self.id_referencia  = id_referencia 
       self.container_type = container_type
       self.source = source 
       self.filled = filled

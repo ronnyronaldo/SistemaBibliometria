@@ -83,17 +83,15 @@ def obtenerDetalleReferenciaIndividual(referenciaBuscar):
     referencias = referencias_schema.dump(get_referencias)
     id_articulo = referencias[0]['id_articulo']
     respuestaArticulo = buscarArticuloPorId(id_articulo)
-    print(respuestaArticulo.json['articulo'][0]['titulo'])
-    print(id_referencia)
-    print(referenciaString)
+    # print(id_referencia)
     pg = ProxyGenerator()
-    pg.ScraperAPI('b2b3bd83b1aabff21cfdca39bf18a0dd')
+    pg.ScraperAPI('80507573c7f452c1a0bcaa4ff664e804')
     scholarly.use_proxy(pg)
     try:
         search_queryAux = scholarly.search_pubs(referenciaString)
         detalleReferencia = search_queryAux.__next__()
         # Extraer detalle de la referencia
-        print(detalleReferencia)
+        # print(detalleReferencia)
         container_type = detalleReferencia.get('container_type')
         source = detalleReferencia.get('source')
         filled = detalleReferencia.get('filled')
@@ -115,14 +113,21 @@ def obtenerDetalleReferenciaIndividual(referenciaBuscar):
         author_id_string = ";".join(author_id)
         author_string =  ";".join(author)
         #Transformar a string una lista
-        print(title)
-        print(pub_year)
-        if (title in referenciaString) and (pub_year in referenciaString):
+        referenciaSinEspacios = referenciaString.replace(' ','') 
+        print(referenciaSinEspacios)
+        tituloSinEspacios = title.replace(' ','')  
+        print(tituloSinEspacios)
+        anioSinEspacios = pub_year.replace(' ','')  
+        print(anioSinEspacios)
+        print(tituloSinEspacios in referenciaSinEspacios)
+        #print( pub_year in referenciaString)
+        if (tituloSinEspacios in referenciaSinEspacios) and (anioSinEspacios in referenciaSinEspacios):
             DetalleReferencia(id_referencia, container_type, source, filled, gsrank, pub_url, author_id_string, num_citations, url_scholarbib, url_add_sclib, citedby_url, url_related_articles, title, author_string, pub_year, venue, abstract).create()
             return make_response(jsonify({"respuesta": {"valor":"Referencia encontrada correctamente.", "error":"False"}}))
         else:
             return make_response(jsonify({"respuesta": {"valor":"Referencia no encontrada.", "error":"True"}}))
     except:
+        print('Referencia no encontrada')
         return make_response(jsonify({"respuesta": {"valor":"Referencia no encontrada.", "error":"True"}}))
 
 
