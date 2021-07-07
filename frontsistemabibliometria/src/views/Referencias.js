@@ -255,7 +255,9 @@ function Referencias() {
                       <label>REFERENCIA</label>
                       <Form.Control
                         defaultValue={referenciaSeleccionada.referencia}
-                        type="text"
+                        cols="80"
+                        rows="4"
+                        as="textarea"
                         disabled
                       ></Form.Control>
                     </Form.Group>
