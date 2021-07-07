@@ -68,6 +68,7 @@ function Referencias() {
   const [publicaciones, setPublicaciones] = React.useState([]);
   const [referencias, setReferencias] = React.useState([]);
   const [publicacionSeleccionada, setPublicacionSeleccionada] = React.useState({
+    id_articulo :  0,
     titulo : "",
     autor :  "",
     anio_publicacion : 0
@@ -86,6 +87,7 @@ function Referencias() {
   async function handleCargarReferencias(id_articulo, titulo, autor, anio_publicacion) {
     setPublicacionSeleccionada({
       ...publicacionSeleccionada,
+      id_articulo : id_articulo,
       titulo : titulo,
       autor :  autor,
       anio_publicacion : anio_publicacion
@@ -152,6 +154,7 @@ function Referencias() {
           "referencia": referenciaSeleccionada.referencia
         }).then(value => {
           if(value.respuesta.error == "False"){
+            handleCargarReferencias(publicacionSeleccionada.id_articulo, publicacionSeleccionada.titulo, publicacionSeleccionada.autor, publicacionSeleccionada.anio_publicacion);
             notify("tr", value.respuesta.valor, "primary");
           }else{
             notify("tr", value.respuesta.valor, "danger");
