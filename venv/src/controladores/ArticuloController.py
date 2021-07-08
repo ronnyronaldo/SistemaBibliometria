@@ -109,6 +109,13 @@ def listaArticulosMineria():
         articulos.append(dict(articulo)) # Serializo cada fila
     return make_response(jsonify(articulos))
 
+def listaArticulosMineriaAnios():
+    articulosRespuesta = (db.session.query(Articulo).with_entities(Articulo.anio_publicacion, Articulo.titulo)).all()
+    articulos = []
+    for articulo in articulosRespuesta:
+        articulos.append(dict(articulo)) # Serializo cada fila
+    return make_response(jsonify(articulos))
+
 def asignarMedioPublicacion():
     articulosRespuesta = (db.session.query(Articulo, MedioPublicacion)
         .with_entities(Articulo.id_articulo, Articulo.nombre_medio_publicacion, MedioPublicacion.nombre, MedioPublicacion.id_medio_publicacion)

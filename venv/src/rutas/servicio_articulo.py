@@ -1,6 +1,6 @@
 from flask import Blueprint
 from flask import request
-from controladores.ArticuloController import listaArticulos, asignarMedioPublicacion, insertarArticulo, eliminarArticulo, listaArticulosMineria
+from controladores.ArticuloController import listaArticulos, asignarMedioPublicacion, insertarArticulo, eliminarArticulo, listaArticulosMineria, listaArticulosMineriaAnios
 servicio_articulo= Blueprint('servicio_articulo', __name__)
 @servicio_articulo.route('/insertar', methods=['POST']) 
 def insertar():
@@ -22,3 +22,7 @@ def eliminarArticuloPorId(id_articulo):
 @servicio_articulo.route('/listarMineria', methods=['GET']) 
 def listarMineria():
     return listaArticulosMineria()
+
+@servicio_articulo.route('/listarMineriaAnios', methods=['GET']) 
+def listarMineriaAnios():
+    return listaArticulosMineriaAnios()
