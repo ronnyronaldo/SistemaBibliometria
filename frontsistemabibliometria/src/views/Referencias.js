@@ -140,7 +140,12 @@ function Referencias() {
           "referencia": referencias[i].referencia
         }).then(value => {
           if(value.respuesta.error == "False"){
-            notify("tr", value.respuesta.valor, "primary");
+            if(value.respuesta.error == "False"){
+              handleCargarReferencias(publicacionSeleccionada.id_articulo, publicacionSeleccionada.titulo, publicacionSeleccionada.autor, publicacionSeleccionada.anio_publicacion);
+              notify("tr", value.respuesta.valor, "primary");
+            }else{
+              notify("tr", value.respuesta.valor, "danger");
+            }
           }else{
             notify("tr", value.respuesta.valor, "danger");
           }
