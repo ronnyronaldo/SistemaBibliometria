@@ -5,7 +5,8 @@ const endpoints = {
     baseUrlMedioPublicacion: `http://localhost:5000/medioPublicacion`,
     baseUrlEstadisticasUso: `http://localhost:5000/estadisticasUso`,
     baseUrlAreaUnesco: `http://localhost:5000/areaUnesco`,
-    baseUrlAreaFrascati: `http://localhost:5000/areaFrascati`
+    baseUrlAreaFrascati: `http://localhost:5000/areaFrascati`,
+    baseUrlClustering: `http://localhost:5000/cluster`
 }
 export default endpoints;
 
