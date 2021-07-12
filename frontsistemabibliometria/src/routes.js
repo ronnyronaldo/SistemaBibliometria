@@ -3,6 +3,7 @@ import UserProfile from "views/UserProfile.js";
 import Publicaciones from "views/Publicaciones";
 import BaseDatosDigital from "views/BaseDatosDigital";
 import MedioPublicacion from "views/MedioPublicacion";
+import AnalisisDataMining from "views/AnalisisDataMining";
 import Referencias from "views/Referencias";
 
 import Typography from "views/Typography.js";
@@ -41,16 +42,30 @@ const dashboardRoutes = [
     layout: "/admin",
   },
   {
-    path: "/revistas",
-    name: "Revistas",
+    path: "/mediosPublicacion",
+    name: "Medios Publicacion",
     icon: "nc-icon nc-paper-2",
     component: MedioPublicacion,
     layout: "/admin",
   },
   {
+    path: "/areas",
+    name: "Areas",
+    icon: "nc-icon nc-layers-3",
+    component: MedioPublicacion,
+    layout: "/admin",
+  },
+  {
+    path: "/baseDatosDigital",
+    name: "Base Datos Digital",
+    icon: "nc-icon nc-grid-45",
+    component: Icons,
+    layout: "/admin",
+  },
+  {
     path: "/estadisticasProveedores",
     name: "Est. Proveedores",
-    icon: "nc-icon nc-notes",
+    icon: "nc-icon nc-chart-bar-32",
     component: BaseDatosDigital,
     layout: "/admin",
   },
@@ -58,7 +73,7 @@ const dashboardRoutes = [
     path: "/analisis",
     name: "Ejecutar Análisis",
     icon: "nc-icon nc-button-play",
-    component: UserProfile,
+    component: AnalisisDataMining,
     layout: "/admin",
   },
   /*

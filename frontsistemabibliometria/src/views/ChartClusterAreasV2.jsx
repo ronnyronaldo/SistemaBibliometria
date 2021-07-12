@@ -62,7 +62,7 @@ class Barchar extends Component {
             if (cluster == 5) return "gray"
         }
 
-        svg.selectAll("circle")
+        var dot = svg.selectAll("circle")
         .data(data)
         .enter()
         .append("circle")
@@ -70,6 +70,24 @@ class Barchar extends Component {
         .attr("cy", d => yScale(d.id_area_frascati))
         .attr("r", d => 5)
         .attr("fill", d => color(d.id_cluster))
+        .attr( "fill-opacity", 0.4 )
+        .on("click", function(){ 
+            if (dot.attr("fill") === "red") dot.attr("fill", "blue");
+            else dot.attr("fill", "red");
+          });
+
+        var dot1 = svg.selectAll(".dodo")
+          .data(data)
+         .enter().append("text")
+          .attr("class", "dodo")
+          .attr("x", function(d) { return xScale(d.id_area_unesco); })
+          .attr("y", function(d) { return yScale(d.id_area_frascati); })
+          .attr("dx", ".71em")
+          .attr("dy", ".35em")
+          .text(function(d) { return "Tania";})
+        //dot.on('click' , function(d){ console.log("Hola"); });
+
+
     }
     render() {
         return <>
