@@ -1,5 +1,4 @@
 from modelos.ArticuloScopus import ArticuloScopus
-from modelos.ArticuloReferenciaScopus import ArticuloReferenciaScopus
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify, make_response
 from marshmallow_sqlalchemy import ModelSchema
@@ -54,17 +53,3 @@ def buscarArticuloParaExtraerReferencias(titulo, titulo_alternativo, anio_public
     articulos_schema = ArticuloScopusSchema(many=True)
     articulos = articulos_schema.dump(get_articulos)
     return make_response(jsonify({"articulo_scopus": articulos}))
-
-def extraerReferencias():
-    get_articulos = ArticuloScopus.query.with_entities(ArticuloScopus.id_article, ArticuloScopus.References)
-    articulos_schema = ArticuloReferenciaScopusSchema(many=True)
-    articulos = articulos_schema.dump(get_articulos)
-    for articulo in articulos:
-        id_article = articulo["id_article"]
-        referencesString = articulo["References"]
-        referencesList = []
-        if not referencesString == None: 
-            referencesList = referencesString.split(';')
-            for reference in referencesList:
-                ArticuloReferenciaScopus(id_article, reference).create()
-    return make_response(jsonify({"extraerReferencias": "True"}))

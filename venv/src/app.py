@@ -36,23 +36,6 @@ from rutas.servicio_articulo_scopus import servicio_articulo_scopus
 #Objeto clustering
 from rutas.servicio_clustering import servicio_clustering
 #Objeto clustering
-#Objeto ArticuloReferencias
-from modelos.ArticuloReferenciaScopus import db
-from rutas.articuloReferencia_bp import articuloReferencia_bp
-#Objeto ArticuloReferencias
-#Objeto Referencia
-from modelos.DetalleReferenciaScopus import db
-from rutas.referencia_bp import referencia_bp
-#Objeto Referencia
-#Objeto ReferenciaCompleta
-from modelos.ReferenciaCorrectaScopus import db
-#Objeto ReferenciaCompleta
-#Objeto ReferenciaNoEncontradas
-from modelos.ReferenciaNoEncontradaScopus import db
-#Objeto ReferenciasNoEncontradas
-#Objeto ReferenciaErroneas
-from modelos.ReferenciaErroneaScopus import db
-#Objeto ReferenciasErronas
 #Configuracion de la aplicacion y de la base de datos
 app = Flask(__name__)
 CORS(app, allow_headers=["Content-Type", "Authorization", "Access-Control-Allow-Credentials"], supports_credentials=True)
@@ -71,9 +54,6 @@ app.register_blueprint(servicio_area_frascati, url_prefix='/areaFrascati')
 app.register_blueprint(servicio_area_unesco, url_prefix='/areaUnesco') 
 app.register_blueprint(servicio_articulo_scopus, url_prefix='/articuloScopus')
 app.register_blueprint(servicio_clustering, url_prefix='/cluster')
-
-app.register_blueprint(articuloReferencia_bp, url_prefix='/referencia')
-app.register_blueprint(referencia_bp, url_prefix='/referenciaDetalle')
 
 # Correr la aplicacion
 app.run()
