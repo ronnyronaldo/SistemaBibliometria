@@ -19,3 +19,6 @@ MINERIA DE DATOS
 16. pip install sklearn
 17. pip install matplotlib.pyplot
 
+
+npm install --save d3
+
