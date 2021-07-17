@@ -1,5 +1,6 @@
 export const validacionInputService = {
-    campoVacio
+    campoVacio,
+    esDecimal
 };
 
 function esEntero(texto, mensaje) {
@@ -24,7 +25,7 @@ function esDecimalSinMensaje(texto) {
     return false;
 }
 
-function esDecimal(texto, mensaje) {
+function esDecimal(texto) {
     let regex = /^\d+(\.\d{1,2})?$/;
     if (regex.test(texto)) {
         return true;
