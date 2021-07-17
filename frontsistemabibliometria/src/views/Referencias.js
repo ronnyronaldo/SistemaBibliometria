@@ -4,6 +4,17 @@ import { publicacionService } from '../_services/publicacion.service';
 import { Link } from "react-router-dom";
 import { referenciaService } from '../_services/referencia.service';
 import NotificationAlert from "react-notification-alert";
+
+/**Spinner */
+import { css } from "@emotion/react";
+import FadeLoader from "react-spinners/FadeLoader";
+const override = css`
+  display: block;
+  margin: 0 auto;
+  border-color: #212F3C;
+`;
+/**Spinner */
+
 // react-bootstrap components
 import {
   Badge,
@@ -18,6 +29,10 @@ import {
   Form
 } from "react-bootstrap";
 function Referencias() {
+  /**Spinner */
+  let [loading, setLoading] = React.useState(false);
+  /**Spinner */
+
   /**Variables y funciones para mostrar alertas al usuario */
   const [showModal, setShowModal] = React.useState(false);
   const notificationAlertRef = React.useRef(null);
@@ -85,6 +100,7 @@ function Referencias() {
   });
 
   async function handleCargarReferencias(id_articulo, titulo, autor, anio_publicacion) {
+    setLoading(true);
     setPublicacionSeleccionada({
       ...publicacionSeleccionada,
       id_articulo : id_articulo,
@@ -96,13 +112,16 @@ function Referencias() {
     await tablaPaginacionService.destruirTabla('#dataTableReferenciasNoEncontradas');
     await referenciaService.listarReferenciasNoEcontradasPorIdArticulo(id_articulo).then(value => {
       setReferencias(value.referencias);
+      setLoading(false);
     });
     await tablaPaginacionService.paginacion('#dataTableReferenciasNoEncontradas');
   }
 
   async function handleCargarDatosPublicaciones() {
+    setLoading(true);
     await tablaPaginacionService.destruirTabla('#dataTablePublicacionesSeccionReferencias');
     await publicacionService.listar().then(value => {
+      setLoading(false);
       setPublicaciones(value.articulos);
     });
     await tablaPaginacionService.paginacion('#dataTablePublicacionesSeccionReferencias');
@@ -177,6 +196,7 @@ function Referencias() {
 
   return (
     <>
+      <FadeLoader loading={loading} css={override} size={50} />
       <div className="rna-container">
         <NotificationAlert ref={notificationAlertRef} />
       </div>

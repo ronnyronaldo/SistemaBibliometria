@@ -1,9 +1,10 @@
 import Dashboard from "views/Dashboard.js";
 import UserProfile from "views/UserProfile.js";
 import Publicaciones from "views/Publicaciones";
-import BaseDatosDigital from "views/BaseDatosDigital";
 import MedioPublicacion from "views/MedioPublicacion";
+import BaseDatosDigital from "views/BaseDatosDigital";
 import AnalisisDataMining from "views/AnalisisDataMining";
+import Areas from "views/Areas";
 import Referencias from "views/Referencias";
 
 import Typography from "views/Typography.js";
@@ -11,6 +12,7 @@ import Icons from "views/Icons.js";
 import Maps from "views/Maps.js";
 import Notifications from "views/Notifications.js";
 import Upgrade from "views/Upgrade.js";
+import EstadisticasProveedores from "views/EstadisticasProveedores";
 
 const dashboardRoutes = [
   {
@@ -52,21 +54,21 @@ const dashboardRoutes = [
     path: "/areas",
     name: "Areas",
     icon: "nc-icon nc-layers-3",
-    component: MedioPublicacion,
+    component: Areas,
     layout: "/admin",
   },
   {
     path: "/baseDatosDigital",
     name: "Base Datos Digital",
     icon: "nc-icon nc-grid-45",
-    component: Icons,
+    component: BaseDatosDigital,
     layout: "/admin",
   },
   {
     path: "/estadisticasProveedores",
     name: "Est. Proveedores",
     icon: "nc-icon nc-chart-bar-32",
-    component: BaseDatosDigital,
+    component: EstadisticasProveedores,
     layout: "/admin",
   },
   {

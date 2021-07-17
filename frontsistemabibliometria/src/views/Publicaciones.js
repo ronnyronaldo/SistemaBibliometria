@@ -5,6 +5,12 @@ import { validacionInputService } from '../_services/validacionInput.service';
 import { publicacionObj } from "../utils/types";
 // react plugin for creating notifications over the dashboard
 import NotificationAlert from "react-notification-alert";
+
+/**Spinner */
+import { css } from "@emotion/react";
+import FadeLoader from "react-spinners/FadeLoader";
+/**Spinner */
+
 // react-bootstrap components
 import {
   Alert,
@@ -28,7 +34,20 @@ import { baseDatosDigitalService } from "_services/baseDatosDigital.service";
 import { areaFrascatiService } from "_services/areaFrascati.service";
 import { areaUnescoService } from "_services/areaUnesco.service";
 import { medioPublicacionService } from "_services/medio_publicacion.service";
+/** Spinner */
+const override = css`
+  display: block;
+  margin: 0 auto;
+  border-color: #212F3C;
+`;
+
+/**Spinner */
+
 function Publicaciones() {
+  /**Spinner */
+  let [loading, setLoading] = React.useState(false);
+  /**Spinner */
+
   /**Variables y funciones para mostrar alertas al usuario */
   const [showModal, setShowModal] = React.useState(false);
   const notificationAlertRef = React.useRef(null);
@@ -129,14 +148,15 @@ function Publicaciones() {
     })
 
     await tablaPaginacionService.destruirTabla('#dataTablePublicaciones');
+    setLoading(true)
     await publicacionService.listar().then(value => {
       setPublicaciones(value.articulos);
+      setLoading(false)
     });
     await tablaPaginacionService.paginacion('#dataTablePublicaciones');
   }
 
   async function handleCargarReferencias(id_articulo, titulo, autor, anio_publicacion, nombre_base_datos_digital) {
-    
     document.getElementById("referenciaText").value = "";
 
     setPublicacionSeleccionada({
@@ -151,9 +171,10 @@ function Publicaciones() {
       ...datoReferencia,
       idArticulo: id_articulo
     })
-
+    setLoading(true);
     await tablaPaginacionService.destruirTabla('#dataTableReferencias');
     await referenciaService.listarReferenciasPorIdArticulo(id_articulo).then(value => {
+      setLoading(false);
       setReferencias(value.referencias);
     });
     await tablaPaginacionService.paginacion('#dataTableReferencias');
@@ -219,7 +240,9 @@ function Publicaciones() {
   }
 
   const handleEliminarReferencia = (id_referencia) => {
+    setLoading(true);
     referenciaService.eliminar(id_referencia).then(value => {
+      setLoading(false);
       if(value.respuesta.error == "False"){
         handleCargarReferencias(datoReferencia.idArticulo, publicacionSeleccionada.titulo_publicacion, publicacionSeleccionada.autor, publicacionSeleccionada.anio_publicacion, publicacionSeleccionada.nombre_base_datos_digital);
         notify("tr", value.respuesta.valor, "primary");
@@ -230,8 +253,9 @@ function Publicaciones() {
   }
 
   const handleEliminarArticulo = (id_articulo) => {
-
+    setLoading(true);
     publicacionService.eliminar(id_articulo).then(value => {
+      setLoading(false);
       if(value.respuesta.error == "False"){
         handleCargarDatosPublicaciones();
         notify("tr", value.respuesta.valor, "primary");
@@ -261,6 +285,7 @@ function Publicaciones() {
                       if (value.mediosPublicacion.length !== 0) {
                         let id_medio_publicacion = value.mediosPublicacion[0].id_medio_publicacion;
                         //console.log(id_medio_publicacion)
+                        setLoading(true);
                         publicacionService.insertar({
                           "id_base_datos_digital": id_base_datos_digital,
                           "id_area_unesco": id_area_unesco,
@@ -290,6 +315,7 @@ function Publicaciones() {
                           "nombre_area_frascati_especifico": nuevoIngreso.nombre_area_frascati_especifico != undefined ? nuevoIngreso.nombre_area_frascati_especifico : "",
                           "nombre_area_unesco_especifico": nuevoIngreso.nombre_area_unesco_especifico != undefined ? nuevoIngreso.nombre_area_unesco_especifico : ""
                         }).then(value => {
+                          setLoading(false);
                           if (value.respuesta.error == "False") {
                             notify("tr", value.respuesta.valor + ': ' + nuevoIngreso.titulo + '(' + nuevoIngreso.anio_publicacion + ')', "primary");
                             handleCargarDatosPublicaciones();
@@ -323,6 +349,7 @@ function Publicaciones() {
   }, []);
   return (
     <>
+      <FadeLoader loading={loading} css={override} size={50} />
       <div className="rna-container">
         <NotificationAlert ref={notificationAlertRef} />
       </div>

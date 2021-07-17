@@ -32,7 +32,7 @@ function paginacion(idTabla) {
                     sortDescending: ": active para ordenar la columna en orden descendente"
                 }
             },
-            scrollY: 400,
+            scrollY: 300,
             lengthMenu: [[10, 25, -1], [10, 25, "All"]],
         });
     });
