@@ -18,12 +18,15 @@ class AreaFrascati(db.Model):
       db.session.add(self)
       db.session.commit()
       return self
+
+    def delete(areaFrascati):
+      db.session.delete(areaFrascati)
+      db.session.commit()
+      return areaFrascati
       
-    """def __init__(self,title,productDescription,productBrand,price):
-        self.title = title
-        self.productDescription = productDescription
-        self.productBrand = productBrand
-        self.price = price"""
+    def __init__(self, descripcion):
+      self.descripcion = descripcion
+
     def __repr__(self):
         return '' % self.id_area_frascati
 #db.create_all() # Para crear la tabla

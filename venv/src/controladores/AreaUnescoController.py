@@ -18,3 +18,26 @@ def validarAreaUnescoPorNombre(nombre):
     area_unesco_schema = AreaUnescoSchema(many=True)
     area_unesco = area_unesco_schema.dump(get_area_unesco)
     return make_response(jsonify({"area_unesco": area_unesco}))
+
+def listaAreaUnesco():
+    get_area_unesco = AreaUnesco.query.all()
+    area_unesco_schema = AreaUnescoSchema(many=True)
+    area_unesco = area_unesco_schema.dump(get_area_unesco)
+    return make_response(jsonify({"area_unesco": area_unesco}))
+
+def insertarAreaUnesco(nuevoAreaUnesco):
+    print(nuevoAreaUnesco['descripcion_unesco'])
+    get_area_unesco = AreaUnesco.query.filter(AreaUnesco.descripcion_unesco == nuevoAreaUnesco['descripcion_unesco'])
+    area_unesco_schema = AreaUnescoSchema(many=True)
+    area_unesco = area_unesco_schema.dump(get_area_unesco)
+    numeroAreaUnesco = len(area_unesco)
+    if numeroAreaUnesco == 0:
+        AreaUnesco(nuevoAreaUnesco['descripcion_unesco']).create()
+        return make_response(jsonify({"respuesta": {"valor":"Área Unesco ingresado correctamente", "error":"False"}}))
+    else:
+        return make_response(jsonify({"respuesta": {"valor":"El Área Unesco ya esta registrado", "error":"True"}}))
+
+def eliminarAreaUnesco(id_area_unesco):
+    areaUnesco = AreaUnesco.query.get(id_area_unesco)
+    AreaUnesco.delete(areaUnesco)
+    return make_response(jsonify({"respuesta": {"valor":"Área Unesco eliminada correctamente.", "error":"False"}}))

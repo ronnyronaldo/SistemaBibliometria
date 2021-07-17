@@ -18,12 +18,14 @@ class MedioPublicacion(db.Model):
       db.session.add(self)
       db.session.commit()
       return self
-      
-    """def __init__(self,title,productDescription,productBrand,price):
-        self.title = title
-        self.productDescription = productDescription
-        self.productBrand = productBrand
-        self.price = price"""
+    
+    def delete(medioPublicacion):
+      db.session.delete(medioPublicacion)
+      db.session.commit()
+      return medioPublicacion
+
+    def __init__(self, nombre):
+      self.nombre = nombre
     def __repr__(self):
         return '' % self.id_medio_publicacion
 #db.create_all() # Para crear la tabla

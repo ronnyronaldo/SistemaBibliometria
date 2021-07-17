@@ -36,3 +36,28 @@ def validarBaseDatosDigitalPorNombre(nombre_base_datos_digital):
     base_datos_digital = base_datos_digital_schema.dump(get_base_datos_digital)
     return make_response(jsonify({"base_datos_digital": base_datos_digital}))
 
+def eliminarBaseDatosDigital(id_base_datos_digital):
+    baseDatosDigital = BaseDatosDigital.query.get(id_base_datos_digital)
+    BaseDatosDigital.delete(baseDatosDigital)
+    return make_response(jsonify({"respuesta": {"valor":"Base de Datos Digital eliminada correctamente.", "error":"False"}}))
+
+def insertarBaseDatosDigital(nuevoBaseDatosDigital):
+    print(nuevoBaseDatosDigital['proveedor'])
+    get_base_datos_digital = BaseDatosDigital.query.filter(BaseDatosDigital.nombre_base_datos_digital == nuevoBaseDatosDigital['nombre_base_datos_digital'])
+    base_datos_digital_schema = BaseDatosDigitalSchema(many=True)
+    base_datos_digital = base_datos_digital_schema.dump(get_base_datos_digital)
+    numeroBaseDatosDigital = len(base_datos_digital)
+    if numeroBaseDatosDigital == 0:
+        BaseDatosDigital(nuevoBaseDatosDigital['nombre_base_datos_digital'],
+                        nuevoBaseDatosDigital['proveedor'],
+                        nuevoBaseDatosDigital['costo_actual'],
+                        nuevoBaseDatosDigital['suscripcion_descripcion'],
+                        nuevoBaseDatosDigital['area_servicio'],
+                        nuevoBaseDatosDigital['esUtilizadaEstudio']).create()
+        return make_response(jsonify({"respuesta": {"valor":"Base de Datos Digital ingresada correctamente", "error":"False"}}))
+    else:
+        return make_response(jsonify({"respuesta": {"valor":"La Base de Datos Digital ya esta registrada", "error":"True"}}))
+
+
+
+
