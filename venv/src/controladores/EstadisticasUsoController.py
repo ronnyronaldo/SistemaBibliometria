@@ -27,3 +27,22 @@ def buscarEstadisticasUsoPorId(id_base_datos_digital):
     estadisticas_uso_schema = EstadisticasUsoSchema(many=True)
     estadisticas_uso = estadisticas_uso_schema.dump(get_estadisticas_uso)
     return make_response(jsonify({"estadisticas_uso": estadisticas_uso}))
+
+def insertarEstadisticasUso(nuevoEstadisticasUso):
+    get_estadisticas_uso = EstadisticasUso.query.filter((EstadisticasUso.id_base_datos_digital == nuevoEstadisticasUso['id_base_datos_digital']) & (EstadisticasUso.año == nuevoEstadisticasUso['año']) & (EstadisticasUso.mes == nuevoEstadisticasUso['mes']))
+    estadisticas_uso_schema = EstadisticasUsoSchema(many=True)
+    estadisticas_uso = estadisticas_uso_schema.dump(get_estadisticas_uso)
+    numeroEstadisticasUso = len(estadisticas_uso)
+    if numeroEstadisticasUso == 0:
+        EstadisticasUso(nuevoEstadisticasUso['id_base_datos_digital'],
+        nuevoEstadisticasUso['año'],
+        nuevoEstadisticasUso['mes'],
+        nuevoEstadisticasUso['numero_busquedas']).create()
+        return make_response(jsonify({"respuesta": {"valor":"Valor ingresado correctamente", "error":"False"}}))
+    else:
+        return make_response(jsonify({"respuesta": {"valor":"Los datos que ingreso ya esta registrado", "error":"True"}}))
+
+def eliminarEstadisticasUso(id_estadisticas_uso):
+    estadisticasUso = EstadisticasUso.query.get(id_estadisticas_uso)
+    EstadisticasUso.delete(estadisticasUso)
+    return make_response(jsonify({"respuesta": {"valor":"Estadistica de uso eliminada correctamente.", "error":"False"}}))
