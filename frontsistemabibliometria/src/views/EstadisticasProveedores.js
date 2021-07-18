@@ -1,7 +1,10 @@
 import React from "react";
-import {baseDatosDigitalService} from '../_services/baseDatosDigital.service';
-import {estadisticasUsoService} from '../_services/estadisticasUso.service';
-import {Bar} from 'react-chartjs-2';
+import { baseDatosDigitalService } from '../_services/baseDatosDigital.service';
+import { estadisticasUsoService } from '../_services/estadisticasUso.service';
+import { validacionInputService } from '../_services/validacionInput.service';
+import { Bar } from 'react-chartjs-2';
+// react plugin for creating notifications over the dashboard
+import NotificationAlert from "react-notification-alert";
 
 /**Spinner */
 import { css } from "@emotion/react";
@@ -24,30 +27,72 @@ import {
   Container,
   Row,
   Col,
+  Form,
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { tablaPaginacionService } from '../utils/tablaPaginacion.service';
 function EstadisticasProveedores() {
+  const [showModal, setShowModal] = React.useState(false);
+  const notificationAlertRef = React.useRef(null);
+  const notify = (place, mensaje, type) => {
+    //var color = Math.floor(Math.random() * 5 + 1);
+    //var type = "danger";
+    /*switch (color) {
+      case 1:
+        type = "primary";
+        break;
+      case 2:
+        type = "success";
+        break;
+      case 3:
+        type = "danger";
+        break;
+      case 4:
+        type = "warning";
+        break;
+      case 5:
+        type = "info";
+        break;
+      default:
+        break;
+    }*/
+    var options = {};
+    options = {
+      place: place,
+      message: (
+        <div>
+          <div>
+            {mensaje}
+          </div>
+        </div>
+      ),
+      type: type,
+      icon: "nc-icon nc-bell-55",
+      autoDismiss: 7,
+    };
+    notificationAlertRef.current.notificationAlert(options);
+  };
+
   /**Spinner */
   let [loading, setLoading] = React.useState(false);
   /**Spinner */
   const [baseDatosDigital, setBaseDatosDigital] = React.useState([]);
   const [etiquetas, setEtiquetas] = React.useState([]);
   const [datos, setDatos] = React.useState([]);
-  const [nombreBaseDatosDigital, setNombreBaseDatosDigital] = React.useState('');
+  const [datosEstadisticasUso, setDatosEstadisticasUso] = React.useState([]);
   const data = {
     labels: etiquetas,
-    datasets:[{
-      label:'Número de búsquedas',
+    datasets: [{
+      label: 'Número de búsquedas',
       backgroundColor: '#081F2E',
       borderColor: 'black',
       borderWidth: 1,
       hoverBackgroundColor: '#0C4E78',
       hoverBorderColor: 'white',
-      data:datos
+      data: datos
     }]
   }
-  const opciones={
+  const opciones = {
     maintainAspectRatio: false,
     responsive: true,
   }
@@ -62,31 +107,164 @@ function EstadisticasProveedores() {
     await tablaPaginacionService.paginacion('#dataTableBaseDatosDigitales');
   }
 
-  async function handleCargarEstadisticasUso(id_base_datos_digital, nombre_base_datos_digital) {
+  async function handleCargarEstadisticasUso() {
     setLoading(true);
-    setNombreBaseDatosDigital(nombre_base_datos_digital)
-    await estadisticasUsoService.listarEstadisticasUsoPorId(id_base_datos_digital).then(value => {
-      var estadisticas_uso = value.estadisticas_uso
-      let etiquetas = []
-      let datos = []
-      for (var i=0; i<estadisticas_uso.length;i++) {
-        etiquetas.push(estadisticas_uso[i].mes+'-'+estadisticas_uso[i].año) 
-        datos.push(estadisticas_uso[i].numero_busquedas)
-      }
-      setEtiquetas(etiquetas)
-      setDatos(datos)
-      setLoading(false);
-    });   
+    await tablaPaginacionService.destruirTabla('#dataEstadisticasUso');
+    let id_base_datos_digital = document.getElementById("idBaseDatosDigital").value;
+    if (id_base_datos_digital !== 0) {
+      await estadisticasUsoService.listarEstadisticasUsoPorId(id_base_datos_digital).then(value => {
+        var estadisticas_uso = value.estadisticas_uso
+        setDatosEstadisticasUso(estadisticas_uso);
+        let etiquetas = []
+        let datos = []
+        for (var i = 0; i < estadisticas_uso.length; i++) {
+          etiquetas.push(estadisticas_uso[i].mes + '-' + estadisticas_uso[i].año)
+          datos.push(estadisticas_uso[i].numero_busquedas)
+        }
+        setEtiquetas(etiquetas)
+        setDatos(datos)
+        setLoading(false);
+      });
+    } else {
+      notify("tr", 'No ha seleccionado la base de datos digital.', "danger");
+    }
+    await tablaPaginacionService.paginacion('#dataEstadisticasUso');
   }
 
+  const handleCargarEstadisticas = () => {
+    let idBaseDatosDigital = document.getElementById("idBaseDatosDigital").value;
+    let anio = document.getElementById("anioText").value;
+    let mes = document.getElementById("idMes").value;
+    let numero_busquedas = document.getElementById("numeroBusquedaText").value;
+    if (idBaseDatosDigital != 0) {
+      if (validacionInputService.campoVacio(anio)) {
+        if (mes != 0) {
+          if (validacionInputService.campoVacio(numero_busquedas)) {
+            setLoading(true);
+            estadisticasUsoService.insertar({
+              "id_base_datos_digital": idBaseDatosDigital,
+              "año" : anio,
+              "mes": mes,
+              "numero_busquedas": numero_busquedas
+            }).then(value =>{
+              setLoading(false);
+              if(value.respuesta.error == "False"){
+                handleCargarEstadisticasUso();
+                notify("tr", value.respuesta.valor, "primary");
+              }else{
+                notify("tr", value.respuesta.valor, "danger");
+              }
+            })
+          } else {
+            notify("tr", 'Número de búsquedas ingresadas incorrectamente.', "danger");
+          }
+        } else {
+          notify("tr", 'No ha seleccionado el mes.', "danger");
+        }
+      } else {
+        notify("tr", 'Año ingresado incorrectamente.', "danger");
+      }
+    } else {
+      notify("tr", 'No ha seleccionado la base de datos digital.', "danger");
+    }
+  }
+  const handleEliminarEstadisticasUso = (id_estadisticas_uso) => {
+    setLoading(true);
+    estadisticasUsoService.eliminar(id_estadisticas_uso).then(value => {
+      setLoading(false);
+      if(value.respuesta.error == "False"){
+        handleCargarEstadisticasUso();
+        notify("tr", value.respuesta.valor, "primary");
+      }else{
+        notify("tr", value.respuesta.valor, "danger");
+      }
+    })
+  }
   React.useEffect(() => {
     handleCargarBaseDatosDigitales();
   }, []);
   return (
     <>
       <FadeLoader loading={loading} css={override} size={50} />
+      <div className="rna-container">
+        <NotificationAlert ref={notificationAlertRef} />
+      </div>
       <Container fluid>
         <Row>
+          <Col md="12">
+            <Card className="strpied-tabled-with-hover">
+              <Card.Header>
+                <Card.Title as="h4">Ingreso Estadísticas Base Datos Digital</Card.Title>
+                <Row>
+                  <Col className="pr-1" md="3">
+                    <Form.Group>
+                      <label>BASE DATOS DIGITAL</label>
+                      <Form.Row>
+                        <select className="form-control" onChange={handleCargarEstadisticasUso} id="idBaseDatosDigital">
+                          <option value="0">Seleccione</option>
+                          {baseDatosDigital.map(item => (
+                            <option value={item.id_base_datos_digital} key={item.id_base_datos_digital}>{item.nombre_base_datos_digital}</option>
+                          ))}
+                        </select>
+                      </Form.Row>
+                    </Form.Group>
+                  </Col>
+                  <Col className="pr-1" md="2">
+                    <Form.Group>
+                      <label>AÑO</label>
+                      <Form.Control
+                        id="anioText"
+                        defaultValue=""
+                        type="text"
+                      ></Form.Control>
+                    </Form.Group>
+                  </Col>
+                  <Col className="pr-1" md="2">
+                    <Form.Group>
+                      <label>MES</label>
+                      <Form.Row>
+                        <select className="form-control" id="idMes">
+                          <option value="Enero">Enero</option>
+                          <option value="Febrero">Febrero</option>
+                          <option value="Marzo">Marzo</option>
+                          <option value="Abril">Abril</option>
+                          <option value="Mayo">Mayo</option>
+                          <option value="Junio">Junio</option>
+                          <option value="Julio">Julio</option>
+                          <option value="Agosto">Agosto</option>
+                          <option value="Septiembre">Septiembre</option>
+                          <option value="Octubre">Octubre</option>
+                          <option value="Noviembre">Noviembre</option>
+                          <option value="Diciembre">Diciembre</option>
+                        </select>
+                      </Form.Row>
+                    </Form.Group>
+                  </Col>
+                  <Col className="pr-1" md="2">
+                    <Form.Group>
+                      <label>NÚMERO DE BÚSQUEDAS</label>
+                      <Form.Control
+                        id="numeroBusquedaText"
+                        defaultValue=""
+                        type="text"
+                      ></Form.Control>
+                    </Form.Group>
+                  </Col>
+                  <Col className="pr-1" md="3">
+                    <Form.Group>
+                      <label></label>
+                      <Form.Control
+                        defaultValue="AGREGAR"
+                        type="button"
+                        className="btn-outline-success"
+                        onClick={handleCargarEstadisticas}
+                      ></Form.Control>
+                    </Form.Group>
+                  </Col>
+                </Row>
+              </Card.Header>
+            </Card>
+          </Col>
           <Col md="12">
             <Card className="strpied-tabled-with-hover">
               <Card.Header>
@@ -96,20 +274,22 @@ function EstadisticasProveedores() {
                 </p>
               </Card.Header>
               <Card.Body className="table-full-width table-responsive px-3">
-                <table className="table table-bordered table-hover" id="dataTableBaseDatosDigitales" width="100%" cellSpacing="0">
+                <table className="table table-bordered table-hover" id="dataEstadisticasUso" width="100%" cellSpacing="0">
                   <thead className="thead-dark">
                     <tr>
-                      <th>ID</th>
-                      <th>NOMBRE</th>
-                      <th>PROVEEDOR</th>
+                      <th>AÑO</th>
+                      <th>MES</th>
+                      <th>NÚMERO DE BÚSQUEDAS</th>
+                      <th>ACCIONES</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {baseDatosDigital.map(item => (
-                      <tr className="small" key={item.id_base_datos_digital} onClick={() => handleCargarEstadisticasUso(item.id_base_datos_digital, item.nombre_base_datos_digital)}>
-                        <td >{item.id_base_datos_digital}</td>
-                        <td >{item.nombre_base_datos_digital}</td>
-                        <td >{item.proveedor}</td>
+                    {datosEstadisticasUso.map(item => (
+                      <tr className="small" key={item.id_estadisticas_uso}>
+                        <td >{item.año}</td>
+                        <td >{item.mes}</td>
+                        <td >{item.numero_busquedas}</td>
+                        <td width="5%"><Link to="#" id="eliminarEstadisticasUso" className="link col-sm-12 col-md-3" onClick={()=>handleEliminarEstadisticasUso(item.id_estadisticas_uso)}><i className="fas fa-trash-alt fa-2x"></i></Link></td>
                       </tr>
                     ))}
                   </tbody>
@@ -120,16 +300,16 @@ function EstadisticasProveedores() {
           <Col md="12">
             <Card className="strpied-tabled-with-hover">
               <Card.Header>
-                <Card.Title as="h4">Estadísticas de Búsqueda {nombreBaseDatosDigital.toUpperCase() }</Card.Title>
+                <Card.Title as="h4">Estadísticas de Búsqueda</Card.Title>
                 <p className="card-category">
                   Universidad de Cuenca
                 </p>
               </Card.Header>
               <Card.Body className="table-full-width table-responsive px-3">
-                <div style={{width:'100%', height:'400px'}}>
+                <div style={{ width: '100%', height: '400px' }}>
                   <Bar data={data} options={opciones}></Bar>
                 </div>
-               
+
               </Card.Body>
             </Card>
           </Col>
