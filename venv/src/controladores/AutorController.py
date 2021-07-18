@@ -22,3 +22,8 @@ def listaAutores():
     autores = autor_schema.dump(get_autor)
     return make_response(jsonify({"autor": autores}))
 
+def eliminarAutores(id_autor):
+    autor = Autor.query.get(id_autor)
+    Autor.delete(autor)
+    return make_response(jsonify({"respuesta": {"valor":"Autor eliminado correctamente.", "error":"False"}}))
+
