@@ -5,6 +5,7 @@ import MedioPublicacion from "views/MedioPublicacion";
 import BaseDatosDigital from "views/BaseDatosDigital";
 import AnalisisDataMining from "views/AnalisisDataMining";
 import Areas from "views/Areas";
+import Autores from "views/Autores";
 import Referencias from "views/Referencias";
 
 import Typography from "views/Typography.js";
@@ -34,6 +35,13 @@ const dashboardRoutes = [
     name: "Publicaciones",
     icon: "nc-icon nc-single-copy-04",
     component: Publicaciones,
+    layout: "/admin",
+  },
+  {
+    path: "/autores",
+    name: "Autores",
+    icon: "nc-icon nc-circle-09",
+    component: Autores,
     layout: "/admin",
   },
   {
