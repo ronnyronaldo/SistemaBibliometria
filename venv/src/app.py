@@ -33,6 +33,10 @@ from rutas.servicio_area_frascati import servicio_area_frascati
 from modelos.ArticuloScopus import db
 from rutas.servicio_articulo_scopus import servicio_articulo_scopus
 #Objeto Articulo Scopus
+#Objeto Autor
+from modelos.Autor import db
+from rutas.servicio_autor import servicio_autor
+#Objeto Autor
 #Objeto clustering
 from rutas.servicio_clustering import servicio_clustering
 #Objeto clustering
@@ -46,6 +50,7 @@ migrate = Migrate(app, db)
 
 # Registrar los objetos para poder navegar
 app.register_blueprint(servicio_articulo, url_prefix='/articulo')
+app.register_blueprint(servicio_autor, url_prefix='/autor')
 app.register_blueprint(servicio_referencia, url_prefix='/referencia')
 app.register_blueprint(servicio_base_datos_digital, url_prefix='/baseDatosDigital')
 app.register_blueprint(servicio_medio_publicacion, url_prefix='/medioPublicacion')
