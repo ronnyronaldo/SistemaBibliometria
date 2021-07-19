@@ -49,6 +49,12 @@ def buscarArticuloPorId(id_articulo):
     articulo = articulo_schema.dump(get_articulo)
     return make_response(jsonify({"articulo": articulo}))
 
+def obtenerIdArticuloIngresarAutor(titulo, titulo_alternatiivo, anio_publicacion, id_base_datos_digital):
+    get_articulo = Articulo.query.filter((Articulo.titulo == titulo) & (Articulo.titulo_alternativo == titulo_alternatiivo) & (Articulo.anio_publicacion == anio_publicacion) & (Articulo.id_base_datos_digital == id_base_datos_digital))
+    articulo_schema = ArticuloSchema(many=True)
+    articulo = articulo_schema.dump(get_articulo)
+    return articulo
+
 def insertarArticulo(nuevoArticulo):
     print(nuevoArticulo['titulo_alternativo'])
     get_articulo = Articulo.query.filter((Articulo.id_base_datos_digital == nuevoArticulo['id_base_datos_digital']) & (Articulo.titulo == nuevoArticulo['titulo']) & (Articulo.anio_publicacion == nuevoArticulo['anio_publicacion']))

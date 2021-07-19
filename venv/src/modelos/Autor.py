@@ -10,7 +10,7 @@ db = SQLAlchemy()
 
 ###Models####
 class Autor(db.Model):
-    __tablename__ = "autor"
+    __tablename__ = "articulo_autor"
     id_autor = db.Column(db.Integer, primary_key=True)
     id_articulo = db.Column(db.Integer)
     identificacion = db.Column(db.String(15))
