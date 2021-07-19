@@ -122,7 +122,18 @@ function Autores() {
   }
   async function handleIngresarAutores() {
     if (nuevosAutores.length != 0) {
-      for (var i = 0; i < nuevosAutores.length; i++) {
+      setLoading(true)
+      autorService.insertar(nuevosAutores).then(value => {
+        setLoading(false);
+        if (value.respuesta.error == "False") {
+          handleCargarAutores();
+          notify("tr", /*nuevoIngreso.titulo + '(' + nuevoIngreso.anio_publicacion + ')' + ': ' + */value.respuesta.valor, "primary");
+        } else {
+          notify("tr", /*nuevoIngreso.titulo + '(' + nuevoIngreso.anio_publicacion + ')' + ' : ' + */value.respuesta.valor , "danger");
+        }
+      })
+
+      /*for (var i = 0; i < nuevosAutores.length; i++) {
         setLoading(true)
         let nuevoIngreso = nuevosAutores[i];
         autorService.insertar({
@@ -141,8 +152,7 @@ function Autores() {
             notify("tr", nuevoIngreso.titulo + '(' + nuevoIngreso.anio_publicacion + ')' + ' : ' + value.respuesta.valor , "danger");
           }
         })
-      }
-      handleCargarAutores();
+      }*/
     }
   }
   React.useEffect(() => {
@@ -159,9 +169,9 @@ function Autores() {
           <Col md="12">
             <Card className="strpied-tabled-with-hover">
               <Card.Header>
-                <Card.Title as="h4">Ingreso de Autores</Card.Title>
+                <Card.Title as="h4">Ingreso de Articulo - Autor</Card.Title>
                 <p className="card-category">
-                  Investigadores con filiación a la Universidad de Cuenca
+                  Ingreso de todos los autores por articulo
                 </p>
               </Card.Header>
               <Card.Body>
@@ -197,6 +207,7 @@ function Autores() {
                 <table className="table table-bordered table-hover" id="dataAutores" width="100%" cellSpacing="0">
                   <thead className="thead-dark">
                     <tr>
+                      <th>NOMBRE PUBLICACION</th>
                       <th>IDENTIFICACIÓN</th>
                       <th>NOMBRE</th>
                       <th>ACCIONES</th>
@@ -205,6 +216,7 @@ function Autores() {
                   <tbody>
                     {autores.map(item => (
                       <tr className="small" key={item.id_autor}>
+                        <td>{item.titulo}</td>
                         <td>{item.identificacion}</td>
                         <td>{item.nombre}</td>
                         <td width="5%"><Link to="#" id="eliminarAutor" className="link col-sm-12 col-md-3" onClick={() => handleEliminarAutor(item.id_autor)}><i className="fas fa-trash-alt fa-2x"></i></Link></td>
