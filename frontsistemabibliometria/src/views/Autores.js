@@ -1,6 +1,9 @@
 import React from "react";
 import { tablaPaginacionService } from '../utils/tablaPaginacion.service';
 import { autorService } from '../_services/autor.service';
+import { FormGroup } from "reactstrap";
+import *as XLSX from 'xlsx';
+
 // react plugin for creating notifications over the dashboard
 import NotificationAlert from "react-notification-alert";
 
@@ -34,6 +37,7 @@ function Autores() {
 
   const [showModal, setShowModal] = React.useState(false);
   const notificationAlertRef = React.useRef(null);
+  const [nuevosAutores, setNuevosAutores] = React.useState([]);
   const notify = (place, mensaje, type) => {
     //var color = Math.floor(Math.random() * 5 + 1);
     //var type = "danger";
@@ -77,23 +81,73 @@ function Autores() {
     setLoading(true);
     await tablaPaginacionService.destruirTabla('#dataAutores');
     await autorService.listar().then(value => {
-      setAutor(value.autor);
+      setAutores(value.autor);
       setLoading(false);
     });
     await tablaPaginacionService.paginacion('#dataAutores');
   }
   const handleEliminarAutor = (id_autor) => {
-    /*setLoading(true);
-    medioPublicacionService.eliminar(id_medio_publicacion).then(value => {
+    setLoading(true);
+    autorService.eliminar(id_autor).then(value => {
       setLoading(false);
       if(value.respuesta.error == "False"){
-        handleCargarMediosPublicacion();
+        handleCargarAutores();
         notify("tr", value.respuesta.valor, "primary");
       }else{
         notify("tr", value.respuesta.valor, "danger");
       }
-    })*/
+    })
   }
+
+  async function handleReadExcel(file) {
+    const promise = new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsArrayBuffer(file);
+      fileReader.onload = (e) => {
+        const bufferArray = e.target.result;
+        const wb = XLSX.read(bufferArray, { type: "buffer" });
+        const wsname = wb.SheetNames[1];
+        const ws = wb.Sheets[wsname];
+        const data = XLSX.utils.sheet_to_json(ws);
+        setNuevosAutores(data);
+        resolve(data);
+      };
+      fileReader.onerror = (error) => {
+        reject(error)
+      };
+    })
+    promise.then(value => {
+      console.log(value)
+    })
+  }
+  async function handleIngresarAutores() {
+    if (nuevosAutores.length != 0) {
+      for (var i = 0; i < nuevosAutores.length; i++) {
+        setLoading(true)
+        let nuevoIngreso = nuevosAutores[i];
+        autorService.insertar({
+          "nombre_base_datos_digital": nuevoIngreso.nombre != undefined ? nuevoIngreso.nombre : "",
+          "titulo": nuevoIngreso.titulo != undefined ? nuevoIngreso.titulo : "",
+          "titulo_alternativo": nuevoIngreso.titulo_alternativo != undefined ? nuevoIngreso.titulo_alternativo : "",
+          "anio_publicacion": nuevoIngreso.anio_publicacion != undefined ? nuevoIngreso.anio_publicacion : "",
+          "autor_identificación": nuevoIngreso.autor_identificación != undefined ? nuevoIngreso.autor_identificación : "",
+          "orden_autor": nuevoIngreso.orden_autor != undefined ? nuevoIngreso.orden_autor : "",
+          "nombres": nuevoIngreso.nombres != undefined ? nuevoIngreso.nombres : ""
+        }).then(value => {
+          setLoading(false);
+          if (value.respuesta.error == "False") {
+            notify("tr", nuevoIngreso.titulo + '(' + nuevoIngreso.anio_publicacion + ')' + ': ' + value.respuesta.valor, "primary");
+          } else {
+            notify("tr", nuevoIngreso.titulo + '(' + nuevoIngreso.anio_publicacion + ')' + ' : ' + value.respuesta.valor , "danger");
+          }
+        })
+      }
+      handleCargarAutores();
+    }
+  }
+  React.useEffect(() => {
+    handleCargarAutores();
+  }, []);
   return (
     <>
       <FadeLoader loading={loading} css={override} size={50} />
@@ -102,6 +156,35 @@ function Autores() {
       </div>
       <Container fluid>
         <Row>
+          <Col md="12">
+            <Card className="strpied-tabled-with-hover">
+              <Card.Header>
+                <Card.Title as="h4">Ingreso de Autores</Card.Title>
+                <p className="card-category">
+                  Investigadores con filiación a la Universidad de Cuenca
+                </p>
+              </Card.Header>
+              <Card.Body>
+                <Form>
+                  <Row>
+                    <Col className="pr-1" md="5">
+                      <Form.Group>
+                        <label>INGRESE EL ARCHIVO .XLSX CON LOS DATOS DE LOS AUTORES </label>
+                        <FormGroup>
+                          <input type='file' onChange={(e) => {
+                            const file = e.target.files[0];
+                            handleReadExcel(file)
+                          }} className="col-sm-12 col-md-8"></input>
+                          <Link to="#" id="ingresarPublicacion" className="link col-sm-12 col-md-3" onClick={handleIngresarAutores}><Button variant="primary">Ingresar <i className="fas fa-file-upload fa-2x" /></Button></Link>
+                        </FormGroup>
+                      </Form.Group>
+                    </Col>
+                  </Row>
+
+                </Form>
+              </Card.Body>
+            </Card>
+          </Col>
           <Col md="12">
             <Card className="strpied-tabled-with-hover">
               <Card.Header>
