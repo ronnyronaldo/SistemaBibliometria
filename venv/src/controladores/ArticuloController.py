@@ -43,6 +43,18 @@ class ArticuloSchema(ModelSchema):
     nombre_area_frascati_especifico = fields.String(required=True)
     nombre_area_unesco_especifico = fields.String(required=True)
 
+def buscarArticuloPorId(id_articulo):
+    get_articulo = Articulo.query.filter(Articulo.id_articulo == id_articulo)
+    articulo_schema = ArticuloSchema(many=True)
+    articulo = articulo_schema.dump(get_articulo)
+    return make_response(jsonify({"articulo": articulo}))
+
+def obtenerIdArticuloIngresarAutor(titulo, anio_publicacion, id_base_datos_digital):
+    get_articulo = Articulo.query.filter((Articulo.titulo == titulo) & (Articulo.anio_publicacion == anio_publicacion) & (Articulo.id_base_datos_digital == id_base_datos_digital))
+    articulo_schema = ArticuloSchema(many=True)
+    articulo = articulo_schema.dump(get_articulo)
+    return articulo
+
 def insertarArticulo(nuevoArticulo):
     print(nuevoArticulo['titulo_alternativo'])
     get_articulo = Articulo.query.filter((Articulo.id_base_datos_digital == nuevoArticulo['id_base_datos_digital']) & (Articulo.titulo == nuevoArticulo['titulo']) & (Articulo.anio_publicacion == nuevoArticulo['anio_publicacion']))
@@ -90,11 +102,25 @@ def listaArticulos():
         .join(AreaFrascati, Articulo.id_area_frascati == AreaFrascati.id_area_frascati )
         .join(AreaUnesco, Articulo.id_area_unesco == AreaUnesco.id_area_unesco)).all()
     #db.session.close()
-    db.session.remove()
+    #db.session.remove()
     articulos = []
     for articulo in articulosRespuesta:
         articulos.append(dict(articulo)) # Serializo cada fila
     return make_response(jsonify({"articulos": articulos}))
+
+
+def listaArticulosMineria():
+    get_articulo = Articulo.query.all()
+    articulo_schema = ArticuloSchema(many=True)
+    articulos = articulo_schema.dump(get_articulo)
+    return make_response(jsonify(articulos))
+
+def listaArticulosMineriaAnios():
+    articulosRespuesta = (db.session.query(Articulo).with_entities(Articulo.anio_publicacion, Articulo.titulo)).all()
+    articulos = []
+    for articulo in articulosRespuesta:
+        articulos.append(dict(articulo)) # Serializo cada fila
+    return make_response(jsonify(articulos))
 
 def asignarMedioPublicacion():
     articulosRespuesta = (db.session.query(Articulo, MedioPublicacion)
@@ -111,3 +137,8 @@ def asignarMedioPublicacion():
     db.session.remove()
         #print(articuloRespuesta.id_medio_publicacion)
     return make_response(jsonify({"articulos": ""}))
+
+def eliminarArticulo(id_articulo):
+    articulo = Articulo.query.get(id_articulo)
+    Articulo.delete(articulo)
+    return make_response(jsonify({"respuesta": {"valor":"Publicación eliminada correctamente.", "error":"False"}}))
