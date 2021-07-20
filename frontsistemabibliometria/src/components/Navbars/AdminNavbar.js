@@ -58,7 +58,7 @@ function Header() {
                 href="#pablo"
                 onClick={(e) => e.preventDefault()}
               >
-                <span className="no-icon">Tania Landivar</span>
+                <span className="no-icon"></span>
               </Nav.Link>
             </Nav.Item>
             <Nav.Item>
@@ -67,7 +67,7 @@ function Header() {
                 href="#pablo"
                 onClick={(e) => e.preventDefault()}
               >
-                <span className="no-icon">Cerrar Sesión</span>
+                <span className="no-icon"></span>
               </Nav.Link>
             </Nav.Item>
           </Nav>

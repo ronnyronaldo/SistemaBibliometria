@@ -10,5 +10,15 @@ Configuracion proyecto python
 9. pip3 install scholarly
 10. C:\TESISTL\SistemaBibliometria\venv\src >> set FLASK_APP=app.py 
 11. flask run
-pip install scraperapi-sdk
- pip install -U flask-cors
+12. pip install scraperapi-sdk
+13. pip install -U flask-cors
+
+MINERIA DE DATOS
+14. pip install numpy  
+15. pip install pandas
+16. pip install sklearn
+17. pip install matplotlib.pyplot
+
+
+npm install --save d3
+
