@@ -1,7 +1,6 @@
 
 #from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
-from modelos.ArticuloReferenciaScopus import ArticuloReferenciaScopus
 #app = Flask(__name__)
 #MySQL configurations
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root@localhost/bd_tesis'
@@ -10,10 +9,10 @@ from modelos.ArticuloReferenciaScopus import ArticuloReferenciaScopus
 db = SQLAlchemy()
 
 ###Models####
-class DetalleReferenciaScopus(db.Model):
-    __tablename__ = "detalleReferenciaScopus"
-    id = db.Column(db.Integer, primary_key=True)
-    id_articleRef  = db.Column(db.Integer, db.ForeignKey(ArticuloReferenciaScopus.id_referencia))
+class DetalleReferencia(db.Model):
+    __tablename__ = "detalle_referencia"
+    id_detalle_referencia = db.Column(db.Integer, primary_key=True)
+    id_referencia = db.Column(db.Integer)
     container_type = db.Column(db.String(200))
     source = db.Column(db.String(200))
     filled = db.Column(db.String(30))
@@ -30,16 +29,14 @@ class DetalleReferenciaScopus(db.Model):
     pub_year = db.Column(db.Integer)
     venue = db.Column(db.String(100))
     abstract = db.Column(db.String(350))
-    
-    articulosReferencia = db.relationship(ArticuloReferenciaScopus, foreign_keys="DetalleReferenciaScopus.id_articleRef")
-
+  
     def create(self):
       db.session.add(self)
       db.session.commit()
       return self
 
-    def __init__(self, id_articleRef , container_type, source, filled, gsrank, pub_url, author_id, num_citations, url_scholarbib, url_add_sclib, citedby_url, url_related_articles, title, author, pub_year, venue, abstract):
-      self.id_articleRef  = id_articleRef 
+    def __init__(self, id_referencia, container_type, source, filled, gsrank, pub_url, author_id, num_citations, url_scholarbib, url_add_sclib, citedby_url, url_related_articles, title, author, pub_year, venue, abstract):
+      self.id_referencia  = id_referencia 
       self.container_type = container_type
       self.source = source 
       self.filled = filled

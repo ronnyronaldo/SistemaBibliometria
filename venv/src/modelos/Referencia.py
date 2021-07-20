@@ -19,11 +19,15 @@ class Referencia(db.Model):
       db.session.add(self)
       db.session.commit()
       return self
-    """def __init__(self,title,productDescription,productBrand,price):
-        self.title = title
-        self.productDescription = productDescription
-        self.productBrand = productBrand
-        self.price = price"""
+
+    def delete(referencia):
+      db.session.delete(referencia)
+      db.session.commit()
+      return referencia
+   
+    def __init__(self,id_articulo,referencia):
+        self.id_articulo = id_articulo
+        self.referencia = referencia
     def __repr__(self):
         return '' % self.id_referencia
 #db.create_all() # Para crear la tabla

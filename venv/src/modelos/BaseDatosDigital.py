@@ -22,11 +22,20 @@ class BaseDatosDigital(db.Model):
       db.session.add(self)
       db.session.commit()
       return self
-    """def __init__(self,title,productDescription,productBrand,price):
-        self.title = title
-        self.productDescription = productDescription
-        self.productBrand = productBrand
-        self.price = price"""
+    
+    def delete(baseDatosDigital):
+      db.session.delete(baseDatosDigital)
+      db.session.commit()
+      return baseDatosDigital
+
+    def __init__(self, nombre_base_datos_digital, proveedor, costo_actual, suscripcion_descripcion, area_servicio, esUtilizadaEstudio):
+        self.nombre_base_datos_digital = nombre_base_datos_digital
+        self.proveedor = proveedor
+        self.costo_actual = costo_actual
+        self.suscripcion_descripcion = suscripcion_descripcion
+        self.area_servicio = area_servicio
+        self.esUtilizadaEstudio = esUtilizadaEstudio
+
     def __repr__(self):
         return '' % self.id_base_datos_digital
 #db.create_all() # Para crear la tabla

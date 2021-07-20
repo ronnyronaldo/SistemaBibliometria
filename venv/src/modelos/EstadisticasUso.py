@@ -21,11 +21,18 @@ class EstadisticasUso(db.Model):
       db.session.add(self)
       db.session.commit()
       return self
-    """def __init__(self,title,productDescription,productBrand,price):
-        self.title = title
-        self.productDescription = productDescription
-        self.productBrand = productBrand
-        self.price = price"""
+    
+    def delete(estadisticasUso):
+      db.session.delete(estadisticasUso)
+      db.session.commit()
+      return estadisticasUso
+
+    def __init__(self, id_base_datos_digital, año, mes, numero_busquedas):
+        self.id_base_datos_digital = id_base_datos_digital
+        self.año = año
+        self.mes = mes
+        self.numero_busquedas = numero_busquedas
+
     def __repr__(self):
         return '' % self.id_estadisticas_uso
 #db.create_all() # Para crear la tabla

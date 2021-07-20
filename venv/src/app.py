@@ -29,28 +29,17 @@ from rutas.servicio_area_unesco import servicio_area_unesco
 from modelos.AreaFrascati import db
 from rutas.servicio_area_frascati import servicio_area_frascati
 #Objeto AreaFrascati
-
-#Objeto Articulo
+#Objeto Articulo Scopus
 from modelos.ArticuloScopus import db
-from rutas.articulo_bp import articulo_bp
-#Objeto Articulo
-#Objeto ArticuloReferencias
-from modelos.ArticuloReferenciaScopus import db
-from rutas.articuloReferencia_bp import articuloReferencia_bp
-#Objeto ArticuloReferencias
-#Objeto Referencia
-from modelos.DetalleReferenciaScopus import db
-from rutas.referencia_bp import referencia_bp
-#Objeto Referencia
-#Objeto ReferenciaCompleta
-from modelos.ReferenciaCorrectaScopus import db
-#Objeto ReferenciaCompleta
-#Objeto ReferenciaNoEncontradas
-from modelos.ReferenciaNoEncontradaScopus import db
-#Objeto ReferenciasNoEncontradas
-#Objeto ReferenciaErroneas
-from modelos.ReferenciaErroneaScopus import db
-#Objeto ReferenciasErronas
+from rutas.servicio_articulo_scopus import servicio_articulo_scopus
+#Objeto Articulo Scopus
+#Objeto Autor
+from modelos.Autor import db
+from rutas.servicio_autor import servicio_autor
+#Objeto Autor
+#Objeto clustering
+from rutas.servicio_clustering import servicio_clustering
+#Objeto clustering
 #Configuracion de la aplicacion y de la base de datos
 app = Flask(__name__)
 CORS(app, allow_headers=["Content-Type", "Authorization", "Access-Control-Allow-Credentials"], supports_credentials=True)
@@ -61,15 +50,15 @@ migrate = Migrate(app, db)
 
 # Registrar los objetos para poder navegar
 app.register_blueprint(servicio_articulo, url_prefix='/articulo')
+app.register_blueprint(servicio_autor, url_prefix='/autor')
 app.register_blueprint(servicio_referencia, url_prefix='/referencia')
 app.register_blueprint(servicio_base_datos_digital, url_prefix='/baseDatosDigital')
 app.register_blueprint(servicio_medio_publicacion, url_prefix='/medioPublicacion')
 app.register_blueprint(servicio_estadisticas_uso, url_prefix='/estadisticasUso') 
 app.register_blueprint(servicio_area_frascati, url_prefix='/areaFrascati') 
 app.register_blueprint(servicio_area_unesco, url_prefix='/areaUnesco') 
-app.register_blueprint(articulo_bp, url_prefix='/articuloScopus')
-app.register_blueprint(articuloReferencia_bp, url_prefix='/referencia')
-app.register_blueprint(referencia_bp, url_prefix='/referenciaDetalle')
+app.register_blueprint(servicio_articulo_scopus, url_prefix='/articuloScopus')
+app.register_blueprint(servicio_clustering, url_prefix='/cluster')
 
 # Correr la aplicacion
 app.run()

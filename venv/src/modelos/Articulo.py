@@ -44,6 +44,12 @@ class Articulo(db.Model):
       db.session.add(self)
       db.session.commit()
       return self
+
+    def delete(articulo):
+      db.session.delete(articulo)
+      db.session.commit()
+      return articulo
+   
     def __init__(self, id_base_datos_digital, id_area_unesco, id_area_frascati, id_medio_publicacion, url_dspace, titulo, titulo_alternativo, palabras_clave, abstract, resumen, nombre_area_frascati_amplio, nombre_area_unesco_amplio, tipo_publicacion, anio_publicacion, link_revista, doi, estado_publicacion, enlace_documento, factor_impacto, cuartil, autor_identificación, orden_autor, nombres, nombre_afiliacion, nombre_medio_publicacion, nombre_area_frascati_especifico, nombre_area_unesco_especifico):
         self.id_base_datos_digital = id_base_datos_digital
         self.id_area_unesco = id_area_unesco 
