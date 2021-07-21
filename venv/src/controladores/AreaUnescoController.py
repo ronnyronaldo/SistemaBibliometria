@@ -19,6 +19,12 @@ def validarAreaUnescoPorNombre(nombre):
     area_unesco = area_unesco_schema.dump(get_area_unesco)
     return make_response(jsonify({"area_unesco": area_unesco}))
 
+def buscarAreaUnescoPorId(id_area_unesco):
+    get_area_unesco = AreaUnesco.query.filter(AreaUnesco.id_area_unesco == id_area_unesco)
+    area_unesco_schema = AreaUnescoSchema(many=True)
+    area_unesco = area_unesco_schema.dump(get_area_unesco)
+    return make_response(jsonify({"area_unesco": area_unesco}))
+
 def listaAreaUnesco():
     get_area_unesco = AreaUnesco.query.all()
     area_unesco_schema = AreaUnescoSchema(many=True)

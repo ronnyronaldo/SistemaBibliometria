@@ -1,5 +1,5 @@
 from flask import Blueprint
-from controladores.Clustering import ejecutar, ejecutarAnios, clusterAreas, clusterMediosPublicacionOrdenAutor, clusterRevistasRefNumCit
+from controladores.Clustering import ejecutar, ejecutarAnios, clusterAreas, clusterMediosPublicacionOrdenAutor, clusterRevistasRefNumCit, clusterAreasPorAnio
 servicio_clustering =  Blueprint('servicio_clustering', __name__)
 @servicio_clustering.route('/ejecutar', methods=['GET']) 
 def clustering():
@@ -22,3 +22,7 @@ def clusteringMediosPublicacionOrdenAutor():
 @servicio_clustering.route('/ejecutarRevistasRefNumCit', methods=['GET']) 
 def clusteringRevistasRefNumCit():
     return clusterRevistasRefNumCit()
+
+@servicio_clustering.route('/ejecutarClusterAreasPorAnio/<int:anio_publicacion>', methods=['GET']) 
+def clusteringAreasPorAnio(anio_publicacion):
+    return clusterAreasPorAnio(anio_publicacion)

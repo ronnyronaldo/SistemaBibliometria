@@ -7,7 +7,7 @@ from sklearn.metrics import pairwise_distances_argmin_min
 import seaborn as sb
 import matplotlib.pyplot as plt
 from flask import Flask, request, jsonify, make_response
-from controladores.ArticuloController import listaArticulos, listaArticulosMineria, listaArticulosMineriaAnios
+from controladores.ArticuloController import listaArticulos, listaArticulosMineria, listaArticulosMineriaAnios, listaArticulosMineriaPorAnio
 from controladores.DetalleReferenciaController import listaDetalleReferencia 
 from sklearn.decomposition import PCA
 from mpl_toolkits.mplot3d import Axes3D
@@ -89,6 +89,45 @@ def clusterAreas():
     # ejex = f1.to_json()
     # ejey = f2.to_json()
     areas = pd.concat([dataframe[['id_area_unesco']], dataframe[['id_area_frascati']],dataframe['KMeans_Clusters']], axis = 1)
+    area = areas.to_json()
+    # plt.scatter(f1, f2, c=asignar, s=70)
+    # plt.scatter(C[:, 0], C[:, 1], marker='*', c=colores, s=1000)
+    # plt.show()
+    #valorClustering = dataframe.to_json()
+    return make_response(jsonify(area))
+
+def clusterAreasPorAnio(anio_publicacion):
+    respuesta = (listaArticulosMineriaPorAnio(anio_publicacion)).json
+    dataframe = pd.io.json.json_normalize(respuesta)
+    
+    X = np.array(dataframe[["id_area_unesco","id_area_frascati","orden_autor"]])
+    y = np.array(dataframe['anio_publicacion'])
+    print(X.shape)
+
+    kmeans = KMeans(n_clusters=7).fit(X)
+    centroids = kmeans.cluster_centers_
+
+    # Predicting the clusters
+    labels = kmeans.predict(X)
+
+    # Getting the cluster centers
+    C = kmeans.cluster_centers_
+    colores=['red','green','blue','cyan','yellow','pink','purple']
+    asignar=[]
+    for row in labels:
+        asignar.append(colores[row])
+
+    # fig = plt.figure()
+    # ax = Axes3D(fig)
+    # ax.scatter(X[:, 0], X[:, 1], X[:, 2], c=asignar,s=60)
+    # ax.scatter(C[:, 0], C[:, 1], C[:, 2], marker='*', c=colores, s=1000)
+    dataframe['KMeans_Clusters'] = labels
+    # Getting the values and plotting it
+    f1 = dataframe['id_area_unesco'].values
+    f2 = dataframe['id_area_frascati'].values
+    # ejex = f1.to_json()
+    # ejey = f2.to_json()
+    areas = pd.concat([dataframe[['id_area_unesco']], dataframe[['id_area_frascati']],dataframe['KMeans_Clusters'], dataframe['id_articulo']], axis = 1)
     area = areas.to_json()
     # plt.scatter(f1, f2, c=asignar, s=70)
     # plt.scatter(C[:, 0], C[:, 1], marker='*', c=colores, s=1000)

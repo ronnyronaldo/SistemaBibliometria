@@ -19,6 +19,12 @@ def validarAreaFrascatiPorNombre(nombre):
     area_frascati = area_frascati_schema.dump(get_area_frascati)
     return make_response(jsonify({"area_frascati": area_frascati}))
 
+def buscarAreaFrascatiPorId(id_area_frascati):
+    get_area_frascati = AreaFrascati.query.filter(AreaFrascati.id_area_frascati == id_area_frascati)
+    area_frascati_schema = AreaFrascatiSchema(many=True)
+    area_frascati = area_frascati_schema.dump(get_area_frascati)
+    return make_response(jsonify({"area_frascati": area_frascati}))
+
 def listaAreaFrascati():
     get_area_frascati = AreaFrascati.query.all()
     area_frascati_schema = AreaFrascatiSchema(many=True)
