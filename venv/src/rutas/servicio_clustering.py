@@ -23,6 +23,6 @@ def clusteringMediosPublicacionOrdenAutor():
 def clusteringRevistasRefNumCit():
     return clusterRevistasRefNumCit()
 
-@servicio_clustering.route('/ejecutarClusterAreasPorAnio/<int:anio_publicacion>', methods=['GET']) 
-def clusteringAreasPorAnio(anio_publicacion):
-    return clusterAreasPorAnio(anio_publicacion)
+@servicio_clustering.route('/ejecutarClusterAreasPorAnio/<int:anio_publicacion>/<int:num_cluster>', methods=['GET']) 
+def clusteringAreasPorAnio(anio_publicacion, num_cluster):
+    return clusterAreasPorAnio(anio_publicacion, num_cluster)

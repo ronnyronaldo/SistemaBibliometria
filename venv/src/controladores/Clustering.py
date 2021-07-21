@@ -96,7 +96,7 @@ def clusterAreas():
     #valorClustering = dataframe.to_json()
     return make_response(jsonify(area))
 
-def clusterAreasPorAnio(anio_publicacion):
+def clusterAreasPorAnio(anio_publicacion, num_cluster):
     respuesta = (listaArticulosMineriaPorAnio(anio_publicacion)).json
     dataframe = pd.io.json.json_normalize(respuesta)
     
@@ -104,18 +104,18 @@ def clusterAreasPorAnio(anio_publicacion):
     y = np.array(dataframe['anio_publicacion'])
     print(X.shape)
 
-    kmeans = KMeans(n_clusters=7).fit(X)
+    kmeans = KMeans(n_clusters=num_cluster).fit(X)
     centroids = kmeans.cluster_centers_
 
     # Predicting the clusters
     labels = kmeans.predict(X)
 
     # Getting the cluster centers
-    C = kmeans.cluster_centers_
+    """C = kmeans.cluster_centers_
     colores=['red','green','blue','cyan','yellow','pink','purple']
     asignar=[]
     for row in labels:
-        asignar.append(colores[row])
+        asignar.append(colores[row])"""
 
     # fig = plt.figure()
     # ax = Axes3D(fig)

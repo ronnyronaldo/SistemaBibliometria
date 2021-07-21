@@ -124,34 +124,20 @@ def listaArticulosMineriaPorAnio(anio_publicacion):
     return make_response(jsonify(articulos))
 
 def obtenerDetalleClusterAreasPub(resultadoClusterAreas):
-    cluster1 = []
-    cluster2 = []
-    cluster3 = []
-    cluster4 = []
-    cluster5 = []
-    cluster6 = []
-    cluster7 = []
+    numero_cluster = resultadoClusterAreas[0]['num_cluster']
+    clusters = []
+    for i in range(numero_cluster):
+        valor = {i: []}
+        clusters.append(valor) 
     for registro in resultadoClusterAreas:
         respuestaArticulo = buscarArticuloPorId(registro['id_articulo']).json['articulo'][0]
         respuestaAreaFrascati = buscarAreaFrascatiPorId(respuestaArticulo['id_area_frascati']).json['area_frascati'][0]
         respuestaAreaUnesco = buscarAreaUnescoPorId(respuestaArticulo['id_area_unesco']).json['area_unesco'][0]
         valor = {"areaFrascati": respuestaAreaFrascati['descripcion'], "areaUnesco": respuestaAreaUnesco['descripcion_unesco'], "id_articulo": registro['id_articulo']}
-
-        if registro['id_cluster'] == 0:
-            cluster1.append(valor)
-        if registro['id_cluster'] == 1:
-            cluster2.append(valor)
-        if registro['id_cluster'] == 2:
-            cluster3.append(valor)
-        if registro['id_cluster'] == 3:
-            cluster4.append(valor)
-        if registro['id_cluster'] == 4:
-            cluster5.append(valor)
-        if registro['id_cluster'] == 5:
-            cluster6.append(valor)
-        if registro['id_cluster'] == 6:
-            cluster7.append(valor)
-    return make_response(jsonify([{"cluster1" : cluster1, "cluster2" : cluster2, "cluster3" : cluster3, "cluster4" : cluster4, "cluster5" : cluster5, "cluster6" : cluster6, "cluster7" : cluster7}]))
+        for i in range(numero_cluster):
+            if registro['id_cluster'] == i:
+                clusters[i][i].append(valor)
+    return make_response(jsonify(clusters))
 
 def listaArticulosMineriaAnios():
     articulosRespuesta = (db.session.query(Articulo).with_entities(Articulo.anio_publicacion, Articulo.titulo)).all()
