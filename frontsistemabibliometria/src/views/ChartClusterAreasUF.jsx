@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
+import { validacionInputService } from '../_services/validacionInput.service';
 import { color, scaleLinear, scaleBand, range } from 'd3';
 
 class Barchar extends Component {
@@ -53,24 +54,17 @@ class Barchar extends Component {
         
         const xScale = scaleLinear().domain([0, au]).range([0, width-150])
         const yScale = scaleLinear().domain([0, af]).range([height, 0])
+    
         function color(cluster){
-            if (cluster == 0) return "blue"
-            if (cluster == 1) return "green"
-            if (cluster == 2) return "orange"
-            if (cluster == 3) return "red"
-            if (cluster == 4) return "black"
-            if (cluster == 5) return "cyan"
-            if (cluster == 6) return "pink"
+            for (var i = 0; i< totales.length ; i++){
+                if(cluster == i) return validacionInputService.valorColor(i+1)
+            }
         }
-
+        
         function nombre(cluster){
-            if (cluster == 0) return "Cluster 1 (" + totales[0]+")"
-            if (cluster == 1) return "Cluster 2 (" + totales[1]+")"
-            if (cluster == 2) return "Cluster 3 (" + totales[2]+")"
-            if (cluster == 3) return "Cluster 4 (" + totales[3]+")"
-            if (cluster == 4) return "Cluster 5 (" + totales[4]+")"
-            if (cluster == 5) return "Cluster 6 (" + totales[5]+")"
-            if (cluster == 6) return "Cluster 7 (" + totales[6]+")"
+            for (var  i = 0; totales.length; i++){
+                if(cluster == i) return "Cluster "+i+" (" + totales[i]+")"
+            }
         }
 
         var dot = svg.selectAll("circle")
@@ -90,8 +84,12 @@ class Barchar extends Component {
         .attr("height", 100)
         .attr("width", 100);
 
-        const valor = [0,1,2,3,4,5,6];
-        legend.selectAll('g').data(valor)
+        let leyenda = []
+        for (var j = 0; j < totales.length; j++){
+            leyenda.push(j)
+        }
+
+        legend.selectAll('g').data(leyenda)
         .enter()
         .append('g')
         .each(function(d, i) {

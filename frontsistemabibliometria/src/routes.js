@@ -81,7 +81,7 @@ const dashboardRoutes = [
   },
   {
     path: "/analisis",
-    name: "Ejecutar Análisis",
+    name: "Minería de Datos",
     icon: "nc-icon nc-button-play",
     component: AnalisisDataMining,
     layout: "/admin",

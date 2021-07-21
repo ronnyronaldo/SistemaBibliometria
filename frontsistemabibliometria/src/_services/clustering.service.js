@@ -25,8 +25,8 @@ async function ejecutarclusteringRevRefNumCit() {
     return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarRevistasRefNumCit`);
 }
 
-async function ejecutarclusteringAreasPorAnio(anio_publicacion) {
-    return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarClusterAreasPorAnio/`+ anio_publicacion);
+async function ejecutarclusteringAreasPorAnio(anio_publicacion, num_cluster) {
+    return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarClusterAreasPorAnio/`+ anio_publicacion+'/'+ num_cluster);
 }
 
 

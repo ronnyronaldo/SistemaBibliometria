@@ -10,6 +10,18 @@ import ChartClusterAreasUF from './ChartClusterAreasUF';
 import ChartClusterMedPubOrdAut from './ChartClusterMedPubOrdAut';
 import ChartClusterRevNumCit from './ChartClusterRevNumCit';
 import {medioPublicacionService} from '../_services/medio_publicacion.service';
+// react plugin for creating notifications over the dashboard
+import NotificationAlert from "react-notification-alert";
+/**Spinner */
+import { css } from "@emotion/react";
+import FadeLoader from "react-spinners/FadeLoader";
+import { Link } from "react-router-dom";
+const override = css`
+  display: block;
+  margin: 0 auto;
+  border-color: #212F3C;
+`;
+/**Spinner */
 
 // react-bootstrap components
 import {
@@ -26,7 +38,53 @@ import {
 } from "react-bootstrap";
 import { publicacionService } from "_services/publicacion.service";
 function AnalisisDataMining() {
+  const [showModal, setShowModal] = React.useState(false);
+  const notificationAlertRef = React.useRef(null);
+  const notify = (place, mensaje, type) => {
+    //var color = Math.floor(Math.random() * 5 + 1);
+    //var type = "danger";
+    /*switch (color) {
+      case 1:
+        type = "primary";
+        break;
+      case 2:
+        type = "success";
+        break;
+      case 3:
+        type = "danger";
+        break;
+      case 4:
+        type = "warning";
+        break;
+      case 5:
+        type = "info";
+        break;
+      default:
+        break;
+    }*/
+    var options = {};
+    options = {
+      place: place,
+      message: (
+        <div>
+          <div>
+            {mensaje}
+          </div>
+        </div>
+      ),
+      type: type,
+      icon: "nc-icon nc-bell-55",
+      autoDismiss: 7,
+    };
+    notificationAlertRef.current.notificationAlert(options);
+  };
   
+  /**Spinner */
+  let [loading, setLoading] = React.useState(false);
+  /**Spinner */
+
+  const [numero_cluster, setNumeroCluster] = React.useState(5);
+  const [nombre_cluster, setNombreCluster] = React.useState([]);
   const [detalleDatosClusterAreas, setDetalleDatosClusterAreas] = React.useState([]);
   const [tituloGrafico, setTituloGrafico] = React.useState('');
   const [detalleDatosClusterEspAreas, setDetalleDatosClusterEspAreas] = React.useState([]);
@@ -78,11 +136,11 @@ function AnalisisDataMining() {
   }
 
   async function handleEjecutarClusteringAreasPorAnio() { 
-    setTituloGrafico('PRODUCTIVIDAD POR AREAS');
+    setTituloGrafico('PRODUCTIVIDAD POR ÁREAS');
     setResultadoClusterAreas([]);
     setResultadoClusterMediosPublicacionOrdenAutor([]);
     setResultadoClusterRevNumCit([]);
-    await clusteringService.ejecutarclusteringAreasPorAnio(2018).then(async(value) => {
+    await clusteringService.ejecutarclusteringAreasPorAnio(2018, numero_cluster).then(async(value) => {
       var objeto = JSON.parse(value);
       var id_area_frascati = objeto.id_area_frascati;
       var id_area_unesco = objeto.id_area_unesco;
@@ -103,7 +161,8 @@ function AnalisisDataMining() {
         }
         const idArticuloCluster = {
           id_cluster: listaKMeans_Clusters[i],
-          id_articulo: listaArticulo[i]
+          id_articulo: listaArticulo[i],
+          num_cluster: numero_cluster
         }
         resultadoArticuloCluster.push(idArticuloCluster)
         resultadoAreas.push(registro)
@@ -111,10 +170,17 @@ function AnalisisDataMining() {
 
   
       await publicacionService.obtenerDetalleClusterAreasPub(resultadoArticuloCluster).then( value => {
-        let totales = [value[0].cluster1.length, value[0].cluster2.length, value[0].cluster3.length, value[0].cluster4.length, value[0].cluster5.length, value[0].cluster6.length, value[0].cluster7.length]
-        setTotalClusterAreasPorAnio(totales);
         if(value.length != 0){
-          setDetalleDatosClusterAreas(value[0])
+          let totales = [];
+          let nombre_cluster = [];
+          for (var i=0; i < numero_cluster ; i++){
+            let registro_nombre_cluster = {"codigo" : i , "nombre" : "Cluster "+ i}
+            nombre_cluster.push(registro_nombre_cluster)
+            totales.push(value[i][i].length)
+          }
+          setNombreCluster(nombre_cluster);
+          setTotalClusterAreasPorAnio(totales);
+          setDetalleDatosClusterAreas(value)
         }
       })
 
@@ -198,43 +264,17 @@ function AnalisisDataMining() {
     setDetalleDatosClusterEspAreas([]);
     await tablaPaginacionService.destruirTabla('#dataClusterAreas');
     let idCluster = document.getElementById("idCluster").value;
-    if(idCluster == 0){
+    if(idCluster == 'N'){
       console.log('No  ha seleccionado el cluster')
-    }
-    if(idCluster == 1){
-      await handleValoresUnicos(detalleDatosClusterAreas.cluster1).then(value => {
-        setDetalleDatosClusterEspAreas(value)
-      })
-    }
-    if(idCluster == 2){
-      await handleValoresUnicos(detalleDatosClusterAreas.cluster2).then(value => {
-        setDetalleDatosClusterEspAreas(value)
-      })
-    }
-    if(idCluster == 3){
-      await handleValoresUnicos(detalleDatosClusterAreas.cluster3).then(value => {
-        setDetalleDatosClusterEspAreas(value)
-      })
-    }
-    if(idCluster == 4){
-      await handleValoresUnicos(detalleDatosClusterAreas.cluster4).then(value => {
-        setDetalleDatosClusterEspAreas(value)
-      })
-    }
-    if(idCluster == 5){
-      await handleValoresUnicos(detalleDatosClusterAreas.cluster5).then(value => {
-        setDetalleDatosClusterEspAreas(value)
-      })
-    }
-    if(idCluster == 6){
-      await handleValoresUnicos(detalleDatosClusterAreas.cluster6).then(value => {
-        setDetalleDatosClusterEspAreas(value)
-      })
-    }
-    if(idCluster == 7){
-      await handleValoresUnicos(detalleDatosClusterAreas.cluster7).then(value => {
-        setDetalleDatosClusterEspAreas(value)
-      })
+    }else{
+      for (var i = 0; i < numero_cluster; i++){
+        if(idCluster == i){
+          console.log(detalleDatosClusterAreas[i][i])
+          await handleValoresUnicos(detalleDatosClusterAreas[i][i]).then(value => {
+            setDetalleDatosClusterEspAreas(value)
+          })
+        }
+      }
     }
     await tablaPaginacionService.paginacion('#dataClusterAreas');
   }
@@ -242,6 +282,10 @@ function AnalisisDataMining() {
   const h = 500;
   return (
     <>
+     <FadeLoader loading={loading} css={override} size={50} />
+      <div className="rna-container">
+        <NotificationAlert ref={notificationAlertRef} />
+      </div>
       <Container fluid>
         <Row>
           <Col md="12">
@@ -336,14 +380,10 @@ function AnalisisDataMining() {
                       <label>Cluster</label>
                       <Form.Row>
                         <select className="form-control" id="idCluster" onClick = {handleSeleccionarDatosCluster}>
-                          <option value="0">Seleccione el Cluster</option>
-                          <option value="1">Cluster 1</option>
-                          <option value="2">Cluster 2</option>
-                          <option value="3">Cluster 3</option>
-                          <option value="4">Cluster 4</option>
-                          <option value="5">Cluster 5</option>
-                          <option value="6">Cluster 6</option>
-                          <option value="7">Cluster 7</option>
+                          <option value="N">Seleccione el Cluster</option>
+                          {nombre_cluster.map(item => (
+                            <option value={item.codigo} key={item.codigo}>{item.nombre}</option>
+                          ))}
                         </select>
                       </Form.Row>
                     </Form.Group>

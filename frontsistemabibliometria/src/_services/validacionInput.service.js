@@ -1,6 +1,7 @@
 export const validacionInputService = {
     campoVacio,
-    esDecimal
+    esDecimal,
+    valorColor
 };
 
 function esEntero(texto, mensaje) {
@@ -105,4 +106,21 @@ function campoVacio(texto, mensaje) {
         return false;
     }
     return true;
+}
+
+function valorColor(valor){
+    if(valor == 1) return "blue"
+    if(valor == 2) return "green"
+    if(valor == 3) return "orange"
+    if(valor == 4) return "red"
+    if(valor == 5) return "black"
+    if(valor == 6) return "cyan"
+    if(valor == 7) return "pink"
+    if(valor == 8) return "blue"
+    if(valor == 9) return "blue"
+    if(valor == 10) return "blue"
+    if(valor == 11) return "blue"
+    if(valor == 12) return "blue"
+    if(valor == 13) return "blue"
+    if(valor == 14) return "blue"
 }
