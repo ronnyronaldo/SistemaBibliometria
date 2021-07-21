@@ -9,7 +9,7 @@ class Barchar extends Component {
     }
     componentDidMount() {
         // set the dimensions and margins of the graph
-        const {data, w, h, af, au } = this.props;
+        const {data, w, h, af, au, totales} = this.props;
         var margin = {top: 20, right: 20, bottom: 40, left: 60},
         width = w - margin.left - margin.right,
         height = h - margin.top - margin.bottom;
@@ -24,7 +24,7 @@ class Barchar extends Component {
             "translate(" + margin.left + "," + margin.top + ")");
 
         // Add X axis
-        var x = d3.scaleLinear().domain([0, au]).range([0, width]);
+        var x = d3.scaleLinear().domain([0, au]).range([0, width-150]);
         svg
         .append("g")
         .attr("transform", "translate(0," + height + ")")
@@ -39,7 +39,7 @@ class Barchar extends Component {
         // Add X axis label:
         svg.append("text")
         .attr("text-anchor", "end")
-        .attr("x", width)
+        .attr("x", width-150)
         .attr("y", height + margin.top + 20)
         .text("Area Unesco");
 
@@ -50,8 +50,8 @@ class Barchar extends Component {
         .attr("y", -margin.left+20)
         .attr("x", -margin.top)
         .text("Area Frascati")
-
-        const xScale = scaleLinear().domain([0, au]).range([0, width])
+        
+        const xScale = scaleLinear().domain([0, au]).range([0, width-150])
         const yScale = scaleLinear().domain([0, af]).range([height, 0])
         function color(cluster){
             if (cluster == 0) return "blue"
@@ -63,6 +63,16 @@ class Barchar extends Component {
             if (cluster == 6) return "pink"
         }
 
+        function nombre(cluster){
+            if (cluster == 0) return "Cluster 1 (" + totales[0]+")"
+            if (cluster == 1) return "Cluster 2 (" + totales[1]+")"
+            if (cluster == 2) return "Cluster 3 (" + totales[2]+")"
+            if (cluster == 3) return "Cluster 4 (" + totales[3]+")"
+            if (cluster == 4) return "Cluster 5 (" + totales[4]+")"
+            if (cluster == 5) return "Cluster 6 (" + totales[5]+")"
+            if (cluster == 6) return "Cluster 7 (" + totales[6]+")"
+        }
+
         var dot = svg.selectAll("circle")
         .data(data)
         .enter()
@@ -72,23 +82,36 @@ class Barchar extends Component {
         .attr("r", d => 5)
         .attr("fill", d => color(d.id_cluster))
         .attr( "fill-opacity", 0.4 )
-        // .on("click", function(){ 
-        //     if (dot.attr("fill") === "red") dot.attr("fill", "blue");
-        //     else dot.attr("fill", "red");
-        //   });
+                        
+        var legend = svg.append("g")
+        .attr("class", "legend")
+        .attr("x", w - 65)
+        .attr("y", 25)
+        .attr("height", 100)
+        .attr("width", 100);
 
-        // var dot1 = svg.selectAll(".dodo")
-        //   .data(data)
-        //  .enter().append("text")
-        //   .attr("class", "dodo")
-        //   .attr("x", function(d) { return xScale(d.id_area_unesco); })
-        //   .attr("y", function(d) { return yScale(d.id_area_frascati); })
-        //   .attr("dx", ".71em")
-        //   .attr("dy", ".35em")
-        //   .text(function(d) { return "Tania";})
-        //dot.on('click' , function(d){ console.log("Hola"); });
+        const valor = [0,1,2,3,4,5,6];
+        legend.selectAll('g').data(valor)
+        .enter()
+        .append('g')
+        .each(function(d, i) {
+            var g = d3.select(this);
+            g.append("rect")
+            .attr("x", width-110)
+            .attr("y", i*25)
+            .attr("width", 10)
+            .attr("height", 10)
+            .style("fill", color(d));
+  
+            g.append("text")
+            .attr("x", width-90)
+            .attr("y", i * 25 + 8)
+            .attr("height",10)
+            .attr("width",10)
+            .style("fill", "black")
+            .text(nombre(d));
 
-
+        });
     }
     render() {
         return <>

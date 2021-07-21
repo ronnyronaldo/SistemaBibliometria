@@ -4,7 +4,8 @@ import endpoints from "./endpoints";
 export const publicacionService = {
     listar,
     insertar,
-    eliminar
+    eliminar,
+    obtenerDetalleClusterAreasPub
 };
 
 async function listar() {
@@ -17,6 +18,10 @@ async function insertar(params) {
 
 async function eliminar(id_articulo) {
     return fetchWrapper.get(`${endpoints.baseUrlPublicacion}/eliminar/` + id_articulo);
+}
+
+async function obtenerDetalleClusterAreasPub(params) {
+    return fetchWrapper.post(`${endpoints.baseUrlPublicacion}/obtenerDetalleClusterAreasPub`, params);
 }
 
 

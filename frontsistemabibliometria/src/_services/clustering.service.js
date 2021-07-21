@@ -5,7 +5,8 @@ export const clusteringService = {
     clusterAreas,
     ejecutarClusterAreas,
     ejecutarClusterMediosPublicacionOrden,
-    ejecutarclusteringRevRefNumCit
+    ejecutarclusteringRevRefNumCit,
+    ejecutarclusteringAreasPorAnio
 };
 
 async function clusterAreas() {
@@ -22,6 +23,10 @@ async function ejecutarClusterMediosPublicacionOrden() {
 
 async function ejecutarclusteringRevRefNumCit() {
     return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarRevistasRefNumCit`);
+}
+
+async function ejecutarclusteringAreasPorAnio(anio_publicacion) {
+    return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarClusterAreasPorAnio/`+ anio_publicacion);
 }
 
 
