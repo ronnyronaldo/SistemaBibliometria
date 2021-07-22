@@ -6,7 +6,8 @@ export const clusteringService = {
     ejecutarClusterAreas,
     ejecutarClusterMediosPublicacionOrden,
     ejecutarclusteringRevRefNumCit,
-    ejecutarclusteringAreasPorAnio
+    ejecutarclusteringAreasPorAnio,
+    ejecutarclusteringMediosPublicacionPorAnio
 };
 
 async function clusterAreas() {
@@ -14,21 +15,24 @@ async function clusterAreas() {
 }
 
 async function ejecutarClusterAreas(num_cluster) {
-    return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarClusterAreas`+'/'+ num_cluster);
+    return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarClusterAreas/`+ num_cluster);
 }
 
 async function ejecutarClusterMediosPublicacionOrden(numeroCluster) {
     return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarMediosPublicacionOrdenAutor/` +  numeroCluster);
 }
 
-async function ejecutarclusteringRevRefNumCit() {
-    return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarRevistasRefNumCit`);
+async function ejecutarclusteringRevRefNumCit(numeroCluster) {
+    return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarRevistasRefNumCit/`+numeroCluster);
 }
 
 async function ejecutarclusteringAreasPorAnio(anio_publicacion, num_cluster) {
     return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarClusterAreasPorAnio/`+ anio_publicacion+'/'+ num_cluster);
 }
 
+async function ejecutarclusteringMediosPublicacionPorAnio(anio_publicacion, num_cluster) {
+    return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarClusterMediosPublicacionPorAnio/`+ anio_publicacion+'/'+ num_cluster);
+}
 
 
 

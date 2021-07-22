@@ -88,6 +88,7 @@ function AnalisisDataMining() {
   const [nombre_cluster, setNombreCluster] = React.useState([]);
   const [detalleDatosClusterAreas, setDetalleDatosClusterAreas] = React.useState([]);
   const [detalleDatosClusterMediosPublciacion, setDetalleDatosClusterMediosPublicacion] = React.useState([]);
+  const [detalleDatosClusterMediosPublciacionRef, setDetalleDatosClusterMediosPublicacionRef] = React.useState([]);
   const [tituloGrafico, setTituloGrafico] = React.useState('');
   const [detalleDatosClusterEsp, setDetalleDatosClusterEsp] = React.useState([]);
   const [resultadoClusterAreas, setResultadoClusterAreas] = React.useState([]);
@@ -95,6 +96,7 @@ function AnalisisDataMining() {
   const [numeroAreaUnesco, setNumeroAreaUnesco] = React.useState(0);
   const [totalClusterAreas, setTotalClusterAreas] = React.useState([]);
   const [totalClusterMediosPublicacion, setTotalClusterMediosPublicacion] = React.useState([]);
+  const [totalClusterMediosPublicacionReferencias, setTotalClusterMediosPublicacionReferencias] = React.useState([]);
   const [resultadoClusterMediosPublicacionOrdenAutor, setResultadoClusterMediosPublicacionOrdenAutor] = React.useState([]);
   const [numeroMediosPublicacion, setNumeroMediosPublicacion] = React.useState(0);
   const [resultadoClusterRevNumCit, setResultadoClusterRevNumCit] = React.useState([]);
@@ -181,9 +183,20 @@ function AnalisisDataMining() {
     setTituloGrafico('PRODUCTIVIDAD POR MEDIOS PUBLICACIÓN');
     setResultadoClusterAreas([]);
     setResultadoClusterRevNumCit([]);
+    setResultadoClusterMediosPublicacionOrdenAutor([]);
     await clusteringService.ejecutarClusterMediosPublicacionOrden(numeroCluster).then(value => {
       handleProcesarDatosClusteringMediosPublicacion(value, numeroCluster );
     })
+  }
+
+  async function handleEjecutarClusteringMedPubOrdAutPorAnio(anio, numeroCluster) { 
+    setTituloGrafico('PRODUCTIVIDAD POR MEDIOS PUBLICACIÓN');
+    setResultadoClusterAreas([]);
+    setResultadoClusterRevNumCit([]);
+    setResultadoClusterMediosPublicacionOrdenAutor([]);
+    await clusteringService.ejecutarclusteringMediosPublicacionPorAnio(anio, numeroCluster).then(async(value) => {
+      handleProcesarDatosClusteringMediosPublicacion(value, numeroCluster );
+    });
   }
 
   async function handleProcesarDatosClusteringMediosPublicacion(value, numeroCluster) { 
@@ -236,32 +249,63 @@ function AnalisisDataMining() {
     });     
   }
 
-  async function handleEjecutarClusteringRevNumCit() { 
+  async function handleEjecutarClusteringRevNumCit(numeroCluster) { 
+    setTituloGrafico('USO POR MEDIOS PUBLICACIÓN');
     setResultadoClusterMediosPublicacionOrdenAutor([]);
+    setResultadoClusterRevNumCit([]);
     setResultadoClusterAreas([]);
-    await clusteringService.ejecutarclusteringRevRefNumCit().then(value => {
-      //console.log(value)
-      var objeto = JSON.parse(value);
-      console.log(objeto);
-      var revista = objeto.revista;
-      var num_citations = objeto.num_citations;
-      var KMeans_Clusters = objeto.KMeans_Clusters
-      var listaRevista= Object.values(revista)
-      var listaNumCit= Object.values(num_citations)
-      var listaKMeans_Clusters= Object.values(KMeans_Clusters)
-      var resultadoRevNumCit = []
-      for (var i = 0; i<listaRevista.length; i++){
-        const registro = {
-          revista: listaRevista[i],
-          num_citations: listaNumCit[i],
-          id_cluster: listaKMeans_Clusters[i]
-        }
-        resultadoRevNumCit.push(registro)
-      }
-      setResultadoClusterRevNumCit(resultadoRevNumCit);
-      
-      
+    await clusteringService.ejecutarclusteringRevRefNumCit(numeroCluster).then(value => {
+      handleProcesarDatosClusteringMediosPublicacionReferencias(value, numeroCluster); 
     });
+  }
+  async function handleProcesarDatosClusteringMediosPublicacionReferencias(value, numeroCluster) { 
+    var objeto = JSON.parse(value);
+    var revista = objeto.revista;
+    var num_citations = objeto.num_citations;
+    var KMeans_Clusters = objeto.KMeans_Clusters
+    var id_referencia = objeto.id_referencia
+    var nombre_medio_publicacion = objeto.venue
+    var listaRevista= Object.values(revista)
+    var listaNumCit= Object.values(num_citations)
+    var listaKMeans_Clusters= Object.values(KMeans_Clusters)
+    var listaReferencia = Object.values(id_referencia)
+    var listaNombreMedioPublicacion = Object.values(nombre_medio_publicacion)
+
+    var resultadoRevNumCit = []
+    var resultadoMedioPublicacionClusterRef = []
+    for (var i = 0; i<listaRevista.length; i++){
+      const registro = {
+        revista: listaRevista[i],
+        num_citations: listaNumCit[i],
+        id_cluster: listaKMeans_Clusters[i],
+        id_referencia: listaReferencia[i]
+      }
+      const idReferenciaCluster = {
+        id_cluster: listaKMeans_Clusters[i],
+        id_referencia: listaReferencia[i],
+        nombre_medio_publicacion: listaNombreMedioPublicacion[i],
+        num_cluster: numeroCluster
+      }
+      resultadoMedioPublicacionClusterRef.push(idReferenciaCluster);
+      resultadoRevNumCit.push(registro);
+    }
+
+    await publicacionService.obtenerDetalleClusterMediosPublicacionReferencias(resultadoMedioPublicacionClusterRef).then( value => {
+      if(value.length != 0){
+        let totales = [];
+        let nombre_cluster = [];
+        for (var i=0; i < numeroCluster ; i++){
+          let registro_nombre_cluster = {"codigo" : i , "nombre" : "Cluster "+ i}
+          nombre_cluster.push(registro_nombre_cluster)
+          totales.push(value[i][i].length)
+        }
+        setNombreCluster(nombre_cluster);
+        setTotalClusterMediosPublicacionReferencias(totales);
+        setDetalleDatosClusterMediosPublicacionRef(value)
+      }
+    })
+    setResultadoClusterRevNumCit(resultadoRevNumCit);
+
   }
   async function handleValoresUnicosAreas(cluster) { 
       let unicos = [];
@@ -324,6 +368,25 @@ function AnalisisDataMining() {
     }
     await tablaPaginacionService.paginacion('#dataClusterMediosPublicacion');
   }
+
+  async function handleSeleccionarDatosClusterMediosPublicacionRef() { 
+    setDetalleDatosClusterEsp([]);
+    await tablaPaginacionService.destruirTabla('#dataClusterMediosPublicacionRef');
+    let idCluster = document.getElementById("idClusterMediosPublicacionRef").value;
+    if(idCluster == 'N'){
+      console.log('No  ha seleccionado el cluster')
+    }else{
+      for (var i = 0; i < numero_cluster; i++){
+        if(idCluster == i){
+          //console.log(detalleDatosClusterMediosPublciacionRef[i][i])
+          await handleValoresUnicosMediosPublicacion(detalleDatosClusterMediosPublciacionRef[i][i]).then(value => {
+            setDetalleDatosClusterEsp(value)
+          })
+        }
+      }
+    }
+    await tablaPaginacionService.paginacion('#dataClusterMediosPublicacionRef');
+  }
   
   async function handleEjecutarOperacion() { 
     setDetalleDatosClusterEsp([]);
@@ -355,8 +418,42 @@ function AnalisisDataMining() {
           }
         }
         if(idCampo == 2){
-          handleEjecutarClusteringMedPubOrdAut(numeroCluster)
-          setNumeroCluster(numeroCluster)
+          if(idFiltro != 0){
+            if(idFiltro == 'Anio'){
+              if(idAnio != 0){
+                setNumeroCluster(numeroCluster);
+                handleEjecutarClusteringMedPubOrdAutPorAnio(idAnio, numeroCluster)
+              }else{
+                notify("tr", 'Seleccione el Año.', "danger");
+              }
+            }
+          }else{
+            if(validacionInputService.esNumero(numeroCluster) && validacionInputService.campoVacio(numeroCluster) ){
+              setNumeroCluster(numeroCluster);
+              handleEjecutarClusteringMedPubOrdAut(numeroCluster);
+            }else{
+              notify("tr", 'El número de cluster ingresado no es válido.', "danger");
+            }
+          }
+        }
+        if(idCampo == 3){
+          if(idFiltro != 0){
+            if(idFiltro == 'Anio'){
+              if(idAnio != 0){
+                setNumeroCluster(numeroCluster);
+                handleEjecutarClusteringMedPubOrdAutPorAnio(idAnio, numeroCluster)
+              }else{
+                notify("tr", 'Seleccione el Año.', "danger");
+              }
+            }
+          }else{
+            if(validacionInputService.esNumero(numeroCluster) && validacionInputService.campoVacio(numeroCluster) ){
+              setNumeroCluster(numeroCluster);
+              handleEjecutarClusteringRevNumCit(numeroCluster);
+            }else{
+              notify("tr", 'El número de cluster ingresado no es válido.', "danger");
+            }
+          }
         }
       }
       else{
@@ -403,7 +500,8 @@ function AnalisisDataMining() {
                           <select className="form-control" id="idCampo">
                             <option value="0">Seleccione</option>
                             <option value="1">Áreas</option>
-                            <option value="2">Medios Publicacion</option>
+                            <option value="2">Medios Publicacion (Publicaciones)</option>
+                            <option value="3">Medios Publicacion (Referencias)</option>
                           </select>
                         </Form.Row>
                       </Form.Group>
@@ -472,7 +570,7 @@ function AnalisisDataMining() {
                   <ChartClusterMedPubOrdAut data={resultadoClusterMediosPublicacionOrdenAutor} w={w} h={h} mp={numeroMediosPublicacion} oa = {ordenAutor} totales={totalClusterMediosPublicacion}></ChartClusterMedPubOrdAut>
                 )}
                 {resultadoClusterRevNumCit.length !== 0 && (
-                  <ChartClusterRevNumCit data={resultadoClusterRevNumCit} w={w} h={h} nr={num_revistas} nc = {num_citations} ></ChartClusterRevNumCit>
+                  <ChartClusterRevNumCit data={resultadoClusterRevNumCit} w={w} h={h} nr={num_revistas} nc = {num_citations} totales={totalClusterMediosPublicacionReferencias}></ChartClusterRevNumCit>
                 )}
               </Card.Body>
             </Card>
@@ -546,6 +644,44 @@ function AnalisisDataMining() {
                     <tbody>
                       {detalleDatosClusterEsp.map(item => (
                         <tr className="small" key={item.id_articulo}>
+                          <td width="15%">{item.medioPublicacion}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </Card.Body>
+              </Card>
+            </Col>
+          )}
+          {resultadoClusterRevNumCit.length !== 0 && (
+            <Col md="12">
+              <Card className="strpied-tabled-with-hover">
+                <Card.Header>
+                  <Card.Title as="h4">DETALLE DE LOS RESULTADOS</Card.Title>
+                </Card.Header>
+                <Card.Body className="table-full-width table-responsive px-3">
+                  <Col className="pr-1" md="2">
+                      <Form.Group>
+                        <label>Cluster</label>
+                        <Form.Row>
+                          <select className="form-control" id="idClusterMediosPublicacionRef" onClick = {handleSeleccionarDatosClusterMediosPublicacionRef}>
+                            <option value="N">Seleccione el Cluster</option>
+                            {nombre_cluster.map(item => (
+                              <option value={item.codigo} key={item.codigo}>{item.nombre}</option>
+                            ))}
+                          </select>
+                        </Form.Row>
+                      </Form.Group>
+                    </Col>
+                  <table className="table table-bordered table-hover" id="dataClusterMediosPublicacionRef" width="100%" cellSpacing="0">
+                  <thead className="thead-dark">
+                      <tr>
+                        <th>MEDIO PUBLICACION REFERENCIAS</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {detalleDatosClusterEsp.map(item => (
+                        <tr className="small" key={item.id_referencia}>
                           <td width="15%">{item.medioPublicacion}</td>
                         </tr>
                       ))}
