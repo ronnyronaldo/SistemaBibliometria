@@ -148,12 +148,29 @@ def clusterMediosPublicacionOrdenAutor(num_cluster):
     # Predicting the clusters
     labels = kmeans.predict(X)
 
-    # Getting the cluster centers
-    #C = kmeans.cluster_centers_
-    #colores=['red','green','blue','cyan','yellow']
-    #asignar=[]
-    #for row in labels:
-    #    asignar.append(colores[row])
+    dataframe['KMeans_Clusters'] = labels
+    # Getting the values and plotting it
+    f1 = dataframe['id_medio_publicacion'].values
+    f2 = dataframe['orden_autor'].values
+
+    mediosPublicacionOrden = pd.concat([dataframe[['id_medio_publicacion']], dataframe[['orden_autor']],dataframe['KMeans_Clusters'], dataframe['id_articulo']], axis = 1)
+    mediosOrden = mediosPublicacionOrden.to_json()
+    
+    return make_response(jsonify(mediosOrden))
+
+def clusterMediosPublicacionOrdenAutorPorAnio(anio_publicacion, num_cluster):
+    respuesta = (listaArticulosMineriaPorAnio(anio_publicacion)).json
+    dataframe = pd.io.json.json_normalize(respuesta)
+    
+    X = np.array(dataframe[["id_medio_publicacion","orden_autor"]])
+    y = np.array(dataframe['anio_publicacion'])
+    print(X.shape)
+
+    kmeans = KMeans(n_clusters=num_cluster).fit(X)
+    centroids = kmeans.cluster_centers_
+
+    # Predicting the clusters
+    labels = kmeans.predict(X)
 
     dataframe['KMeans_Clusters'] = labels
     # Getting the values and plotting it
@@ -165,7 +182,8 @@ def clusterMediosPublicacionOrdenAutor(num_cluster):
     
     return make_response(jsonify(mediosOrden))
 
-def clusterRevistasRefNumCit():
+
+def clusterRevistasRefNumCit(num_cluster):
     respuesta = (listaDetalleReferencia()).json
     dataframe = pd.io.json.json_normalize(respuesta)
     dataframe.venue = pd.Categorical(dataframe.venue)
@@ -175,25 +193,18 @@ def clusterRevistasRefNumCit():
     y = np.array(dataframe['pub_year'])
     print(X.shape)
 
-    kmeans = KMeans(n_clusters=5).fit(X)
+    kmeans = KMeans(n_clusters=num_cluster).fit(X)
     centroids = kmeans.cluster_centers_
 
     # Predicting the clusters
     labels = kmeans.predict(X)
-
-    # Getting the cluster centers
-    C = kmeans.cluster_centers_
-    colores=['red','green','blue','cyan','yellow','pink']
-    asignar=[]
-    for row in labels:
-        asignar.append(colores[row])
 
     dataframe['KMeans_Clusters'] = labels
     # Getting the values and plotting it
     f1 = dataframe['revista'].values
     f2 = dataframe['num_citations'].values
 
-    revistaNumCit = pd.concat([dataframe[['revista']], dataframe[['num_citations']],dataframe['KMeans_Clusters']], axis = 1)
+    revistaNumCit = pd.concat([dataframe[['revista']], dataframe[['num_citations']],dataframe['KMeans_Clusters'], dataframe['id_referencia'], dataframe['venue']], axis = 1)
     revistas = revistaNumCit.to_json()
     
     return make_response(jsonify(revistas))

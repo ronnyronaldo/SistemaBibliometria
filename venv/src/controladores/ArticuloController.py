@@ -155,6 +155,19 @@ def obtenerDetalleClusterMediosPublicacion(resultadoClusterMediosPublicacion):
                 clusters[i][i].append(valor)
     return make_response(jsonify(clusters))
 
+def obtenerDetalleClusterMediosPublicacionRef(resultadoClusterMediosPublicacionRef):
+    numero_cluster = resultadoClusterMediosPublicacionRef[0]['num_cluster']
+    clusters = []
+    for i in range(numero_cluster):
+        valor = {i: []}
+        clusters.append(valor) 
+    for registro in resultadoClusterMediosPublicacionRef:
+        valor = {"id_referencia": registro['id_referencia'], "medioPublicacion": registro['nombre_medio_publicacion']}
+        for i in range(numero_cluster):
+            if registro['id_cluster'] == i:
+                clusters[i][i].append(valor)
+    return make_response(jsonify(clusters))
+
 def listaArticulosMineriaAnios():
     articulosRespuesta = (db.session.query(Articulo).with_entities(Articulo.anio_publicacion, Articulo.titulo)).all()
     articulos = []

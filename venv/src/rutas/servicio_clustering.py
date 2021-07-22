@@ -1,5 +1,5 @@
 from flask import Blueprint
-from controladores.Clustering import ejecutar, ejecutarAnios, clusterAreas, clusterMediosPublicacionOrdenAutor, clusterRevistasRefNumCit, clusterAreasPorAnio
+from controladores.Clustering import ejecutar, ejecutarAnios, clusterAreas, clusterMediosPublicacionOrdenAutor, clusterRevistasRefNumCit, clusterAreasPorAnio, clusterMediosPublicacionOrdenAutorPorAnio
 servicio_clustering =  Blueprint('servicio_clustering', __name__)
 @servicio_clustering.route('/ejecutar', methods=['GET']) 
 def clustering():
@@ -18,10 +18,14 @@ def clusteringAreas(num_cluster):
 def clusteringMediosPublicacionOrdenAutor(num_cluster):
     return clusterMediosPublicacionOrdenAutor(num_cluster)
 
-@servicio_clustering.route('/ejecutarRevistasRefNumCit', methods=['GET']) 
-def clusteringRevistasRefNumCit():
-    return clusterRevistasRefNumCit()
+@servicio_clustering.route('/ejecutarRevistasRefNumCit/<int:num_cluster>', methods=['GET']) 
+def clusteringRevistasRefNumCit(num_cluster):
+    return clusterRevistasRefNumCit(num_cluster)
 
 @servicio_clustering.route('/ejecutarClusterAreasPorAnio/<int:anio_publicacion>/<int:num_cluster>', methods=['GET']) 
 def clusteringAreasPorAnio(anio_publicacion, num_cluster):
     return clusterAreasPorAnio(anio_publicacion, num_cluster)
+
+@servicio_clustering.route('/ejecutarClusterMediosPublicacionPorAnio/<int:anio_publicacion>/<int:num_cluster>', methods=['GET']) 
+def clusteringMediosPublicacionPorAnio(anio_publicacion, num_cluster):
+    return clusterMediosPublicacionOrdenAutorPorAnio(anio_publicacion, num_cluster)
