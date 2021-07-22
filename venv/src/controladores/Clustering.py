@@ -57,7 +57,7 @@ def ejecutarAnios():
     valorClustering = pca_titulo_anio.to_json()
     return make_response(jsonify(valorClustering))
 
-def clusterAreas():
+def clusterAreas(num_cluster):
     respuesta = (listaArticulosMineria()).json
     dataframe = pd.io.json.json_normalize(respuesta)
     
@@ -65,18 +65,18 @@ def clusterAreas():
     y = np.array(dataframe['anio_publicacion'])
     print(X.shape)
 
-    kmeans = KMeans(n_clusters=7).fit(X)
+    kmeans = KMeans(n_clusters=num_cluster).fit(X)
     centroids = kmeans.cluster_centers_
 
     # Predicting the clusters
     labels = kmeans.predict(X)
 
     # Getting the cluster centers
-    C = kmeans.cluster_centers_
-    colores=['red','green','blue','cyan','yellow','pink','purple']
-    asignar=[]
-    for row in labels:
-        asignar.append(colores[row])
+    #C = kmeans.cluster_centers_
+    #colores=['red','green','blue','cyan','yellow','pink','purple']
+    #asignar=[]
+    #for row in labels:
+    #    asignar.append(colores[row])
 
     # fig = plt.figure()
     # ax = Axes3D(fig)
@@ -88,7 +88,7 @@ def clusterAreas():
     f2 = dataframe['id_area_frascati'].values
     # ejex = f1.to_json()
     # ejey = f2.to_json()
-    areas = pd.concat([dataframe[['id_area_unesco']], dataframe[['id_area_frascati']],dataframe['KMeans_Clusters']], axis = 1)
+    areas = pd.concat([dataframe[['id_area_unesco']], dataframe[['id_area_frascati']],dataframe['KMeans_Clusters'], dataframe['id_articulo']], axis = 1)
     area = areas.to_json()
     # plt.scatter(f1, f2, c=asignar, s=70)
     # plt.scatter(C[:, 0], C[:, 1], marker='*', c=colores, s=1000)

@@ -10,10 +10,9 @@ def clusteringAnios():
     print('entre al servicio')
     return ejecutarAnios()
 
-@servicio_clustering.route('/ejecutarClusterAreas', methods=['GET']) 
-def clusteringAreas():
-    print('entre al servicio')
-    return clusterAreas()
+@servicio_clustering.route('/ejecutarClusterAreas/<int:num_cluster>', methods=['GET']) 
+def clusteringAreas(num_cluster):
+    return clusterAreas(num_cluster)
 
 @servicio_clustering.route('/ejecutarMediosPublicacionOrdenAutor', methods=['GET']) 
 def clusteringMediosPublicacionOrdenAutor():
