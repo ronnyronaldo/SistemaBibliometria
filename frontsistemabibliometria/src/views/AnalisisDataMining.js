@@ -340,7 +340,6 @@ function AnalisisDataMining() {
     }else{
       for (var i = 0; i < numero_cluster; i++){
         if(idCluster == i){
-          //console.log(detalleDatosClusterAreas[i][i])
           await handleValoresUnicosAreas(detalleDatosClusterAreas[i][i]).then(value => {
             setDetalleDatosClusterEsp(value)
           })
@@ -359,7 +358,6 @@ function AnalisisDataMining() {
     }else{
       for (var i = 0; i < numero_cluster; i++){
         if(idCluster == i){
-          //console.log(detalleDatosClusterMediosPublciacion[i][i])
           await handleValoresUnicosMediosPublicacion(detalleDatosClusterMediosPublciacion[i][i]).then(value => {
             setDetalleDatosClusterEsp(value)
           })
@@ -378,7 +376,6 @@ function AnalisisDataMining() {
     }else{
       for (var i = 0; i < numero_cluster; i++){
         if(idCluster == i){
-          //console.log(detalleDatosClusterMediosPublciacionRef[i][i])
           await handleValoresUnicosMediosPublicacion(detalleDatosClusterMediosPublciacionRef[i][i]).then(value => {
             setDetalleDatosClusterEsp(value)
           })
