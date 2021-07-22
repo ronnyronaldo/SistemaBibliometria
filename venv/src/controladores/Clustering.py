@@ -68,7 +68,6 @@ def clusterAreas(num_cluster):
     kmeans = KMeans(n_clusters=num_cluster).fit(X)
     centroids = kmeans.cluster_centers_
 
-    # Predicting the clusters
     labels = kmeans.predict(X)
 
     # Getting the cluster centers
@@ -135,7 +134,7 @@ def clusterAreasPorAnio(anio_publicacion, num_cluster):
     #valorClustering = dataframe.to_json()
     return make_response(jsonify(area))
 
-def clusterMediosPublicacionOrdenAutor():
+def clusterMediosPublicacionOrdenAutor(num_cluster):
     respuesta = (listaArticulosMineria()).json
     dataframe = pd.io.json.json_normalize(respuesta)
     
@@ -143,25 +142,25 @@ def clusterMediosPublicacionOrdenAutor():
     y = np.array(dataframe['anio_publicacion'])
     print(X.shape)
 
-    kmeans = KMeans(n_clusters=5).fit(X)
+    kmeans = KMeans(n_clusters=num_cluster).fit(X)
     centroids = kmeans.cluster_centers_
 
     # Predicting the clusters
     labels = kmeans.predict(X)
 
     # Getting the cluster centers
-    C = kmeans.cluster_centers_
-    colores=['red','green','blue','cyan','yellow']
-    asignar=[]
-    for row in labels:
-        asignar.append(colores[row])
+    #C = kmeans.cluster_centers_
+    #colores=['red','green','blue','cyan','yellow']
+    #asignar=[]
+    #for row in labels:
+    #    asignar.append(colores[row])
 
     dataframe['KMeans_Clusters'] = labels
     # Getting the values and plotting it
     f1 = dataframe['id_medio_publicacion'].values
     f2 = dataframe['orden_autor'].values
 
-    mediosPublicacionOrden = pd.concat([dataframe[['id_medio_publicacion']], dataframe[['orden_autor']],dataframe['KMeans_Clusters']], axis = 1)
+    mediosPublicacionOrden = pd.concat([dataframe[['id_medio_publicacion']], dataframe[['orden_autor']],dataframe['KMeans_Clusters'], dataframe['id_articulo']], axis = 1)
     mediosOrden = mediosPublicacionOrden.to_json()
     
     return make_response(jsonify(mediosOrden))

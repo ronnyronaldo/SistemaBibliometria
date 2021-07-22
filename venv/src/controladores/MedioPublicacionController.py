@@ -25,6 +25,12 @@ def verificaMedioPublicacionPorNombre(nombre):
     medios_publicacion = medio_publicacion_schema.dump(get_medio_publicacion)
     return make_response(jsonify({"mediosPublicacion": medios_publicacion}))
 
+def buscaMedioPublicacionPorId(id_medio_publicacion):
+    get_medio_publicacion = MedioPublicacion.query.filter(MedioPublicacion.id_medio_publicacion == id_medio_publicacion)
+    medio_publicacion_schema = MedioPublicacionSchema(many=True)
+    medios_publicacion = medio_publicacion_schema.dump(get_medio_publicacion)
+    return make_response(jsonify({"mediosPublicacion": medios_publicacion}))
+
 def insertarMedioPublicacion(nuevoMedioPublicacion):
     print(nuevoMedioPublicacion['nombre'])
     get_medio_publicacion = MedioPublicacion.query.filter(MedioPublicacion.nombre == nuevoMedioPublicacion['nombre'])

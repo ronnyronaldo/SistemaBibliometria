@@ -9,6 +9,7 @@ from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
 from controladores.AreaFrascatiController import buscarAreaFrascatiPorId
 from controladores.AreaUnescoController import buscarAreaUnescoPorId
+from controladores.MedioPublicacionController import buscaMedioPublicacionPorId
 
 db = SQLAlchemy()
 
@@ -134,6 +135,21 @@ def obtenerDetalleClusterAreasPub(resultadoClusterAreas):
         respuestaAreaFrascati = buscarAreaFrascatiPorId(respuestaArticulo['id_area_frascati']).json['area_frascati'][0]
         respuestaAreaUnesco = buscarAreaUnescoPorId(respuestaArticulo['id_area_unesco']).json['area_unesco'][0]
         valor = {"areaFrascati": respuestaAreaFrascati['descripcion'], "areaUnesco": respuestaAreaUnesco['descripcion_unesco'], "id_articulo": registro['id_articulo']}
+        for i in range(numero_cluster):
+            if registro['id_cluster'] == i:
+                clusters[i][i].append(valor)
+    return make_response(jsonify(clusters))
+
+def obtenerDetalleClusterMediosPublicacion(resultadoClusterMediosPublicacion):
+    numero_cluster = resultadoClusterMediosPublicacion[0]['num_cluster']
+    clusters = []
+    for i in range(numero_cluster):
+        valor = {i: []}
+        clusters.append(valor) 
+    for registro in resultadoClusterMediosPublicacion:
+        respuestaArticulo = buscarArticuloPorId(registro['id_articulo']).json['articulo'][0]
+        respuestaMedioPublicacion = buscaMedioPublicacionPorId(respuestaArticulo['id_medio_publicacion']).json['mediosPublicacion'][0]
+        valor = {"medioPublicacion": respuestaMedioPublicacion['nombre'], "id_articulo": registro['id_articulo']}
         for i in range(numero_cluster):
             if registro['id_cluster'] == i:
                 clusters[i][i].append(valor)

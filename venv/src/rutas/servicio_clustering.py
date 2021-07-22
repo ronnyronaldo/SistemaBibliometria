@@ -14,9 +14,9 @@ def clusteringAnios():
 def clusteringAreas(num_cluster):
     return clusterAreas(num_cluster)
 
-@servicio_clustering.route('/ejecutarMediosPublicacionOrdenAutor', methods=['GET']) 
-def clusteringMediosPublicacionOrdenAutor():
-    return clusterMediosPublicacionOrdenAutor()
+@servicio_clustering.route('/ejecutarMediosPublicacionOrdenAutor/<int:num_cluster>', methods=['GET']) 
+def clusteringMediosPublicacionOrdenAutor(num_cluster):
+    return clusterMediosPublicacionOrdenAutor(num_cluster)
 
 @servicio_clustering.route('/ejecutarRevistasRefNumCit', methods=['GET']) 
 def clusteringRevistasRefNumCit():
