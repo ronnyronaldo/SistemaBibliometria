@@ -1,7 +1,8 @@
 export const validacionInputService = {
     campoVacio,
     esDecimal,
-    valorColor
+    valorColor,
+    esNumero
 };
 
 function esEntero(texto, mensaje) {

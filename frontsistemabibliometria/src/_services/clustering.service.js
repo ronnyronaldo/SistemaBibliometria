@@ -13,8 +13,8 @@ async function clusterAreas() {
     return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutar`);
 }
 
-async function ejecutarClusterAreas() {
-    return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarClusterAreas`);
+async function ejecutarClusterAreas(num_cluster) {
+    return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarClusterAreas`+'/'+ num_cluster);
 }
 
 async function ejecutarClusterMediosPublicacionOrden() {
