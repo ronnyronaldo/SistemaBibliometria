@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
 import { color, scaleLinear, scaleBand, range } from 'd3';
-
+import { validacionInputService } from '../_services/validacionInput.service';
 class Barchar extends Component {
     constructor(props) {
         super(props);
@@ -9,7 +9,7 @@ class Barchar extends Component {
     }
     componentDidMount() {
         // set the dimensions and margins of the graph
-        const {data, w, h, mp, oa } = this.props;
+        const {data, w, h, mp, oa, totales } = this.props;
         var margin = {top: 20, right: 20, bottom: 40, left: 60},
         width = w - margin.left - margin.right,
         height = h - margin.top - margin.bottom;
@@ -24,7 +24,7 @@ class Barchar extends Component {
             "translate(" + margin.left + "," + margin.top + ")");
 
         // Add X axis
-        var x = d3.scaleLinear().domain([0, mp]).range([0, width]);
+        var x = d3.scaleLinear().domain([0, mp]).range([0, width-150]);
         svg
         .append("g")
         .attr("transform", "translate(0," + height + ")")
@@ -39,7 +39,7 @@ class Barchar extends Component {
         // Add X axis label:
         svg.append("text")
         .attr("text-anchor", "end")
-        .attr("x", width)
+        .attr("x", width-150)
         .attr("y", height + margin.top + 20)
         .text("Medios de Publicación");
 
@@ -51,14 +51,19 @@ class Barchar extends Component {
         .attr("x", -margin.top)
         .text("Orden del Autor")
 
-        const xScale = scaleLinear().domain([0, mp]).range([0, width])
+        const xScale = scaleLinear().domain([0, mp]).range([0, width-150])
         const yScale = scaleLinear().domain([0, oa]).range([height, 0])
+
         function color(cluster){
-            if (cluster == 0) return "blue"
-            if (cluster == 1) return "green"
-            if (cluster == 2) return "orange"
-            if (cluster == 3) return "red"
-            if (cluster == 4) return "cyan"
+            for (var i = 0; i< totales.length ; i++){
+                if(cluster == i) return validacionInputService.valorColor(i+1)
+            }
+        }
+
+        function nombre(cluster){
+            for (var  i = 0; totales.length; i++){
+                if(cluster == i) return "Cluster "+i+" (" + totales[i]+")"
+            }
         }
 
         var dot = svg.selectAll("circle")
@@ -70,23 +75,40 @@ class Barchar extends Component {
         .attr("r", d => 5)
         .attr("fill", d => color(d.id_cluster))
         .attr( "fill-opacity", 0.4 )
-        // .on("click", function(){ 
-        //     if (dot.attr("fill") === "red") dot.attr("fill", "blue");
-        //     else dot.attr("fill", "red");
-        //   });
+        
+        var legend = svg.append("g")
+        .attr("class", "legend")
+        .attr("x", w - 65)
+        .attr("y", 25)
+        .attr("height", 100)
+        .attr("width", 100);
 
-        // var dot1 = svg.selectAll(".dodo")
-        //   .data(data)
-        //  .enter().append("text")
-        //   .attr("class", "dodo")
-        //   .attr("x", function(d) { return xScale(d.id_area_unesco); })
-        //   .attr("y", function(d) { return yScale(d.id_area_frascati); })
-        //   .attr("dx", ".71em")
-        //   .attr("dy", ".35em")
-        //   .text(function(d) { return "Tania";})
-        //dot.on('click' , function(d){ console.log("Hola"); });
+        let leyenda = []
+        for (var j = 0; j < totales.length; j++){
+            leyenda.push(j)
+        }
 
+        legend.selectAll('g').data(leyenda)
+        .enter()
+        .append('g')
+        .each(function(d, i) {
+            var g = d3.select(this);
+            g.append("rect")
+            .attr("x", width-110)
+            .attr("y", i*25)
+            .attr("width", 10)
+            .attr("height", 10)
+            .style("fill", color(d));
+  
+            g.append("text")
+            .attr("x", width-90)
+            .attr("y", i * 25 + 8)
+            .attr("height",10)
+            .attr("width",10)
+            .style("fill", "black")
+            .text(nombre(d));
 
+        });
     }
     render() {
         return <>

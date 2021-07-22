@@ -5,7 +5,8 @@ export const publicacionService = {
     listar,
     insertar,
     eliminar,
-    obtenerDetalleClusterAreasPub
+    obtenerDetalleClusterAreasPub,
+    obtenerDetalleClusterMediosPublicacion
 };
 
 async function listar() {
@@ -22,6 +23,10 @@ async function eliminar(id_articulo) {
 
 async function obtenerDetalleClusterAreasPub(params) {
     return fetchWrapper.post(`${endpoints.baseUrlPublicacion}/obtenerDetalleClusterAreasPub`, params);
+}
+
+async function obtenerDetalleClusterMediosPublicacion(params) {
+    return fetchWrapper.post(`${endpoints.baseUrlPublicacion}/obtenerDetalleMediosPublicacion`, params);
 }
 
 
