@@ -529,7 +529,7 @@ function AnalisisDataMining() {
           else if(idAnio != 0 && idAreaFrascati == 0 && idAreaUnesco != 0){
             if(validacionInputService.esNumero(numeroCluster) && validacionInputService.campoVacio(numeroCluster) ){
               setNumeroCluster(numeroCluster);
-              handleEjecutarClusteringMedPubOrdAutPorAreaUneYAñoPu(idAnio, idAreaUnesco, numeroCluster)
+              handleEjecutarClusteringMedPubOrdAutPorAreaUneYAñoPub(idAnio, idAreaUnesco, numeroCluster)
             }else{
               notify("tr", 'El número de cluster ingresado no es válido.', "danger");
             }   
