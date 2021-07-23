@@ -124,6 +124,30 @@ def listaArticulosMineriaPorAnio(anio_publicacion):
     articulos = articulo_schema.dump(get_articulo)
     return make_response(jsonify(articulos))
 
+def listaArticulosMineriaPorAreaFrascati(id_area_frascati):
+    get_articulo = Articulo.query.filter(Articulo.id_area_frascati == id_area_frascati)
+    articulo_schema = ArticuloSchema(many=True)
+    articulos = articulo_schema.dump(get_articulo)
+    return make_response(jsonify(articulos))
+
+def listaArticulosMineriaPorAreaUnesco(id_area_unesco):
+    get_articulo = Articulo.query.filter(Articulo.id_area_unesco == id_area_unesco)
+    articulo_schema = ArticuloSchema(many=True)
+    articulos = articulo_schema.dump(get_articulo)
+    return make_response(jsonify(articulos))
+
+def listaArticulosMineriaPorAreaUnescoYAnioPublicacion(anio_publicacion, id_area_unesco):
+    get_articulo = Articulo.query.filter((Articulo.anio_publicacion == anio_publicacion) & (Articulo.id_area_unesco_ == id_area_unesco))
+    articulo_schema = ArticuloSchema(many=True)
+    articulos = articulo_schema.dump(get_articulo)
+    return make_response(jsonify(articulos))
+
+def listaArticulosMineriaPorAreaFrascatiYAnioPublicacion(anio_publicacion, id_area_frascati):
+    get_articulo = Articulo.query.filter((Articulo.anio_publicacion == anio_publicacion) & (Articulo.id_area_frascati_ == id_area_frascati))
+    articulo_schema = ArticuloSchema(many=True)
+    articulos = articulo_schema.dump(get_articulo)
+    return make_response(jsonify(articulos))
+
 def obtenerDetalleClusterAreasPub(resultadoClusterAreas):
     numero_cluster = resultadoClusterAreas[0]['num_cluster']
     clusters = []

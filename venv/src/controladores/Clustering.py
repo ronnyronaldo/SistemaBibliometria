@@ -7,7 +7,7 @@ from sklearn.metrics import pairwise_distances_argmin_min
 import seaborn as sb
 import matplotlib.pyplot as plt
 from flask import Flask, request, jsonify, make_response
-from controladores.ArticuloController import listaArticulos, listaArticulosMineria, listaArticulosMineriaAnios, listaArticulosMineriaPorAnio
+from controladores.ArticuloController import listaArticulos, listaArticulosMineria, listaArticulosMineriaAnios, listaArticulosMineriaPorAnio, listaArticulosMineriaPorAreaFrascati, listaArticulosMineriaPorAreaUnesco, listaArticulosMineriaPorAreaUnescoYAnioPublicacion, listaArticulosMineriaPorAreaFrascatiYAnioPublicacion
 from controladores.DetalleReferenciaController import listaDetalleReferencia 
 from sklearn.decomposition import PCA
 from mpl_toolkits.mplot3d import Axes3D
@@ -160,6 +160,102 @@ def clusterMediosPublicacionOrdenAutor(num_cluster):
 
 def clusterMediosPublicacionOrdenAutorPorAnio(anio_publicacion, num_cluster):
     respuesta = (listaArticulosMineriaPorAnio(anio_publicacion)).json
+    dataframe = pd.io.json.json_normalize(respuesta)
+    
+    X = np.array(dataframe[["id_medio_publicacion","orden_autor"]])
+    y = np.array(dataframe['anio_publicacion'])
+    print(X.shape)
+
+    kmeans = KMeans(n_clusters=num_cluster).fit(X)
+    centroids = kmeans.cluster_centers_
+
+    # Predicting the clusters
+    labels = kmeans.predict(X)
+
+    dataframe['KMeans_Clusters'] = labels
+    # Getting the values and plotting it
+    f1 = dataframe['id_medio_publicacion'].values
+    f2 = dataframe['orden_autor'].values
+
+    mediosPublicacionOrden = pd.concat([dataframe[['id_medio_publicacion']], dataframe[['orden_autor']],dataframe['KMeans_Clusters'], dataframe['id_articulo']], axis = 1)
+    mediosOrden = mediosPublicacionOrden.to_json()
+    
+    return make_response(jsonify(mediosOrden))
+
+def clusterMediosPublicacionOrdenAutorPorAreaFrascati(id_area_frascati, num_cluster):
+    respuesta = (listaArticulosMineriaPorAreaFrascati(id_area_frascati)).json
+    dataframe = pd.io.json.json_normalize(respuesta)
+    
+    X = np.array(dataframe[["id_medio_publicacion","orden_autor"]])
+    y = np.array(dataframe['anio_publicacion'])
+    print(X.shape)
+
+    kmeans = KMeans(n_clusters=num_cluster).fit(X)
+    centroids = kmeans.cluster_centers_
+
+    # Predicting the clusters
+    labels = kmeans.predict(X)
+
+    dataframe['KMeans_Clusters'] = labels
+    # Getting the values and plotting it
+    f1 = dataframe['id_medio_publicacion'].values
+    f2 = dataframe['orden_autor'].values
+
+    mediosPublicacionOrden = pd.concat([dataframe[['id_medio_publicacion']], dataframe[['orden_autor']],dataframe['KMeans_Clusters'], dataframe['id_articulo']], axis = 1)
+    mediosOrden = mediosPublicacionOrden.to_json()
+    
+    return make_response(jsonify(mediosOrden))
+
+def clusterMediosPublicacionOrdenAutorPorAreaUnesco(id_area_unesco, num_cluster):
+    respuesta = (listaArticulosMineriaPorAreaUnesco(id_area_unesco)).json
+    dataframe = pd.io.json.json_normalize(respuesta)
+    
+    X = np.array(dataframe[["id_medio_publicacion","orden_autor"]])
+    y = np.array(dataframe['anio_publicacion'])
+    print(X.shape)
+
+    kmeans = KMeans(n_clusters=num_cluster).fit(X)
+    centroids = kmeans.cluster_centers_
+
+    # Predicting the clusters
+    labels = kmeans.predict(X)
+
+    dataframe['KMeans_Clusters'] = labels
+    # Getting the values and plotting it
+    f1 = dataframe['id_medio_publicacion'].values
+    f2 = dataframe['orden_autor'].values
+
+    mediosPublicacionOrden = pd.concat([dataframe[['id_medio_publicacion']], dataframe[['orden_autor']],dataframe['KMeans_Clusters'], dataframe['id_articulo']], axis = 1)
+    mediosOrden = mediosPublicacionOrden.to_json()
+    
+    return make_response(jsonify(mediosOrden))
+
+def clusterMediosPublicacionOrdenAutorPorAreaFrascatiYAnioPublicacion(anio_publicacion, id_area_frascati, num_cluster):
+    respuesta = (listaArticulosMineriaPorAreaFrascatiYAnioPublicacion(anio_publicacion, id_area_frascati)).json
+    dataframe = pd.io.json.json_normalize(respuesta)
+    
+    X = np.array(dataframe[["id_medio_publicacion","orden_autor"]])
+    y = np.array(dataframe['anio_publicacion'])
+    print(X.shape)
+
+    kmeans = KMeans(n_clusters=num_cluster).fit(X)
+    centroids = kmeans.cluster_centers_
+
+    # Predicting the clusters
+    labels = kmeans.predict(X)
+
+    dataframe['KMeans_Clusters'] = labels
+    # Getting the values and plotting it
+    f1 = dataframe['id_medio_publicacion'].values
+    f2 = dataframe['orden_autor'].values
+
+    mediosPublicacionOrden = pd.concat([dataframe[['id_medio_publicacion']], dataframe[['orden_autor']],dataframe['KMeans_Clusters'], dataframe['id_articulo']], axis = 1)
+    mediosOrden = mediosPublicacionOrden.to_json()
+    
+    return make_response(jsonify(mediosOrden))
+
+def clusterMediosPublicacionOrdenAutorPorAreaUnescoYAnioPublicacion(anio_publicacion, id_area_unesco, num_cluster):
+    respuesta = (listaArticulosMineriaPorAreaUnescoYAnioPublicacion(anio_publicacion, id_area_unesco)).json
     dataframe = pd.io.json.json_normalize(respuesta)
     
     X = np.array(dataframe[["id_medio_publicacion","orden_autor"]])
