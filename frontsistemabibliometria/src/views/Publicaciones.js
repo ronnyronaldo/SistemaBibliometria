@@ -2,6 +2,7 @@ import React from "react";
 import { publicacionService } from '../_services/publicacion.service';
 import { referenciaService } from '../_services/referencia.service';
 import { validacionInputService } from '../_services/validacionInput.service';
+import { detalleReferenciaService } from '../_services/detalle_referencia.service';
 import { publicacionObj } from "../utils/types";
 // react plugin for creating notifications over the dashboard
 import NotificationAlert from "react-notification-alert";
@@ -98,6 +99,7 @@ function Publicaciones() {
   const [publicaciones, setPublicaciones] = React.useState([]);
   const [publicacion, setPublicacion] = React.useState({});
   const [referencias, setReferencias] = React.useState([]);
+  const [detalleReferencias, setDetalleReferencias] = React.useState([]);
   const [tipoIngresoReferencias, setTipoIngresoReferencias] = React.useState({
     ingresoManual: true,
     ingresoAutomatico: false
@@ -173,11 +175,17 @@ function Publicaciones() {
     })
     setLoading(true);
     await tablaPaginacionService.destruirTabla('#dataTableReferencias');
-    await referenciaService.listarReferenciasPorIdArticulo(id_articulo).then(value => {
+    await referenciaService.listarReferenciasPorIdArticulo(id_articulo).then(async(value) => {
       setLoading(false);
       setReferencias(value.referencias);
     });
     await tablaPaginacionService.paginacion('#dataTableReferencias');
+    await tablaPaginacionService.destruirTabla('#dataTableDetalleReferencias');
+      await detalleReferenciaService.detalleReferenciaPorIdArticulo(id_articulo).then(value => {
+        setLoading(false);
+        setDetalleReferencias(value.detalleReferencia);
+      });
+    await tablaPaginacionService.paginacion('#dataTableDetalleReferencias');
   }
 
   const handleOnChangeIngresoManual = (event) => {
@@ -564,6 +572,42 @@ function Publicaciones() {
                         <td width="10%">{item.id_referencia}</td>
                         <td>{item.referencia}</td>
                         <td width="5%"><Link to="#" id="eliminarReferencia" className="link col-sm-12 col-md-3" onClick={()=>handleEliminarReferencia(item.id_referencia)}><i className="fas fa-trash-alt fa-2x"></i></Link></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col md="12">
+            <Card className="card-plain table-plain-bg">
+              <Card.Header>
+                <Card.Title as="h4">Detalle Referencias</Card.Title>
+                <p className="card-category">
+                  {publicacionSeleccionada.titulo_publicacion}
+                </p>
+              </Card.Header>
+              <Card.Body className="table-full-width table-responsive px-3">
+                <table className="table table-bordered" id="dataTableDetalleReferencias" width="100%" cellSpacing="0">
+                  <thead className="thead-dark">
+                    <tr>
+                      <th>ID REFERENCIA</th>
+                      <th>TITULO</th>
+                      <th>AUTOR</th>
+                      <th>AÑO</th>
+                      <th>MEDIO PUBLICACION</th>
+                      <th>NUMERO CITACIONES</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {detalleReferencias.map(item => (
+                      <tr className="small" key={item.id_referencia}>
+                        <td width="10%">{item.id_referencia}</td>
+                        <td>{item.title}</td>
+                        <td>{item.author}</td> 
+                        <td>{item.pub_year}</td>
+                        <td>{item.venue}</td>
+                        <td>{item.num_citations}</td>
                       </tr>
                     ))}
                   </tbody>
