@@ -1,20 +1,11 @@
 from flask import Blueprint
-from controladores.Clustering import ejecutar, ejecutarAnios, clusterAreas, clusterMediosPublicacionOrdenAutor, clusterRevistasRefNumCit, clusterAreasPorAnio, clusterMediosPublicacionOrdenAutorPorAnio
+from controladores.Clustering import clusterAreas, clusterMediosPublicacionOrdenAutor, clusterRevistasRefNumCit, clusterAreasPorAnio, clusterMediosPublicacionOrdenAutorPorAnio
 from controladores.Clustering import clusterMediosPublicacionOrdenAutorPorAreaFrascati, clusterMediosPublicacionOrdenAutorPorAreaUnesco
 from controladores.Clustering import clusterMediosPublicacionOrdenAutorPorAreaFrascatiYAnioPublicacion, clusterMediosPublicacionOrdenAutorPorAreaUnescoYAnioPublicacion
 from controladores.Clustering import clusterRevistasRefNumCitPorAnio, clusterRevistasRefNumCitPorAreaFrascati
 from controladores.Clustering import clusterRevistasRefNumCitPorAreaUnesco, clusterRevistasRefNumCitPorAreFraYAniPub
 from controladores.Clustering import clusterRevistasRefNumCitPorAreUneYAniPub
 servicio_clustering =  Blueprint('servicio_clustering', __name__)
-@servicio_clustering.route('/ejecutar', methods=['GET']) 
-def clustering():
-    return ejecutar()
-    
-@servicio_clustering.route('/ejecutarAnios', methods=['GET']) 
-def clusteringAnios():
-    print('entre al servicio')
-    return ejecutarAnios()
-
 @servicio_clustering.route('/ejecutarClusterAreas/<int:num_cluster>', methods=['GET']) 
 def clusteringAreas(num_cluster):
     return clusterAreas(num_cluster)
