@@ -1,4 +1,5 @@
 from modelos.Articulo import Articulo
+from modelos.Referencia import Referencia
 from modelos.BaseDatosDigital import BaseDatosDigital
 from modelos.MedioPublicacion import MedioPublicacion
 from modelos.AreaFrascati import AreaFrascati
@@ -111,6 +112,20 @@ def listaArticulos():
         articulos.append(dict(articulo)) # Serializo cada fila
     return make_response(jsonify({"articulos": articulos}))
 
+def numeroArticulosIngresados():
+    get_articulo = Articulo.query.all()
+    articulo_schema = ArticuloSchema(many=True)
+    articulos = articulo_schema.dump(get_articulo)
+    numeroArticulos = len(articulos)
+    return make_response(jsonify({"totalArticulos" : numeroArticulos}))
+
+def numeroArticulosNoTienenReferencias():
+    subquery = (db.session.query(Articulo, Referencia).with_entities(Articulo.id_articulo)
+        .join(Referencia, Articulo.id_articulo == Referencia.id_articulo))
+    query = db.session.query(Articulo).filter(Articulo.id_articulo.notin_(subquery))
+    referencias = query.all()
+    numeroArticulosNoTienenReferencias = len(referencias)
+    return make_response(jsonify({"numeroArticulosNoTienenReferencias": numeroArticulosNoTienenReferencias}))
 
 def listaArticulosMineria():
     get_articulo = Articulo.query.all()

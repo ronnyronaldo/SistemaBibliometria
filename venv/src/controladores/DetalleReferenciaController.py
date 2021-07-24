@@ -37,6 +37,13 @@ def listaDetalleReferencia():
     detalles_referencia = detalle_referencia_schema.dump(get_detalle_referencia)
     return make_response(jsonify(detalles_referencia))
 
+def numeroDetalleReferenciaIngresadas():
+    get_detalle_referencia = DetalleReferencia.query.all()
+    detalle_referencia_schema = DetalleReferenciaSchema(many=True)
+    detalles_referencia = detalle_referencia_schema.dump(get_detalle_referencia)
+    numeroDetalleReferenciaIngresadas = len(detalles_referencia)
+    return make_response(jsonify({"numeroDetalleReferenciaIngresadas" : numeroDetalleReferenciaIngresadas}))
+
 def listaDetalleReferenciaPorAnio(anio_publicacion):
 
     """get_detalle_referencia = DetalleReferencia.query.filter((Articulo.anio_publicacion == anio_publicacion) & (Articulo.id_articulo == Referencia.id_articulo) & (Referencia.id_referencia == DetalleReferencia.id_referencia)).all()

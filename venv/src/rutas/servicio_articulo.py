@@ -1,6 +1,7 @@
 from flask import Blueprint
 from flask import request
 from controladores.ArticuloController import listaArticulos, asignarMedioPublicacion, insertarArticulo, eliminarArticulo, listaArticulosMineria, listaArticulosMineriaAnios, obtenerDetalleClusterAreasPub, obtenerDetalleClusterMediosPublicacion, obtenerDetalleClusterMediosPublicacionRef
+from controladores.ArticuloController import numeroArticulosIngresados, numeroArticulosNoTienenReferencias
 servicio_articulo= Blueprint('servicio_articulo', __name__)
 @servicio_articulo.route('/insertar', methods=['POST']) 
 def insertar():
@@ -41,3 +42,11 @@ def obtenerDetalleClusteringMediosPublicacion():
 def obtenerDetalleClusteringMediosPublicacionReferencias():
     detalleCluster = request.json #Obtengo los datos del detalle del cluster medios publicacion
     return obtenerDetalleClusterMediosPublicacionRef(detalleCluster)
+
+@servicio_articulo.route('/numeroArticulosIngresados', methods=['GET']) 
+def numeroArticulos():
+    return numeroArticulosIngresados()
+
+@servicio_articulo.route('/numeroArticulosNoTienenReferencias', methods=['GET']) 
+def numeroArticulosNoTienenRef():
+    return numeroArticulosNoTienenReferencias()
