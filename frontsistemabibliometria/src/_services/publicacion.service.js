@@ -7,11 +7,21 @@ export const publicacionService = {
     eliminar,
     obtenerDetalleClusterAreasPub,
     obtenerDetalleClusterMediosPublicacion,
-    obtenerDetalleClusterMediosPublicacionReferencias
+    obtenerDetalleClusterMediosPublicacionReferencias,
+    numeroArticulosIngresados,
+    numeroArticulosNoTienenReferencias
 };
 
 async function listar() {
     return fetchWrapper.get(`${endpoints.baseUrlPublicacion}/listar`);
+}
+
+async function numeroArticulosIngresados() {
+    return fetchWrapper.get(`${endpoints.baseUrlPublicacion}/numeroArticulosIngresados`);
+}
+
+async function numeroArticulosNoTienenReferencias() {
+    return fetchWrapper.get(`${endpoints.baseUrlPublicacion}/numeroArticulosNoTienenReferencias`);
 }
 
 async function insertar(params) {

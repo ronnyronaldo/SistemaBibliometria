@@ -91,10 +91,10 @@ const dashboardRoutes = [
     path: "/maps",
     name: "Maps",
     icon: "nc-icon nc-pin-3",
-    component: Maps,
+    component: Icons,
     layout: "/admin",
   },
-  {
+  /*{
     path: "/notifications",
     name: "Notifications",
     icon: "nc-icon nc-bell-55",

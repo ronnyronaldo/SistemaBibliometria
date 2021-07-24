@@ -1,5 +1,8 @@
 import React from "react";
 import ChartistGraph from "react-chartist";
+import { publicacionService } from '../_services/publicacion.service';
+import { referenciaService } from '../_services/referencia.service';
+import { detalleReferenciaService } from '../_services/detalle_referencia.service';
 // react-bootstrap components
 import {
   Badge,
@@ -17,6 +20,27 @@ import {
 } from "react-bootstrap";
 
 function Dashboard() {
+  const [numeroPublicaciones, setNumeroPublicaciones] = React.useState(0);
+  const [numeroPublicacionesSinReferencias, setNumeroPublicacionesSinReferencias] = React.useState(0);
+  const [numeroReferencias, setNumeroReferencias] = React.useState(0);
+  const [numeroDetalleReferencias, setNumeroDetalleReferencias] = React.useState(0);
+  const handleCargarTotalesArticulosReferencias = () => {
+    publicacionService.numeroArticulosIngresados().then(value =>{
+      setNumeroPublicaciones(value.totalArticulos);
+    })
+    publicacionService.numeroArticulosNoTienenReferencias().then(value =>{
+      setNumeroPublicacionesSinReferencias(value.numeroArticulosNoTienenReferencias);
+    })
+    referenciaService.numeroReferencias().then(value =>{
+      setNumeroReferencias(value.numeroReferenciasIngresadas);
+    })
+    detalleReferenciaService.numeroDetalleReferencia().then(value =>{
+      setNumeroDetalleReferencias(value.numeroDetalleReferenciaIngresadas);
+    })
+  }
+  React.useEffect(() => {
+    handleCargarTotalesArticulosReferencias();
+  }, []);
   return (
     <>
       <Container fluid>
@@ -27,24 +51,17 @@ function Dashboard() {
                 <Row>
                   <Col xs="5">
                     <div className="icon-big text-center icon-warning">
-                      <i className="nc-icon nc-chart text-warning"></i>
+                      <i className="nc-icon nc-single-copy-04 text-warning"></i>
                     </div>
                   </Col>
                   <Col xs="7">
                     <div className="numbers">
-                      <p className="card-category">Number</p>
-                      <Card.Title as="h4">150GB</Card.Title>
+                      <p className="card-category">TOTAL PUBLICACIONES</p>
+                      <Card.Title as="h4">{numeroPublicaciones + "  (100%)"}</Card.Title>
                     </div>
                   </Col>
                 </Row>
               </Card.Body>
-              <Card.Footer>
-                <hr></hr>
-                <div className="stats">
-                  <i className="fas fa-redo mr-1"></i>
-                  Update Now
-                </div>
-              </Card.Footer>
             </Card>
           </Col>
           <Col lg="3" sm="6">
@@ -53,24 +70,17 @@ function Dashboard() {
                 <Row>
                   <Col xs="5">
                     <div className="icon-big text-center icon-warning">
-                      <i className="nc-icon nc-light-3 text-success"></i>
+                      <i className="nc-icon nc-align-center text-success"></i>
                     </div>
                   </Col>
                   <Col xs="7">
                     <div className="numbers">
-                      <p className="card-category">Revenue</p>
-                      <Card.Title as="h4">$ 1,345</Card.Title>
+                      <p className="card-category">TOTAL PUBLICACIONES SIN REFERENCIAS</p>
+                      <Card.Title as="h4">{numeroPublicacionesSinReferencias +" (" + parseFloat(numeroPublicacionesSinReferencias * 100 / numeroPublicaciones).toFixed(2) +"%)"}</Card.Title>
                     </div>
                   </Col>
                 </Row>
               </Card.Body>
-              <Card.Footer>
-                <hr></hr>
-                <div className="stats">
-                  <i className="far fa-calendar-alt mr-1"></i>
-                  Last day
-                </div>
-              </Card.Footer>
             </Card>
           </Col>
           <Col lg="3" sm="6">
@@ -79,24 +89,17 @@ function Dashboard() {
                 <Row>
                   <Col xs="5">
                     <div className="icon-big text-center icon-warning">
-                      <i className="nc-icon nc-vector text-danger"></i>
+                      <i className="nc-icon nc-bullet-list-67 text-danger"></i>
                     </div>
                   </Col>
                   <Col xs="7">
                     <div className="numbers">
-                      <p className="card-category">Errors</p>
-                      <Card.Title as="h4">23</Card.Title>
+                      <p className="card-category">TOTAL REFERENCIAS</p>
+                      <Card.Title as="h4">{numeroReferencias + "  (100%)"}</Card.Title>
                     </div>
                   </Col>
                 </Row>
               </Card.Body>
-              <Card.Footer>
-                <hr></hr>
-                <div className="stats">
-                  <i className="far fa-clock-o mr-1"></i>
-                  In the last hour
-                </div>
-              </Card.Footer>
             </Card>
           </Col>
           <Col lg="3" sm="6">
@@ -105,24 +108,17 @@ function Dashboard() {
                 <Row>
                   <Col xs="5">
                     <div className="icon-big text-center icon-warning">
-                      <i className="nc-icon nc-favourite-28 text-primary"></i>
+                      <i className="nc-icon nc-notes text-primary"></i>
                     </div>
                   </Col>
                   <Col xs="7">
                     <div className="numbers">
-                      <p className="card-category">Followers</p>
-                      <Card.Title as="h4">+45K</Card.Title>
+                      <p className="card-category">TOTAL DETALLE REFERENCIAS</p>
+                      <Card.Title as="h4">{numeroDetalleReferencias +"  ("+ parseFloat(numeroDetalleReferencias*100/numeroReferencias).toFixed(2)+"%)"}</Card.Title>
                     </div>
                   </Col>
                 </Row>
               </Card.Body>
-              <Card.Footer>
-                <hr></hr>
-                <div className="stats">
-                  <i className="fas fa-redo mr-1"></i>
-                  Update now
-                </div>
-              </Card.Footer>
             </Card>
           </Col>
         </Row>

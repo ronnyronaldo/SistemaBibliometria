@@ -7,8 +7,13 @@ export const referenciaService = {
     insertarManual,
     insertarAutomatico,
     buscarDetalleReferenciaIndividual,
-    eliminar
+    eliminar,
+    numeroReferencias
 };
+
+async function numeroReferencias() {
+    return fetchWrapper.get(`${endpoints.baseUrlReferencia}/numeroReferenciaIngresadas`);
+}
 
 async function listarReferenciasPorIdArticulo(id_articulo) {
     return fetchWrapper.get(`${endpoints.baseUrlReferencia}/listarReferenciasPorIdArticulo/` + id_articulo);
