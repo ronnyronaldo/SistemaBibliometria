@@ -152,26 +152,23 @@ function Referencias() {
   }
 
   async function handleBuscar() {
-    if(tipoBusquedaReferencias.ingresoTotal == true){
-      for (var i = 0; i<referencias.length; i++){
-        referenciaService.buscarDetalleReferenciaIndividual({
-          "id_referencia": referencias[i].id_referencia,
-          "referencia": referencias[i].referencia
-        }).then(value => {
+    if(tipoBusquedaReferencias.ingresoTotal == true){ 
+      referenciaService.buscarDetalleReferenciaTotal({
+        "id_articulo": publicacionSeleccionada.id_articulo
+      }).then(value => {
+        if(value.respuesta.error == "False"){
           if(value.respuesta.error == "False"){
-            if(value.respuesta.error == "False"){
-              handleCargarReferencias(publicacionSeleccionada.id_articulo, publicacionSeleccionada.titulo, publicacionSeleccionada.autor, publicacionSeleccionada.anio_publicacion);
-              notify("tr", value.respuesta.valor, "primary");
-            }else{
-              notify("tr", value.respuesta.valor, "danger");
-            }
+            handleCargarReferencias(publicacionSeleccionada.id_articulo, publicacionSeleccionada.titulo, publicacionSeleccionada.autor, publicacionSeleccionada.anio_publicacion);
+            notify("tr", value.respuesta.valor, "primary");
           }else{
             notify("tr", value.respuesta.valor, "danger");
           }
-        })
-      }
+        }else{
+          notify("tr", value.respuesta.valor, "danger");
+        }
+      })
     }
-    if(tipoBusquedaReferencias.ingresoIndividual == true){
+    /*if(tipoBusquedaReferencias.ingresoIndividual == true){
       if(referenciaSeleccionada.id_referencia != 0){
         referenciaService.buscarDetalleReferenciaIndividual({
           "id_referencia": referenciaSeleccionada.id_referencia,
@@ -187,7 +184,7 @@ function Referencias() {
       }else{
         notify("tr", 'No ha seleccionado ninguna referencia.', "danger");
       }
-    }
+    }*/
   }
 
   React.useEffect(() => {
@@ -275,7 +272,7 @@ function Referencias() {
               <Card.Header>
                 <Card.Title as="h4">Búsqueda del detalle de las referencias</Card.Title>
                 <Row>
-                  <Col className="pr-1" md="10">
+                  <Col className="pr-1" md="10" hidden>
                     <Form.Group>
                       <label>REFERENCIA</label>
                       <Form.Control
@@ -287,7 +284,7 @@ function Referencias() {
                       ></Form.Control>
                     </Form.Group>
                   </Col>
-                  <Col className="px-1" md="1">
+                  <Col className="px-1" md="1" hidden>
                     <Form.Group>
                       <label>INDIVIDUAL</label>
                       <Form.Control
@@ -298,9 +295,10 @@ function Referencias() {
                       ></Form.Control>
                     </Form.Group>
                   </Col>
+                  <Col className="px-1" md="3"></Col>
                   <Col className="px-1" md="1">
                     <Form.Group>
-                      <label>TODO</label>
+                      <label>TODO REGISTROS</label>
                       <Form.Control
                         id="busquedaTotal"
                         type="radio"
@@ -309,7 +307,7 @@ function Referencias() {
                       ></Form.Control>
                     </Form.Group>
                   </Col>
-                  <Col className="pr-1" md="12">
+                  <Col className="pr-1" md="3">
                     <Form.Group>
                       <label></label>
                       <Form.Control

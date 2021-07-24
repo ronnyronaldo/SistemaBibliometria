@@ -8,7 +8,8 @@ export const referenciaService = {
     insertarAutomatico,
     buscarDetalleReferenciaIndividual,
     eliminar,
-    numeroReferencias
+    numeroReferencias,
+    buscarDetalleReferenciaTotal
 };
 
 async function numeroReferencias() {
@@ -33,6 +34,11 @@ async function insertarAutomatico(params) {
 
 async function buscarDetalleReferenciaIndividual(params) {
     return fetchWrapper.post(`${endpoints.baseUrlReferencia}/obtenerDetalleReferenciaIndividual`, params);
+}
+
+
+async function buscarDetalleReferenciaTotal(params) {
+    return fetchWrapper.post(`${endpoints.baseUrlReferencia}/obtenerDetalleReferenciaTotal`, params);
 }
 
 async function eliminar(id_referencia) {

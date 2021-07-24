@@ -137,7 +137,7 @@ function EstadisticasProveedores() {
     let mes = document.getElementById("idMes").value;
     let numero_busquedas = document.getElementById("numeroBusquedaText").value;
     if (idBaseDatosDigital != 0) {
-      if (validacionInputService.campoVacio(anio)) {
+      if (validacionInputService.campoVacio(anio) && validacionInputService.esNumero(anio)) {
         if (mes != 0) {
           if (validacionInputService.campoVacio(numero_busquedas)) {
             setLoading(true);
