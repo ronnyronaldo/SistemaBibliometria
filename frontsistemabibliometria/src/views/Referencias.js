@@ -95,8 +95,8 @@ function Referencias() {
   });
   
   const [tipoBusquedaReferencias, setTipoBusquedaReferencias] = React.useState({
-    ingresoTotal: false,
-    ingresoIndividual: true
+    ingresoTotal: true,
+    ingresoIndividual: false
   });
 
   async function handleCargarReferencias(id_articulo, titulo, autor, anio_publicacion) {
@@ -153,12 +153,14 @@ function Referencias() {
 
   async function handleBuscar() {
     if(tipoBusquedaReferencias.ingresoTotal == true){ 
+      setLoading(true);
       referenciaService.buscarDetalleReferenciaTotal({
         "id_articulo": publicacionSeleccionada.id_articulo
       }).then(value => {
         if(value.respuesta.error == "False"){
           if(value.respuesta.error == "False"){
             handleCargarReferencias(publicacionSeleccionada.id_articulo, publicacionSeleccionada.titulo, publicacionSeleccionada.autor, publicacionSeleccionada.anio_publicacion);
+            setLoading(false);
             notify("tr", value.respuesta.valor, "primary");
           }else{
             notify("tr", value.respuesta.valor, "danger");
