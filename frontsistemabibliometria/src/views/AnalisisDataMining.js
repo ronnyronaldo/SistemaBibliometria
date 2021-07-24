@@ -134,6 +134,11 @@ function AnalisisDataMining() {
   }
 
   async function handleProcesarDatosClusteringAreas(value, numeroCluster) { 
+    if(value == 'Error'){
+      notify("tr", 'Debido a la cantidad de datos no es posible realizar el número de cluster que ingreso.', "danger");
+      return;
+    }
+
     setLoading(true);
     var objeto = JSON.parse(value);
     var id_area_frascati = objeto.id_area_frascati;
@@ -262,6 +267,11 @@ function AnalisisDataMining() {
   }
 
   async function handleProcesarDatosClusteringMediosPublicacion(value, numeroCluster) { 
+    if(value == 'Error'){
+      notify("tr", 'Debido a la cantidad de datos no es posible realizar el número de cluster que ingreso.', "danger");
+      return;
+    }
+    
     setLoading(true)
     var objeto = JSON.parse(value);
     var id_medio_publicacion = objeto.id_medio_publicacion;
@@ -386,6 +396,10 @@ function AnalisisDataMining() {
   }
 
   async function handleProcesarDatosClusteringMediosPublicacionReferencias(value, numeroCluster) { 
+    if(value == 'Error'){
+      notify("tr", 'Debido a la cantidad de datos no es posible realizar el número de cluster que ingreso.', "danger");
+      return;
+    }
     setLoading(true);
     var objeto = JSON.parse(value);
     var revista = objeto.revista;
