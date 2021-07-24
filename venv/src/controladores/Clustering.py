@@ -27,29 +27,14 @@ def clusterAreas(num_cluster):
 
     labels = kmeans.predict(X)
 
-    # Getting the cluster centers
-    #C = kmeans.cluster_centers_
-    #colores=['red','green','blue','cyan','yellow','pink','purple']
-    #asignar=[]
-    #for row in labels:
-    #    asignar.append(colores[row])
-
-    # fig = plt.figure()
-    # ax = Axes3D(fig)
-    # ax.scatter(X[:, 0], X[:, 1], X[:, 2], c=asignar,s=60)
-    # ax.scatter(C[:, 0], C[:, 1], C[:, 2], marker='*', c=colores, s=1000)
     dataframe['KMeans_Clusters'] = labels
     # Getting the values and plotting it
     f1 = dataframe['id_area_unesco'].values
     f2 = dataframe['id_area_frascati'].values
-    # ejex = f1.to_json()
-    # ejey = f2.to_json()
+
     areas = pd.concat([dataframe[['id_area_unesco']], dataframe[['id_area_frascati']],dataframe['KMeans_Clusters'], dataframe['id_articulo']], axis = 1)
     area = areas.to_json()
-    # plt.scatter(f1, f2, c=asignar, s=70)
-    # plt.scatter(C[:, 0], C[:, 1], marker='*', c=colores, s=1000)
-    # plt.show()
-    #valorClustering = dataframe.to_json()
+
     return make_response(jsonify(area))
 
 def clusterAreasPorAnio(anio_publicacion, num_cluster):
@@ -66,29 +51,13 @@ def clusterAreasPorAnio(anio_publicacion, num_cluster):
     # Predicting the clusters
     labels = kmeans.predict(X)
 
-    # Getting the cluster centers
-    """C = kmeans.cluster_centers_
-    colores=['red','green','blue','cyan','yellow','pink','purple']
-    asignar=[]
-    for row in labels:
-        asignar.append(colores[row])"""
-
-    # fig = plt.figure()
-    # ax = Axes3D(fig)
-    # ax.scatter(X[:, 0], X[:, 1], X[:, 2], c=asignar,s=60)
-    # ax.scatter(C[:, 0], C[:, 1], C[:, 2], marker='*', c=colores, s=1000)
     dataframe['KMeans_Clusters'] = labels
     # Getting the values and plotting it
     f1 = dataframe['id_area_unesco'].values
     f2 = dataframe['id_area_frascati'].values
-    # ejex = f1.to_json()
-    # ejey = f2.to_json()
+
     areas = pd.concat([dataframe[['id_area_unesco']], dataframe[['id_area_frascati']],dataframe['KMeans_Clusters'], dataframe['id_articulo']], axis = 1)
     area = areas.to_json()
-    # plt.scatter(f1, f2, c=asignar, s=70)
-    # plt.scatter(C[:, 0], C[:, 1], marker='*', c=colores, s=1000)
-    # plt.show()
-    #valorClustering = dataframe.to_json()
     return make_response(jsonify(area))
 
 def clusterMediosPublicacionOrdenAutor(num_cluster):
@@ -243,7 +212,7 @@ def clusterRevistasRefNumCit(num_cluster):
     dataframe['revista'] = dataframe.venue.cat.codes
     
     X = np.array(dataframe[["revista","num_citations"]])
-    y = np.array(dataframe['pub_year'])
+    y = np.array(dataframe['pub_year']) 
     print(X.shape)
 
     kmeans = KMeans(n_clusters=num_cluster).fit(X)
