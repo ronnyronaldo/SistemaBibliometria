@@ -1,4 +1,6 @@
 from modelos.DetalleReferencia import DetalleReferencia 
+from modelos.Articulo import Articulo 
+from modelos.Referencia import Referencia 
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify, make_response
 from marshmallow_sqlalchemy import ModelSchema
@@ -34,4 +36,61 @@ def listaDetalleReferencia():
     detalle_referencia_schema = DetalleReferenciaSchema(many=True)
     detalles_referencia = detalle_referencia_schema.dump(get_detalle_referencia)
     return make_response(jsonify(detalles_referencia))
+
+def listaDetalleReferenciaPorAnio(anio_publicacion):
+
+    """get_detalle_referencia = DetalleReferencia.query.filter((Articulo.anio_publicacion == anio_publicacion) & (Articulo.id_articulo == Referencia.id_articulo) & (Referencia.id_referencia == DetalleReferencia.id_referencia)).all()
+    detalle_referencia_schema = DetalleReferenciaSchema(many=True)
+    detalles_referencia = detalle_referencia_schema.dump(get_detalle_referencia)
+    print(len(detalles_referencia))"""
+    referenciaRespuesta = (db.session.query(Articulo, Referencia, DetalleReferencia).filter(Articulo.anio_publicacion == anio_publicacion)
+    .with_entities(DetalleReferencia.venue, DetalleReferencia.num_citations, DetalleReferencia.pub_year, Articulo.anio_publicacion, Articulo.id_area_frascati, Articulo.id_area_unesco, DetalleReferencia.id_referencia)
+    .join(Referencia, Articulo.id_articulo == Referencia.id_articulo)
+    .join(DetalleReferencia, Referencia.id_referencia == DetalleReferencia.id_referencia)).all()
+    detalleReferencias = []
+    for detalleReferencia in referenciaRespuesta:
+        detalleReferencias.append(dict(detalleReferencia)) # Serializo cada fila
+    print(len(detalleReferencias))
+    return make_response(jsonify(detalleReferencias))
+
+def listaDetalleReferenciaPorAreaFrascati(id_area_frascati):
+    referenciaRespuesta = (db.session.query(Articulo, Referencia, DetalleReferencia).filter(Articulo.id_area_frascati == id_area_frascati)
+    .with_entities(DetalleReferencia.venue, DetalleReferencia.num_citations, DetalleReferencia.pub_year, Articulo.anio_publicacion, Articulo.id_area_frascati, Articulo.id_area_unesco, DetalleReferencia.id_referencia)
+    .join(Referencia, Articulo.id_articulo == Referencia.id_articulo)
+    .join(DetalleReferencia, Referencia.id_referencia == DetalleReferencia.id_referencia)).all()
+    detalleReferencias = []
+    for detalleReferencia in referenciaRespuesta:
+        detalleReferencias.append(dict(detalleReferencia)) # Serializo cada fila
+    return make_response(jsonify(detalleReferencias))
+
+def listaDetalleReferenciaPorAreaUnesco(id_area_unesco):
+    referenciaRespuesta = (db.session.query(Articulo, Referencia, DetalleReferencia).filter(Articulo.id_area_unesco == id_area_unesco)
+    .with_entities(DetalleReferencia.venue, DetalleReferencia.num_citations, DetalleReferencia.pub_year, Articulo.anio_publicacion, Articulo.id_area_frascati, Articulo.id_area_unesco, DetalleReferencia.id_referencia)
+    .join(Referencia, Articulo.id_articulo == Referencia.id_articulo)
+    .join(DetalleReferencia, Referencia.id_referencia == DetalleReferencia.id_referencia)).all()
+    detalleReferencias = []
+    for detalleReferencia in referenciaRespuesta:
+        detalleReferencias.append(dict(detalleReferencia)) # Serializo cada fila
+    return make_response(jsonify(detalleReferencias))
+
+def listaDetalleReferenciaPorAreaFrascatiYAnioPublicacion(anio_publicacion, id_area_frascati):
+    referenciaRespuesta = (db.session.query(Articulo, Referencia, DetalleReferencia).filter((Articulo.id_area_frascati == id_area_frascati) & (Articulo.anio_publicacion == anio_publicacion))
+    .with_entities(DetalleReferencia.venue, DetalleReferencia.num_citations, DetalleReferencia.pub_year, Articulo.anio_publicacion, Articulo.id_area_frascati, Articulo.id_area_unesco, DetalleReferencia.id_referencia)
+    .join(Referencia, Articulo.id_articulo == Referencia.id_articulo)
+    .join(DetalleReferencia, Referencia.id_referencia == DetalleReferencia.id_referencia)).all()
+    detalleReferencias = []
+    for detalleReferencia in referenciaRespuesta:
+        detalleReferencias.append(dict(detalleReferencia)) # Serializo cada fila
+    return make_response(jsonify(detalleReferencias))
+
+def listaDetalleReferenciaPorAreaUnescoYAnioPublicacion(anio_publicacion, id_area_unesco):
+    referenciaRespuesta = (db.session.query(Articulo, Referencia, DetalleReferencia).filter((Articulo.id_area_unesco == id_area_unesco) & (Articulo.anio_publicacion == anio_publicacion))
+    .with_entities(DetalleReferencia.venue, DetalleReferencia.num_citations, DetalleReferencia.pub_year, Articulo.anio_publicacion, Articulo.id_area_frascati, Articulo.id_area_unesco, DetalleReferencia.id_referencia)
+    .join(Referencia, Articulo.id_articulo == Referencia.id_articulo)
+    .join(DetalleReferencia, Referencia.id_referencia == DetalleReferencia.id_referencia)).all()
+    detalleReferencias = []
+    for detalleReferencia in referenciaRespuesta:
+        detalleReferencias.append(dict(detalleReferencia)) # Serializo cada fila
+    return make_response(jsonify(detalleReferencias))
+
 
