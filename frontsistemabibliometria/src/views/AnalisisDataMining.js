@@ -324,6 +324,67 @@ function AnalisisDataMining() {
       setLoading(false);
     });
   }
+
+  async function handleEjecutarClusteringRevNumCitPorAnio(anio_publicacion, numeroCluster) { 
+    setLoading(true);
+    setTituloGrafico('USO POR MEDIOS PUBLICACIÓN');
+    setResultadoClusterMediosPublicacionOrdenAutor([]);
+    setResultadoClusterRevNumCit([]);
+    setResultadoClusterAreas([]);
+    await clusteringService.ejecutarclusteringRevRefNumCitPorAnio(anio_publicacion, numeroCluster).then(value => {
+      handleProcesarDatosClusteringMediosPublicacionReferencias(value, numeroCluster); 
+      setLoading(false);
+    });
+  }
+
+  async function handleEjecutarClusteringRevNumCitPorAreFra(id_area_frascati, numeroCluster) { 
+    setLoading(true);
+    setTituloGrafico('USO POR MEDIOS PUBLICACIÓN');
+    setResultadoClusterMediosPublicacionOrdenAutor([]);
+    setResultadoClusterRevNumCit([]);
+    setResultadoClusterAreas([]);
+    await clusteringService.ejecutarclusteringRevRefNumCitPorAreaFrascati(id_area_frascati, numeroCluster).then(value => {
+      handleProcesarDatosClusteringMediosPublicacionReferencias(value, numeroCluster); 
+      setLoading(false);
+    });
+  }
+
+  async function handleEjecutarClusteringRevNumCitPorAreUne(id_area_unesco, numeroCluster) { 
+    setLoading(true);
+    setTituloGrafico('USO POR MEDIOS PUBLICACIÓN');
+    setResultadoClusterMediosPublicacionOrdenAutor([]);
+    setResultadoClusterRevNumCit([]);
+    setResultadoClusterAreas([]);
+    await clusteringService.ejecutarclusteringRevRefNumCitPorAreaUnesco(id_area_unesco, numeroCluster).then(value => {
+      handleProcesarDatosClusteringMediosPublicacionReferencias(value, numeroCluster); 
+      setLoading(false);
+    });
+  }
+
+  async function handleEjecutarClusteringRevNumCitPorAreFraYAniPub(anio_publicacion, id_area_frascati, numeroCluster) { 
+    setLoading(true);
+    setTituloGrafico('USO POR MEDIOS PUBLICACIÓN');
+    setResultadoClusterMediosPublicacionOrdenAutor([]);
+    setResultadoClusterRevNumCit([]);
+    setResultadoClusterAreas([]);
+    await clusteringService.ejecutarclusteringRevRefNumCitPorAreaFrascatiYAnioPublicacion(anio_publicacion, id_area_frascati, numeroCluster).then(value => {
+      handleProcesarDatosClusteringMediosPublicacionReferencias(value, numeroCluster); 
+      setLoading(false);
+    });
+  }
+
+  async function handleEjecutarClusteringRevNumCitPorAreUneYAniPub(anio_publicacion, id_area_unesco, numeroCluster) { 
+    setLoading(true);
+    setTituloGrafico('USO POR MEDIOS PUBLICACIÓN');
+    setResultadoClusterMediosPublicacionOrdenAutor([]);
+    setResultadoClusterRevNumCit([]);
+    setResultadoClusterAreas([]);
+    await clusteringService.ejecutarclusteringRevRefNumCitPorAreaUnescoYAnioPublicacion(anio_publicacion, id_area_unesco, numeroCluster).then(value => {
+      handleProcesarDatosClusteringMediosPublicacionReferencias(value, numeroCluster); 
+      setLoading(false);
+    });
+  }
+
   async function handleProcesarDatosClusteringMediosPublicacionReferencias(value, numeroCluster) { 
     setLoading(true);
     var objeto = JSON.parse(value);
@@ -538,18 +599,9 @@ function AnalisisDataMining() {
             notify("tr", 'Solo puede seleccionar un filtro de área (Frascati o Unesco).', "danger");
           }
         }
-        /*
+
         if(idCampo == 3){
-          if(idFiltro != 0){
-            if(idFiltro == 'Anio'){
-              if(idAnio != 0){
-                setNumeroCluster(numeroCluster);
-                handleEjecutarClusteringMedPubOrdAutPorAnio(idAnio, numeroCluster)
-              }else{
-                notify("tr", 'Seleccione el Año.', "danger");
-              }
-            }
-          }else{
+          if(idAnio == 0 && idAreaFrascati == 0 && idAreaUnesco == 0){
             if(validacionInputService.esNumero(numeroCluster) && validacionInputService.campoVacio(numeroCluster) ){
               setNumeroCluster(numeroCluster);
               handleEjecutarClusteringRevNumCit(numeroCluster);
@@ -557,7 +609,50 @@ function AnalisisDataMining() {
               notify("tr", 'El número de cluster ingresado no es válido.', "danger");
             }
           }
-        }*/
+          else if(idAnio != 0 && idAreaFrascati == 0 && idAreaUnesco == 0){
+            if(validacionInputService.esNumero(numeroCluster) && validacionInputService.campoVacio(numeroCluster) ){
+              setNumeroCluster(numeroCluster);
+              handleEjecutarClusteringRevNumCitPorAnio(idAnio, numeroCluster)
+            }else{
+              notify("tr", 'El número de cluster ingresado no es válido.', "danger");
+            }
+          }
+          else if(idAnio == 0 && idAreaFrascati != 0 && idAreaUnesco == 0){
+            if(validacionInputService.esNumero(numeroCluster) && validacionInputService.campoVacio(numeroCluster) ){
+              setNumeroCluster(numeroCluster);
+              handleEjecutarClusteringRevNumCitPorAreFra(idAreaFrascati, numeroCluster)
+            }else{
+              notify("tr", 'El número de cluster ingresado no es válido.', "danger");
+            }
+          }
+          else if(idAnio == 0 && idAreaFrascati == 0 && idAreaUnesco != 0){
+            if(validacionInputService.esNumero(numeroCluster) && validacionInputService.campoVacio(numeroCluster) ){
+              setNumeroCluster(numeroCluster);
+              handleEjecutarClusteringRevNumCitPorAreUne(idAreaUnesco, numeroCluster)
+            }else{
+              notify("tr", 'El número de cluster ingresado no es válido.', "danger");
+            }      
+          }
+          else if(idAnio != 0 && idAreaFrascati != 0 && idAreaUnesco == 0){
+            if(validacionInputService.esNumero(numeroCluster) && validacionInputService.campoVacio(numeroCluster) ){
+              setNumeroCluster(numeroCluster);
+              handleEjecutarClusteringRevNumCitPorAreFraYAniPub(idAnio, idAreaFrascati, numeroCluster)
+            }else{
+              notify("tr", 'El número de cluster ingresado no es válido.', "danger");
+            }   
+          }
+          else if(idAnio != 0 && idAreaFrascati == 0 && idAreaUnesco != 0){
+            if(validacionInputService.esNumero(numeroCluster) && validacionInputService.campoVacio(numeroCluster) ){
+              setNumeroCluster(numeroCluster);
+              handleEjecutarClusteringRevNumCitPorAreUneYAniPub(idAnio, idAreaUnesco, numeroCluster)
+            }else{
+              notify("tr", 'El número de cluster ingresado no es válido.', "danger");
+            }   
+          }
+          else if(idAreaUnesco != 0 && idAreaFrascati !=0){
+            notify("tr", 'Solo puede seleccionar un filtro de área (Frascati o Unesco).', "danger");
+          }
+        }
       }
       else{
         notify("tr", 'Seleccione el campo.', "danger");

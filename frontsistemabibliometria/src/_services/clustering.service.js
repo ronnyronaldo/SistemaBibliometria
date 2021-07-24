@@ -11,7 +11,12 @@ export const clusteringService = {
     ejecutarclusteringMediosPublicacionPorAreaFrascati,
     ejecutarclusteringMediosPublicacionPorAreaUnesco,
     ejecutarclusteringMediosPublicacionPorAreaFrascatiYAnioPublicacion,
-    ejecutarclusteringMediosPublicacionPorAreaUnescoYAnioPublicacion
+    ejecutarclusteringMediosPublicacionPorAreaUnescoYAnioPublicacion,
+    ejecutarclusteringRevRefNumCitPorAnio,
+    ejecutarclusteringRevRefNumCitPorAreaFrascati,
+    ejecutarclusteringRevRefNumCitPorAreaUnesco,
+    ejecutarclusteringRevRefNumCitPorAreaFrascatiYAnioPublicacion,
+    ejecutarclusteringRevRefNumCitPorAreaUnescoYAnioPublicacion
 };
 
 async function clusterAreas() {
@@ -45,10 +50,26 @@ async function ejecutarclusteringMediosPublicacionPorAreaUnescoYAnioPublicacion(
     return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarClusterMediosPublicacionPorAreaUnescoYAnioPublicacion/`+anio_publicacion+"/"+ id_area_unesco +'/'+ num_cluster);
 }
 // Cluter por Medios Publicacion
+// Cluster por Medios de Publicacion de las Referencias
 async function ejecutarclusteringRevRefNumCit(numeroCluster) {
     return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarRevistasRefNumCit/`+numeroCluster);
 }
-
+async function ejecutarclusteringRevRefNumCitPorAnio(anio_publicacion, num_cluster) {
+    return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarRevistasRefNumCitPorAnio/`+ anio_publicacion+'/'+ num_cluster);
+}
+async function ejecutarclusteringRevRefNumCitPorAreaFrascati(id_area_frascati, num_cluster) {
+    return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarRevistasRefNumCitPorAreFra/`+ id_area_frascati +'/'+ num_cluster);
+}
+async function ejecutarclusteringRevRefNumCitPorAreaUnesco(id_area_unesco, num_cluster) {
+    return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarRevistasRefNumCitPorAreUne/`+ id_area_unesco +'/'+ num_cluster);
+}
+async function ejecutarclusteringRevRefNumCitPorAreaFrascatiYAnioPublicacion(anio_publicacion, id_area_frascati, num_cluster) {
+    return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarRevistasRefNumCitPorAreFraYAniPub/`+anio_publicacion+"/"+ id_area_frascati +'/'+ num_cluster);
+}
+async function ejecutarclusteringRevRefNumCitPorAreaUnescoYAnioPublicacion(anio_publicacion, id_area_unesco, num_cluster) {
+    return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarRevistasRefNumCitPorAreUneYAniPub/`+anio_publicacion+"/"+ id_area_unesco +'/'+ num_cluster);
+}
+// Cluster por Medios de Publicacion de las Referencias
 
 
 
