@@ -16,6 +16,10 @@ from mpl_toolkits.mplot3d import Axes3D
 
 def clusterAreas(num_cluster):
     respuesta = (listaArticulosMineria()).json
+    numeroRegistros = len(respuesta)
+    if numeroRegistros < num_cluster:
+        return make_response(jsonify("Error"))
+    
     dataframe = pd.json_normalize(respuesta)
     
     X = np.array(dataframe[["id_area_unesco","id_area_frascati","orden_autor"]])
@@ -39,6 +43,10 @@ def clusterAreas(num_cluster):
 
 def clusterAreasPorAnio(anio_publicacion, num_cluster):
     respuesta = (listaArticulosMineriaPorAnio(anio_publicacion)).json
+    numeroRegistros = len(respuesta)
+    if numeroRegistros < num_cluster:
+        return make_response(jsonify("Error"))
+
     dataframe = pd.json_normalize(respuesta)
     
     X = np.array(dataframe[["id_area_unesco","id_area_frascati","orden_autor"]])
@@ -62,6 +70,10 @@ def clusterAreasPorAnio(anio_publicacion, num_cluster):
 
 def clusterMediosPublicacionOrdenAutor(num_cluster):
     respuesta = (listaArticulosMineria()).json
+    numeroRegistros = len(respuesta)
+    if numeroRegistros < num_cluster:
+        return make_response(jsonify("Error"))
+
     dataframe = pd.json_normalize(respuesta)
     
     X = np.array(dataframe[["id_medio_publicacion","orden_autor"]])
@@ -86,6 +98,11 @@ def clusterMediosPublicacionOrdenAutor(num_cluster):
 
 def clusterMediosPublicacionOrdenAutorPorAnio(anio_publicacion, num_cluster):
     respuesta = (listaArticulosMineriaPorAnio(anio_publicacion)).json
+    
+    numeroRegistros = len(respuesta)
+    if numeroRegistros < num_cluster:
+        return make_response(jsonify("Error"))
+
     dataframe = pd.json_normalize(respuesta)
     
     X = np.array(dataframe[["id_medio_publicacion","orden_autor"]])
@@ -110,6 +127,11 @@ def clusterMediosPublicacionOrdenAutorPorAnio(anio_publicacion, num_cluster):
 
 def clusterMediosPublicacionOrdenAutorPorAreaFrascati(id_area_frascati, num_cluster):
     respuesta = (listaArticulosMineriaPorAreaFrascati(id_area_frascati)).json
+
+    numeroRegistros = len(respuesta)
+    if numeroRegistros < num_cluster:
+        return make_response(jsonify("Error"))
+
     dataframe = pd.json_normalize(respuesta)
     
     X = np.array(dataframe[["id_medio_publicacion","orden_autor"]])
@@ -134,6 +156,11 @@ def clusterMediosPublicacionOrdenAutorPorAreaFrascati(id_area_frascati, num_clus
 
 def clusterMediosPublicacionOrdenAutorPorAreaUnesco(id_area_unesco, num_cluster):
     respuesta = (listaArticulosMineriaPorAreaUnesco(id_area_unesco)).json
+
+    numeroRegistros = len(respuesta)
+    if numeroRegistros < num_cluster:
+        return make_response(jsonify("Error"))
+
     dataframe = pd.json_normalize(respuesta)
     
     X = np.array(dataframe[["id_medio_publicacion","orden_autor"]])
@@ -158,6 +185,11 @@ def clusterMediosPublicacionOrdenAutorPorAreaUnesco(id_area_unesco, num_cluster)
 
 def clusterMediosPublicacionOrdenAutorPorAreaFrascatiYAnioPublicacion(anio_publicacion, id_area_frascati, num_cluster):
     respuesta = (listaArticulosMineriaPorAreaFrascatiYAnioPublicacion(anio_publicacion, id_area_frascati)).json
+
+    numeroRegistros = len(respuesta)
+    if numeroRegistros < num_cluster:
+        return make_response(jsonify("Error"))
+
     dataframe = pd.json_normalize(respuesta)
     
     X = np.array(dataframe[["id_medio_publicacion","orden_autor"]])
@@ -182,6 +214,11 @@ def clusterMediosPublicacionOrdenAutorPorAreaFrascatiYAnioPublicacion(anio_publi
 
 def clusterMediosPublicacionOrdenAutorPorAreaUnescoYAnioPublicacion(anio_publicacion, id_area_unesco, num_cluster):
     respuesta = (listaArticulosMineriaPorAreaUnescoYAnioPublicacion(anio_publicacion, id_area_unesco)).json
+
+    numeroRegistros = len(respuesta)
+    if numeroRegistros < num_cluster:
+        return make_response(jsonify("Error"))
+
     dataframe = pd.json_normalize(respuesta)
     
     X = np.array(dataframe[["id_medio_publicacion","orden_autor"]])
@@ -207,6 +244,11 @@ def clusterMediosPublicacionOrdenAutorPorAreaUnescoYAnioPublicacion(anio_publica
 
 def clusterRevistasRefNumCit(num_cluster):
     respuesta = (listaDetalleReferencia()).json
+
+    numeroRegistros = len(respuesta)
+    if numeroRegistros < num_cluster:
+        return make_response(jsonify("Error"))
+
     dataframe = pd.json_normalize(respuesta)
     dataframe.venue = pd.Categorical(dataframe.venue)
     dataframe['revista'] = dataframe.venue.cat.codes
@@ -233,6 +275,11 @@ def clusterRevistasRefNumCit(num_cluster):
 
 def clusterRevistasRefNumCitPorAnio(anio_publicacion, num_cluster):
     respuesta = (listaDetalleReferenciaPorAnio(anio_publicacion)).json
+
+    numeroRegistros = len(respuesta)
+    if numeroRegistros < num_cluster:
+        return make_response(jsonify("Error"))
+
     dataframe = pd.json_normalize(respuesta)
     dataframe.venue = pd.Categorical(dataframe.venue)
     dataframe['revista'] = dataframe.venue.cat.codes
@@ -259,6 +306,11 @@ def clusterRevistasRefNumCitPorAnio(anio_publicacion, num_cluster):
 
 def clusterRevistasRefNumCitPorAreaFrascati(id_area_frascati, num_cluster):
     respuesta = (listaDetalleReferenciaPorAreaFrascati(id_area_frascati)).json
+
+    numeroRegistros = len(respuesta)
+    if numeroRegistros < num_cluster:
+        return make_response(jsonify("Error"))
+
     dataframe = pd.json_normalize(respuesta)
     dataframe.venue = pd.Categorical(dataframe.venue)
     dataframe['revista'] = dataframe.venue.cat.codes
@@ -285,6 +337,11 @@ def clusterRevistasRefNumCitPorAreaFrascati(id_area_frascati, num_cluster):
 
 def clusterRevistasRefNumCitPorAreaUnesco(id_area_unesco, num_cluster):
     respuesta = (listaDetalleReferenciaPorAreaUnesco(id_area_unesco)).json
+
+    numeroRegistros = len(respuesta)
+    if numeroRegistros < num_cluster:
+        return make_response(jsonify("Error"))
+
     dataframe = pd.json_normalize(respuesta)
     dataframe.venue = pd.Categorical(dataframe.venue)
     dataframe['revista'] = dataframe.venue.cat.codes
@@ -311,6 +368,11 @@ def clusterRevistasRefNumCitPorAreaUnesco(id_area_unesco, num_cluster):
 
 def clusterRevistasRefNumCitPorAreFraYAniPub(anio_publicacion, id_area_frascati, num_cluster):
     respuesta = (listaDetalleReferenciaPorAreaFrascatiYAnioPublicacion(anio_publicacion, id_area_frascati)).json
+
+    numeroRegistros = len(respuesta)
+    if numeroRegistros < num_cluster:
+        return make_response(jsonify("Error"))
+
     dataframe = pd.json_normalize(respuesta)
     dataframe.venue = pd.Categorical(dataframe.venue)
     dataframe['revista'] = dataframe.venue.cat.codes
@@ -332,9 +394,15 @@ def clusterRevistasRefNumCitPorAreFraYAniPub(anio_publicacion, id_area_frascati,
 
     revistaNumCit = pd.concat([dataframe[['revista']], dataframe[['num_citations']],dataframe['KMeans_Clusters'], dataframe['id_referencia'], dataframe['venue']], axis = 1)
     revistas = revistaNumCit.to_json()
+    return make_response(jsonify(revistas))
 
 def clusterRevistasRefNumCitPorAreUneYAniPub(anio_publicacion, id_area_unesco, num_cluster):
     respuesta = (listaDetalleReferenciaPorAreaUnescoYAnioPublicacion(anio_publicacion, id_area_unesco)).json
+
+    numeroRegistros = len(respuesta)
+    if numeroRegistros < num_cluster:
+        return make_response(jsonify("Error"))
+
     dataframe = pd.json_normalize(respuesta)
     dataframe.venue = pd.Categorical(dataframe.venue)
     dataframe['revista'] = dataframe.venue.cat.codes
