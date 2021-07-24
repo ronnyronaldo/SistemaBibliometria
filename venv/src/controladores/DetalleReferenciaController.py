@@ -37,6 +37,12 @@ def listaDetalleReferencia():
     detalles_referencia = detalle_referencia_schema.dump(get_detalle_referencia)
     return make_response(jsonify(detalles_referencia))
 
+def listaDetalleReferenciaPorId(id_referencia):
+    get_detalle_referencia = DetalleReferencia.query.filter(DetalleReferencia.id_referencia == id_referencia)
+    detalle_referencia_schema = DetalleReferenciaSchema(many=True)
+    detalles_referencia = detalle_referencia_schema.dump(get_detalle_referencia)
+    return make_response(jsonify({"detalleReferencia": detalles_referencia}))
+
 def numeroDetalleReferenciaIngresadas():
     get_detalle_referencia = DetalleReferencia.query.all()
     detalle_referencia_schema = DetalleReferenciaSchema(many=True)

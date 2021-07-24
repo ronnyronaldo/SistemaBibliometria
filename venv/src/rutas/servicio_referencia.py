@@ -1,6 +1,7 @@
 from flask import Blueprint
 from flask import request
 from controladores.ReferenciaController import listaReferenciasPorIdArticulo, insertarReferenciaManual, eliminarReferencia, insertarReferenciaAutomatico, listaReferenciasNoEncontradasPorIdArticulo, obtenerDetalleReferenciaIndividual, numeroReferenciasIngresadas
+from controladores.ReferenciaController import obtenerDetalleReferenciaTotal
 servicio_referencia= Blueprint('servicio_referencia', __name__)
 @servicio_referencia.route('/insertarManual', methods=['POST']) 
 def insertarManual():
@@ -16,6 +17,11 @@ def insertarAutomatico():
 def buscarDetalleReferenciaIndividual():
     referenciaBuscar = request.json #Obtengo los datos de la referencia para la busqueda del detalle 
     return obtenerDetalleReferenciaIndividual(referenciaBuscar) 
+
+@servicio_referencia.route('/obtenerDetalleReferenciaTotal', methods=['POST']) 
+def buscarDetalleReferenciaTotal():
+    articuloBuscar = request.json #Obtengo los datos de la referencia para la busqueda del detalle 
+    return obtenerDetalleReferenciaTotal(articuloBuscar) 
 
 @servicio_referencia.route('/listarReferenciasPorIdArticulo/<int:id_articulo>', methods=['GET']) 
 def listarReferenciasPorIdArticulo(id_articulo):
