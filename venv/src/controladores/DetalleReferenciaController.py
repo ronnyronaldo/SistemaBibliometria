@@ -37,6 +37,18 @@ def listaDetalleReferencia():
     detalles_referencia = detalle_referencia_schema.dump(get_detalle_referencia)
     return make_response(jsonify(detalles_referencia))
 
+def listaDetalleReferenciaPorIdArticulo(id_articulo):
+    print(id_articulo)
+    referenciaRespuesta = (db.session.query(Articulo, Referencia, DetalleReferencia).filter(Articulo.id_articulo == id_articulo)
+    .with_entities(DetalleReferencia.title, DetalleReferencia.author, DetalleReferencia.venue, DetalleReferencia.num_citations, DetalleReferencia.pub_year, Articulo.anio_publicacion, Articulo.id_area_frascati, Articulo.id_area_unesco, DetalleReferencia.id_referencia)
+    .join(Referencia, Articulo.id_articulo == Referencia.id_articulo)
+    .join(DetalleReferencia, Referencia.id_referencia == DetalleReferencia.id_referencia)).all()
+    detalleReferencias = []
+    for detalleReferencia in referenciaRespuesta:
+        detalleReferencias.append(dict(detalleReferencia)) # Serializo cada fila
+    print(len(detalleReferencias))
+    return make_response(jsonify(detalleReferencias))
+
 def listaDetalleReferenciaPorId(id_referencia):
     get_detalle_referencia = DetalleReferencia.query.filter(DetalleReferencia.id_referencia == id_referencia)
     detalle_referencia_schema = DetalleReferenciaSchema(many=True)
