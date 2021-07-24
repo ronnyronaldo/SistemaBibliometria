@@ -47,7 +47,7 @@ def listaDetalleReferenciaPorIdArticulo(id_articulo):
     for detalleReferencia in referenciaRespuesta:
         detalleReferencias.append(dict(detalleReferencia)) # Serializo cada fila
     print(len(detalleReferencias))
-    return make_response(jsonify(detalleReferencias))
+    return make_response(jsonify({"detalleReferencia": detalleReferencias}))
 
 def listaDetalleReferenciaPorId(id_referencia):
     get_detalle_referencia = DetalleReferencia.query.filter(DetalleReferencia.id_referencia == id_referencia)
