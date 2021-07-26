@@ -6,6 +6,9 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import pairwise_distances_argmin_min
 import seaborn as sb
 import matplotlib.pyplot as plt
+import networkx as nx
+import matplotlib
+import base64
 from flask import Flask, request, jsonify, make_response
 from controladores.ArticuloController import listaArticulos, listaArticulosMineria, listaArticulosMineriaAnios, listaArticulosMineriaPorAnio, listaArticulosMineriaPorAreaFrascati, listaArticulosMineriaPorAreaUnesco, listaArticulosMineriaPorAreaUnescoYAnioPublicacion, listaArticulosMineriaPorAreaFrascatiYAnioPublicacion
 from controladores.DetalleReferenciaController import listaDetalleReferencia, listaDetalleReferenciaPorAnio 
@@ -427,6 +430,176 @@ def clusterRevistasRefNumCitPorAreUneYAniPub(anio_publicacion, id_area_unesco, n
     
     return make_response(jsonify(revistas))
     
+def redesAutores(orden):
+    respuesta = (listaArticulosMineria()).json
+    numeroRegistros = len(respuesta)
+
+    dataframe = pd.json_normalize(respuesta)
+    
+    df1 = dataframe[['nombres','orden_autor']]
+    
+    ord_autor= dataframe['orden_autor']==orden
+
+    uno = dataframe[ord_autor]
+
+    if(orden==1):
+        fig, ax = plt.subplots(figsize=(20,15))
+        df2 = pd.DataFrame({'froma':uno.nombres.iloc[10:100], 'to': uno.orden_autor.iloc[10:100]})
+        node_sizes = [4000 if entry != 2 else 1000 for entry in df2.to]
+        G = nx.from_pandas_edgelist(df2, 'froma', 'to', create_using=nx.Graph())
+        #plt.subplot(2, 2, 1)
+        nx.draw(G, with_labels=True, edgecolors='red', node_color='#DFE5E5', node_size = 1000, font_size = 8)
+        #grafico = nx.draw(G, with_labels=True, edgecolors='red', node_color='#00b4d9', node_size = 1000, font_size = 8)
+        plt.title('Autores según su orden en los artículos', fontsize=18)
+    elif(orden==2):
+        fig, ax = plt.subplots(figsize=(20,15))
+        df2 = pd.DataFrame({'froma':uno.nombres.iloc[10:100], 'to': uno.orden_autor.iloc[10:100]})
+        node_sizes = [4000 if entry != 2 else 1000 for entry in df2.to]
+        G = nx.from_pandas_edgelist(df2, 'froma', 'to', create_using=nx.Graph())
+        #plt.subplot(2, 2, 1)
+        nx.draw(G, with_labels=True, edgecolors='red', node_color='#DFE5E5', node_size = 1000, font_size = 8)
+        #grafico = nx.draw(G, with_labels=True, edgecolors='red', node_color='#00b4d9', node_size = 1000, font_size = 8)
+        plt.title('Autores según su orden en los artículos', fontsize=18)
+    elif(orden==3):
+        fig, ax = plt.subplots(figsize=(20,15))
+        df2 = pd.DataFrame({'froma':uno.nombres.iloc[10:100], 'to': uno.orden_autor.iloc[10:100]})
+        node_sizes = [4000 if entry != 2 else 1000 for entry in df2.to]
+        G = nx.from_pandas_edgelist(df2, 'froma', 'to', create_using=nx.Graph())
+        #plt.subplot(2, 2, 1)
+        nx.draw(G, with_labels=True, edgecolors='red', node_color='#DFE5E5', node_size = 1000, font_size = 8)
+        #grafico = nx.draw(G, with_labels=True, edgecolors='red', node_color='#00b4d9', node_size = 1000, font_size = 8)
+        plt.title('Autores según su orden en los artículos', fontsize=18)
+    elif(orden==4):
+        fig, ax = plt.subplots(figsize=(20,15))
+        df2 = pd.DataFrame({'froma':uno.nombres.iloc[10:100], 'to': uno.orden_autor.iloc[10:100]})
+        node_sizes = [4000 if entry != 2 else 1000 for entry in df2.to]
+        G = nx.from_pandas_edgelist(df2, 'froma', 'to', create_using=nx.Graph())
+        #plt.subplot(2, 2, 1)
+        nx.draw(G, with_labels=True, edgecolors='red', node_color='#DFE5E5', node_size = 1000, font_size = 8)
+        #grafico = nx.draw(G, with_labels=True, edgecolors='red', node_color='#00b4d9', node_size = 1000, font_size = 8)
+        plt.title('Autores según su orden en los artículos', fontsize=18)
+    elif(orden==4):
+        fig, ax = plt.subplots(figsize=(20,15))
+        df2 = pd.DataFrame({'froma':uno.nombres.iloc[10:100], 'to': uno.orden_autor.iloc[10:100]})
+        node_sizes = [4000 if entry != 2 else 1000 for entry in df2.to]
+        G = nx.from_pandas_edgelist(df2, 'froma', 'to', create_using=nx.Graph())
+        #plt.subplot(2, 2, 1)
+        nx.draw(G, with_labels=True, edgecolors='red', node_color='#DFE5E5', node_size = 1000, font_size = 8)
+        #grafico = nx.draw(G, with_labels=True, edgecolors='red', node_color='#00b4d9', node_size = 1000, font_size = 8)
+        plt.title('Autores según su orden en los artículos', fontsize=18)
+    elif(orden==5):
+        fig, ax = plt.subplots(figsize=(20,15))
+        df2 = pd.DataFrame({'froma':uno.nombres.iloc[10:100], 'to': uno.orden_autor.iloc[10:100]})
+        node_sizes = [4000 if entry != 2 else 1000 for entry in df2.to]
+        G = nx.from_pandas_edgelist(df2, 'froma', 'to', create_using=nx.Graph())
+        #plt.subplot(2, 2, 1)
+        nx.draw(G, with_labels=True, edgecolors='red', node_color='#DFE5E5', node_size = 1000, font_size = 8)
+        #grafico = nx.draw(G, with_labels=True, edgecolors='red', node_color='#00b4d9', node_size = 1000, font_size = 8)
+        plt.title('Autores según su orden en los artículos', fontsize=18)
+    elif(orden==6):
+        fig, ax = plt.subplots(figsize=(20,15))
+        df2 = pd.DataFrame({'froma':uno.nombres.iloc[10:100], 'to': uno.orden_autor.iloc[10:100]})
+        node_sizes = [4000 if entry != 2 else 1000 for entry in df2.to]
+        G = nx.from_pandas_edgelist(df2, 'froma', 'to', create_using=nx.Graph())
+        #plt.subplot(2, 2, 1)
+        nx.draw(G, with_labels=True, edgecolors='red', node_color='#DFE5E5', node_size = 1000, font_size = 8)
+        #grafico = nx.draw(G, with_labels=True, edgecolors='red', node_color='#00b4d9', node_size = 1000, font_size = 8)
+        plt.title('Autores según su orden en los artículos', fontsize=18)
+    elif(orden==7):
+        fig, ax = plt.subplots(figsize=(20,15))
+        df2 = pd.DataFrame({'froma':uno.nombres.iloc[:911], 'to': uno.orden_autor.iloc[:911]})
+        node_sizes = [4000 if entry != 2 else 1000 for entry in df2.to]
+        G = nx.from_pandas_edgelist(df2, 'froma', 'to', create_using=nx.Graph())
+        #plt.subplot(2, 2, 1)
+        nx.draw(G, with_labels=True, edgecolors='red', node_color='#DFE5E5', node_size = 1000, font_size = 8)
+        #grafico = nx.draw(G, with_labels=True, edgecolors='red', node_color='#00b4d9', node_size = 1000, font_size = 8)
+        plt.title('Autores según su orden en los artículos', fontsize=18)
+    elif(orden==8):
+        fig, ax = plt.subplots(figsize=(20,15))
+        df2 = pd.DataFrame({'froma':uno.nombres.iloc[:911], 'to': uno.orden_autor.iloc[:911]})
+        node_sizes = [4000 if entry != 2 else 1000 for entry in df2.to]
+        G = nx.from_pandas_edgelist(df2, 'froma', 'to', create_using=nx.Graph())
+        #plt.subplot(2, 2, 1)
+        nx.draw(G, with_labels=True, edgecolors='red', node_color='#DFE5E5', node_size = 1000, font_size = 8)
+        #grafico = nx.draw(G, with_labels=True, edgecolors='red', node_color='#00b4d9', node_size = 1000, font_size = 8)
+        plt.title('Autores según su orden en los artículos', fontsize=18)
+    elif(orden==9):
+        fig, ax = plt.subplots(figsize=(20,15))
+        df2 = pd.DataFrame({'froma':uno.nombres.iloc[:911], 'to': uno.orden_autor.iloc[:911]})
+        node_sizes = [4000 if entry != 2 else 1000 for entry in df2.to]
+        G = nx.from_pandas_edgelist(df2, 'froma', 'to', create_using=nx.Graph())
+        #plt.subplot(2, 2, 1)
+        nx.draw(G, with_labels=True, edgecolors='red', node_color='#DFE5E5', node_size = 1000, font_size = 8)
+        #grafico = nx.draw(G, with_labels=True, edgecolors='red', node_color='#00b4d9', node_size = 1000, font_size = 8)
+        plt.title('Autores según su orden en los artículos', fontsize=18)
+    elif(orden==10):
+        fig, ax = plt.subplots(figsize=(20,15))
+        df2 = pd.DataFrame({'froma':uno.nombres.iloc[:911], 'to': uno.orden_autor.iloc[:911]})
+        node_sizes = [4000 if entry != 2 else 1000 for entry in df2.to]
+        G = nx.from_pandas_edgelist(df2, 'froma', 'to', create_using=nx.Graph())
+        #plt.subplot(2, 2, 1)
+        nx.draw(G, with_labels=True, edgecolors='red', node_color='#DFE5E5', node_size = 1000, font_size = 8)
+        #grafico = nx.draw(G, with_labels=True, edgecolors='red', node_color='#00b4d9', node_size = 1000, font_size = 8)
+        plt.title('Autores según su orden en los artículos', fontsize=18)
+    elif(orden==11):
+        fig, ax = plt.subplots(figsize=(20,15))
+        df2 = pd.DataFrame({'froma':uno.nombres.iloc[:911], 'to': uno.orden_autor.iloc[:911]})
+        node_sizes = [4000 if entry != 2 else 1000 for entry in df2.to]
+        G = nx.from_pandas_edgelist(df2, 'froma', 'to', create_using=nx.Graph())
+        #plt.subplot(2, 2, 1)
+        nx.draw(G, with_labels=True, edgecolors='red', node_color='#DFE5E5', node_size = 1000, font_size = 8)
+        #grafico = nx.draw(G, with_labels=True, edgecolors='red', node_color='#00b4d9', node_size = 1000, font_size = 8)
+        plt.title('Autores según su orden en los artículos', fontsize=18)
+    elif(orden==12):
+        fig, ax = plt.subplots(figsize=(20,15))
+        df2 = pd.DataFrame({'froma':uno.nombres.iloc[:911], 'to': uno.orden_autor.iloc[:911]})
+        node_sizes = [4000 if entry != 2 else 1000 for entry in df2.to]
+        G = nx.from_pandas_edgelist(df2, 'froma', 'to', create_using=nx.Graph())
+        #plt.subplot(2, 2, 1)
+        nx.draw(G, with_labels=True, edgecolors='red', node_color='#DFE5E5', node_size = 1000, font_size = 8)
+        #grafico = nx.draw(G, with_labels=True, edgecolors='red', node_color='#00b4d9', node_size = 1000, font_size = 8)
+        plt.title('Autores según su orden en los artículos', fontsize=18)
+    elif(orden==13):
+        fig, ax = plt.subplots(figsize=(20,15))
+        df2 = pd.DataFrame({'froma':uno.nombres.iloc[:911], 'to': uno.orden_autor.iloc[:911]})
+        node_sizes = [4000 if entry != 2 else 1000 for entry in df2.to]
+        G = nx.from_pandas_edgelist(df2, 'froma', 'to', create_using=nx.Graph())
+        #plt.subplot(2, 2, 1)
+        nx.draw(G, with_labels=True, edgecolors='red', node_color='#DFE5E5', node_size = 1000, font_size = 8)
+        #grafico = nx.draw(G, with_labels=True, edgecolors='red', node_color='#00b4d9', node_size = 1000, font_size = 8)
+        plt.title('Autores según su orden en los artículos', fontsize=18)
+
+        fig, ax = plt.subplots(figsize=(20,15))
+        df2 = pd.DataFrame({'froma':uno.nombres.iloc[10:100], 'to': uno.orden_autor.iloc[10:100]})
+        node_sizes = [4000 if entry != 2 else 1000 for entry in df2.to]
+        G = nx.from_pandas_edgelist(df2, 'froma', 'to', create_using=nx.Graph())
+        #plt.subplot(2, 2, 1)
+        nx.draw(G, with_labels=True, edgecolors='red', node_color='#DFE5E5', node_size = 1000, font_size = 8)
+        #grafico = nx.draw(G, with_labels=True, edgecolors='red', node_color='#00b4d9', node_size = 1000, font_size = 8)
+        plt.title('Autores según su orden en los artículos', fontsize=18)
+    elif(orden==19):
+        fig, ax = plt.subplots(figsize=(20,15))
+        df2 = pd.DataFrame({'froma':uno.nombres.iloc[:911], 'to': uno.orden_autor.iloc[:911]})
+        node_sizes = [4000 if entry != 2 else 1000 for entry in df2.to]
+        G = nx.from_pandas_edgelist(df2, 'froma', 'to', create_using=nx.Graph())
+        #plt.subplot(2, 2, 1)
+        nx.draw(G, with_labels=True, edgecolors='red', node_color='#DFE5E5', node_size = 1000, font_size = 8)
+        #grafico = nx.draw(G, with_labels=True, edgecolors='red', node_color='#00b4d9', node_size = 1000, font_size = 8)
+        plt.title('Autores según su orden en los artículos', fontsize=18)
+    else:
+        print("No existe ese orden de autor")
+
+    imagen = io.BytesIO()
+    plt.savefig(imagen,  format='png')
+    imagen.seek(0)
+    pic_hash = base64.b64encode(imagen.read()).decode()
+
+    #print(pic_hash)
+    #plt.show()
+
+    #mediosOrden = mediosPublicacionOrden.to_json()
+    
+    return make_response(jsonify({"valorimagen": pic_hash}))
 
 
 
