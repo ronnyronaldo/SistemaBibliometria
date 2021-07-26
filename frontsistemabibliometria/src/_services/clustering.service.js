@@ -16,8 +16,14 @@ export const clusteringService = {
     ejecutarclusteringRevRefNumCitPorAreaFrascati,
     ejecutarclusteringRevRefNumCitPorAreaUnesco,
     ejecutarclusteringRevRefNumCitPorAreaFrascatiYAnioPublicacion,
-    ejecutarclusteringRevRefNumCitPorAreaUnescoYAnioPublicacion
+    ejecutarclusteringRevRefNumCitPorAreaUnescoYAnioPublicacion,
+    ejecutarclusteringRedesAutores
 };
+
+// Redes de autores
+async function ejecutarclusteringRedesAutores(orden) {
+    return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarRedesAutores/`+ orden);
+}
 
 async function clusterAreas() {
     return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutar`);
