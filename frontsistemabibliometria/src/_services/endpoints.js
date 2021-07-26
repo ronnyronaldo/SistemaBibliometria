@@ -8,7 +8,8 @@ const endpoints = {
     baseUrlAreaFrascati: `http://localhost:5000/areaFrascati`,
     baseUrlAutor: `http://localhost:5000/autor`,
     baseUrlClustering: `http://localhost:5000/cluster`,
-    baseUrlDetalleReferencia: `http://localhost:5000/detalleReferencia`
+    baseUrlDetalleReferencia: `http://localhost:5000/detalleReferencia`,
+    baseUrlLeyBradford: `http://localhost:5000/leyBradford`
 }
 export default endpoints;
 
