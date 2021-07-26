@@ -44,6 +44,9 @@ from rutas.servicio_detalle_referencia import servicio_detalle_referencia
 #Objeto clustering
 from rutas.servicio_clustering import servicio_clustering
 #Objeto clustering
+#Objeto leyBradford
+from rutas.servicio_ley_bradford import servicio_ley_bradford
+#Objeto leyBradford
 #Configuracion de la aplicacion y de la base de datos
 app = Flask(__name__)
 CORS(app, allow_headers=["Content-Type", "Authorization", "Access-Control-Allow-Credentials"], supports_credentials=True)
@@ -64,6 +67,7 @@ app.register_blueprint(servicio_area_unesco, url_prefix='/areaUnesco')
 app.register_blueprint(servicio_articulo_scopus, url_prefix='/articuloScopus')
 app.register_blueprint(servicio_clustering, url_prefix='/cluster')
 app.register_blueprint(servicio_detalle_referencia, url_prefix='/detalleReferencia')
+app.register_blueprint(servicio_ley_bradford, url_prefix='/leyBradford')
 
 # Correr la aplicacion
 app.run()
