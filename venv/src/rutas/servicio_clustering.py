@@ -4,7 +4,7 @@ from controladores.Clustering import clusterMediosPublicacionOrdenAutorPorAreaFr
 from controladores.Clustering import clusterMediosPublicacionOrdenAutorPorAreaFrascatiYAnioPublicacion, clusterMediosPublicacionOrdenAutorPorAreaUnescoYAnioPublicacion
 from controladores.Clustering import clusterRevistasRefNumCitPorAnio, clusterRevistasRefNumCitPorAreaFrascati
 from controladores.Clustering import clusterRevistasRefNumCitPorAreaUnesco, clusterRevistasRefNumCitPorAreFraYAniPub
-from controladores.Clustering import clusterRevistasRefNumCitPorAreUneYAniPub, redesAutores
+from controladores.Clustering import clusterRevistasRefNumCitPorAreUneYAniPub, redesAutores, redesAutoresAreas
 servicio_clustering =  Blueprint('servicio_clustering', __name__)
 @servicio_clustering.route('/ejecutarClusterAreas/<int:num_cluster>', methods=['GET']) 
 def clusteringAreas(num_cluster):
@@ -68,4 +68,8 @@ def clusteringRevistasRefNumCitPorAreaUnescoYAnioPublicacion(anio_publicacion, i
 @servicio_clustering.route('/ejecutarRedesAutores/<int:orden>', methods=['GET']) 
 def clusteringRedesAutores(orden):
     return redesAutores(orden)
+
+@servicio_clustering.route('/ejecutarRedesAutoresAreas/<int:area>', methods=['GET']) 
+def clusteringRedesAutoresAreas(area):
+    return redesAutoresAreas(area)
 

@@ -6,6 +6,7 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import pairwise_distances_argmin_min
 import seaborn as sb
 import matplotlib.pyplot as plt
+from matplotlib.pyplot import figure
 import networkx as nx
 import matplotlib
 import base64
@@ -600,6 +601,37 @@ def redesAutores(orden):
     #mediosOrden = mediosPublicacionOrden.to_json()
     
     return make_response(jsonify({"valorimagen": pic_hash}))
+
+def redesAutoresAreas(area):
+    respuesta = (listaArticulosMineria()).json
+    numeroRegistros = len(respuesta)
+
+    dataframe = pd.json_normalize(respuesta)
+    
+    df1 = dataframe[['nombres','orden_autor','id_area_unesco','nombre_area_unesco_amplio']]
+    
+    areas= dataframe['id_area_unesco']==area
+    area = dataframe[areas]
+    nombre_area = str(area['nombre_area_unesco_especifico'].iloc[:1])
+    index = nombre_area.index('\nName')
+    index2 = nombre_area.index('    ')
+    nom_area = nombre_area[index2:index]
+
+    fig, ax = plt.subplots(figsize=(20,17))
+    df2 = pd.DataFrame({'froma':area.nombres, 'to': area.id_area_unesco})
+    G = nx.from_pandas_edgelist(df2, 'froma', 'to', create_using=nx.Graph())
+    #plt.subplot(2, 2, 1)
+    nx.draw(G, with_labels=True, edgecolors='brown', node_color='#64ED6C', node_size = 1000, font_size = 8)
+    plt.title(nom_area, fontsize=18)
+
+    print(nom_area)
+    # Crear y Almacenar Imagen
+    imagenArea = io.BytesIO()
+    plt.savefig(imagenArea,  format='png')
+    imagenArea.seek(0)
+    pic_hash = base64.b64encode(imagenArea.read()).decode()
+    
+    return make_response(jsonify({"valorimagenarea": pic_hash}))
 
 
 
