@@ -17,12 +17,18 @@ export const clusteringService = {
     ejecutarclusteringRevRefNumCitPorAreaUnesco,
     ejecutarclusteringRevRefNumCitPorAreaFrascatiYAnioPublicacion,
     ejecutarclusteringRevRefNumCitPorAreaUnescoYAnioPublicacion,
-    ejecutarclusteringRedesAutores
+    ejecutarclusteringRedesAutores,
+    ejecutarclusteringRedesAutoresAreas
 };
 
-// Redes de autores
+// Redes de autores por orden de autor
 async function ejecutarclusteringRedesAutores(orden) {
     return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarRedesAutores/`+ orden);
+}
+
+// Redes de autores por areas
+async function ejecutarclusteringRedesAutoresAreas(area) {
+    return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarRedesAutoresAreas/`+ area);
 }
 
 async function clusterAreas() {

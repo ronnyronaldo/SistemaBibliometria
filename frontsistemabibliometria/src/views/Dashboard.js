@@ -94,6 +94,7 @@ function Dashboard() {
   const [numeroReferencias, setNumeroReferencias] = React.useState(0);
   const [numeroDetalleReferencias, setNumeroDetalleReferencias] = React.useState(0);
   const [numeroOrdenAutor, setnumeroOrdenAutor] = React.useState("");
+  const [redesAreas, setRedesAreas] = React.useState("");
   const [areasFracati, setAreasFrascati] = React.useState([]);
   const [areasUnesco, setAreasUnesco] = React.useState([]);
   const [datosLeyBradford, setDatosLeyBradford] = React.useState([]);
@@ -127,7 +128,18 @@ function Dashboard() {
     setLoading(true)
     let orden_autor = document.getElementById("idOrdenAutor").value;
     await clusteringService.ejecutarclusteringRedesAutores(orden_autor).then(value => {
+      console.log("Imagene de orden"+value.valorimagen);
       setnumeroOrdenAutor(value.valorimagen);
+      setLoading(false)
+    });
+  }
+
+  async function handleCargarRedesDeAutoresAreas() {
+    setLoading(true)
+    let idAreaUnesco = parseInt(document.getElementById("idAreaUnescoGrafo").value);
+    await clusteringService.ejecutarclusteringRedesAutoresAreas(idAreaUnesco).then(value => {
+      console.log("Imagene de area"+value.valorimagenarea);
+      setRedesAreas(value.valorimagenarea);
       setLoading(false)
     });
   }
@@ -219,10 +231,12 @@ function Dashboard() {
   }
   React.useEffect(() => {
     document.getElementById("idOrdenAutor").value=1;
+    parseInt(document.getElementById("idAreaUnescoGrafo").value="1");
     handleCargarTotalesArticulosReferencias();
     handleCargarRedesDeAutores();
     handleAreasUnesco();
     handleAreasFrascati();
+    handleCargarRedesDeAutoresAreas();
   }, []);
   return (
     <>
@@ -345,7 +359,7 @@ function Dashboard() {
                     <Form.Group>
                       <label>Area Unesco</label>
                       <Form.Row>
-                        <select className="form-control" id="idAreaUnescoGrafo">
+                        <select className="form-control" id="idAreaUnescoGrafo" onChange={handleCargarRedesDeAutoresAreas}>
                           <option value="0">Seleccione</option>
                           {areasUnesco.map(item => (
                             <option value={item.id_area_unesco} key={item.id_area_unesco}>{item.descripcion_unesco}</option>
@@ -357,6 +371,9 @@ function Dashboard() {
               </Row>
               <div>
                 <img src={"data:image/png;base64,"+ numeroOrdenAutor} width="100%" height="100%" alt="Red dot" />
+              </div>
+              <div>
+                <img src={"data:image/png;base64,"+ redesAreas} width="100%" height="100%" alt="Red dot" />
               </div>
               </Card.Body>
             </Card>
