@@ -120,7 +120,7 @@ function Publicaciones() {
       fileReader.onload = (e) => {
         const bufferArray = e.target.result;
         const wb = XLSX.read(bufferArray, { type: "buffer" });
-        const wsname = wb.SheetNames[2];
+        const wsname = wb.SheetNames[0];
         const ws = wb.Sheets[wsname];
         const data = XLSX.utils.sheet_to_json(ws);
         setNuevasPublicaciones(data);
@@ -274,83 +274,27 @@ function Publicaciones() {
   }
 
   async function handleIngresarPublicaciones() {
+    setLoading(true);
     if (nuevasPublicaciones.length != 0) {
-      for (var i = 0; i < nuevasPublicaciones.length; i++) {
-        let nuevoIngreso = nuevasPublicaciones[i];
-        baseDatosDigitalService.validarBaseDatosDigitalPorNombre(nuevoIngreso.nombre).then(value => {
-          if (value.base_datos_digital.length !== 0) {
-            let id_base_datos_digital = value.base_datos_digital[0].id_base_datos_digital;
-            //console.log(id_base_datos_digital)
-            areaFrascatiService.validarAreaFrascatiPorNombre(nuevoIngreso.nombre_area_frascati_especifico).then(value => {
-              if (value.area_frascati.length !== 0) {
-                let id_area_frascati = value.area_frascati[0].id_area_frascati;
-                //console.log(id_area_frascati)
-                areaUnescoService.validarAreaUnescoPorNombre(nuevoIngreso.nombre_area_unesco_especifico).then(value => {
-                  if (value.area_unesco.length !== 0) {
-                    let id_area_unesco = value.area_unesco[0].id_area_unesco;
-                    // console.log(id_area_unesco)
-                    medioPublicacionService.validarMedioPublicacionPorNombre(nuevoIngreso.nombre_medio_publicacion).then(value => {
-                      if (value.mediosPublicacion.length !== 0) {
-                        let id_medio_publicacion = value.mediosPublicacion[0].id_medio_publicacion;
-                        //console.log(id_medio_publicacion)
-                        setLoading(true);
-                        publicacionService.insertar({
-                          "id_base_datos_digital": id_base_datos_digital,
-                          "id_area_unesco": id_area_unesco,
-                          "id_area_frascati": id_area_frascati,
-                          "id_medio_publicacion": id_medio_publicacion,
-                          "url_dspace": nuevoIngreso.url_dspace != undefined ? nuevoIngreso.url_dspace : "",
-                          "titulo": nuevoIngreso.titulo != undefined ? nuevoIngreso.titulo : "",
-                          "titulo_alternativo": nuevoIngreso.titulo_alternativo != undefined ? nuevoIngreso.titulo_alternativo : "",
-                          "palabras_clave": nuevoIngreso.palabras_clave != undefined ? nuevoIngreso.palabras_clave : "",
-                          "abstract": nuevoIngreso.abstract != undefined ? nuevoIngreso.abstract : "",
-                          "resumen": nuevoIngreso.resumen != undefined ? nuevoIngreso.resumen : "",
-                          "nombre_area_frascati_amplio": nuevoIngreso.nombre_area_frascati_amplio != undefined ? nuevoIngreso.nombre_area_frascati_amplio : "",
-                          "nombre_area_unesco_amplio": nuevoIngreso.nombre_area_unesco_amplio != undefined ? nuevoIngreso.nombre_area_unesco_amplio : "",
-                          "tipo_publicacion": nuevoIngreso.tipo_publicacion != undefined ? nuevoIngreso.tipo_publicacion : "",
-                          "anio_publicacion": nuevoIngreso.anio_publicacion != undefined ? nuevoIngreso.anio_publicacion : "",
-                          "link_revista": nuevoIngreso.link_revista != undefined ? nuevoIngreso.link_revista : "",
-                          "doi": nuevoIngreso.doi != undefined ? nuevoIngreso.doi : "",
-                          "estado_publicacion": nuevoIngreso.estado_publicacion != undefined ? nuevoIngreso.estado_publicacion : "",
-                          "enlace_documento": nuevoIngreso.enlace_documento != undefined ? nuevoIngreso.enlace_documento : "",
-                          "factor_impacto": nuevoIngreso.factor_impacto != undefined ? nuevoIngreso.factor_impacto : "",
-                          "cuartil": nuevoIngreso.cuartil != undefined ? nuevoIngreso.cuartil : "",
-                          "autor_identificación": nuevoIngreso.autor_identificación != undefined ? nuevoIngreso.autor_identificación : "",
-                          "orden_autor": nuevoIngreso.orden_autor != undefined ? nuevoIngreso.orden_autor : "",
-                          "nombres": nuevoIngreso.nombres != undefined ? nuevoIngreso.nombres : "",
-                          "nombre_afiliacion": nuevoIngreso.nombre_afiliacion != undefined ? nuevoIngreso.nombre_afiliacion : "",
-                          "nombre_medio_publicacion": nuevoIngreso.nombre_medio_publicacion != undefined ? nuevoIngreso.nombre_medio_publicacion : "",
-                          "nombre_area_frascati_especifico": nuevoIngreso.nombre_area_frascati_especifico != undefined ? nuevoIngreso.nombre_area_frascati_especifico : "",
-                          "nombre_area_unesco_especifico": nuevoIngreso.nombre_area_unesco_especifico != undefined ? nuevoIngreso.nombre_area_unesco_especifico : ""
-                        }).then(value => {
-                          setLoading(false);
-                          if (value.respuesta.error == "False") {
-                            notify("tr", value.respuesta.valor + ': ' + nuevoIngreso.titulo + '(' + nuevoIngreso.anio_publicacion + ')', "primary");
-                            handleCargarDatosPublicaciones();
-                          } else {
-                            notify("tr", value.respuesta.valor + ': ' + nuevoIngreso.titulo + '(' + nuevoIngreso.anio_publicacion + ')', "danger");
-                          }
-                        })
-                      } else {
-                        notify("tr", nuevoIngreso.nombre_medio_publicacion + ' : no esta disponible dentro de los Medios de Publicacion. En caso de ser necesario registre esta medio de publicación.', "danger");
-                      }
-                    })
-                  } else {
-                    notify("tr", nuevoIngreso.nombre_area_unesco_especifico + ': no esta disponible dentro de las Areas Unesco. En caso de ser necesario registre esta área.', "danger");
-                  }
-                })
-              } else {
-                notify("tr", nuevoIngreso.nombre_area_frascati_especifico + ': no esta disponible dentro de las Areas Frascati. En caso de ser necesario registre esta área.', "danger");
+      publicacionService.insertar({nuevasPublicaciones}).then(value => {
+        setLoading(false);
+        if (value.respuesta.error == "False") {
+          if(value.respuesta.mensajes.length > 0){
+            for( var i = 0; i< value.respuesta.mensajes.length; i++){
+              if(value.respuesta.mensajes[i].error== "False"){
+                notify("tr", value.respuesta.mensajes[i].mensaje, "primary");
+              }else{
+                notify("tr", value.respuesta.mensajes[i].mensaje, "danger");
               }
-            })
-          } else {
-            notify("tr", 'El repositorio: ' + nuevoIngreso.nombre + ' no esta permitido en el actual análsis.', "danger");
+            }
           }
-        })
-      }
+        } 
+        handleCargarDatosPublicaciones();
+      })
     } else {
       notify("tr", 'No ha ingresado el archivo o no existen datos para cargar.', "danger");
     }
+    setLoading(false)
   }
   React.useEffect(() => {
     handleCargarDatosPublicaciones();
