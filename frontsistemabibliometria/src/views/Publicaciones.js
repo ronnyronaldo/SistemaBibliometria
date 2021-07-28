@@ -412,6 +412,7 @@ function Publicaciones() {
                       <th>AREA UNESCO</th>
                       <th>AREA FRASCATI</th>
                       <th>FUENTE</th>
+                      <th>CUARTIL</th>
                       <th>ENLACE DOCUMENTO</th>
                       <th>ACCIONES</th>
                     </tr>
@@ -420,13 +421,14 @@ function Publicaciones() {
                     {publicaciones.map(item => (
                       <tr className="small" key={item.id_articulo} onClick={() => handleCargarReferencias(item.id_articulo, item.titulo, item.nombres, item.anio_publicacion, item.nombre_base_datos_digital)}>
                         <td width="15%">{item.nombres}</td>
-                        <td width="20%">{item.titulo}</td>
+                        <td width="15%">{item.titulo}</td>
                         <td width="5%">{item.anio_publicacion}</td>
                         <td width="7%">{item.tipo_publicacion}</td>
                         <td width="20%">{item.nombre}</td>
                         <td width="5%">{item.descripcion_unesco}</td>
                         <td width="5%">{item.descripcion}</td>
                         <td width="5%">{item.nombre_base_datos_digital}</td>
+                        <td width="5%">{item.cuartil}</td>
                         <td width="5%">
                           <a href={item.url_dspace} target="_blank"><i className="fas fa-external-link-alt"></i>Abrir documento</a>
                         </td>

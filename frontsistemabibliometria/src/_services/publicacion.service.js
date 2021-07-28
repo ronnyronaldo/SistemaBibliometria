@@ -9,7 +9,8 @@ export const publicacionService = {
     obtenerDetalleClusterMediosPublicacion,
     obtenerDetalleClusterMediosPublicacionReferencias,
     numeroArticulosIngresados,
-    numeroArticulosNoTienenReferencias
+    numeroArticulosNoTienenReferencias,
+    obtenerDetalleClusteringCuartilAreaUnesco
 };
 
 async function listar() {
@@ -42,6 +43,10 @@ async function obtenerDetalleClusterMediosPublicacion(params) {
 
 async function obtenerDetalleClusterMediosPublicacionReferencias(params) {
     return fetchWrapper.post(`${endpoints.baseUrlPublicacion}/obtenerDetalleMediosPublicacionReferencias`, params);
+}
+
+async function obtenerDetalleClusteringCuartilAreaUnesco(params) {
+    return fetchWrapper.post(`${endpoints.baseUrlPublicacion}/obtenerDetalleClusterCuartilAreUne`, params);
 }
 
 
