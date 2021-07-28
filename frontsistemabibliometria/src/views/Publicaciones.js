@@ -205,21 +205,30 @@ function Publicaciones() {
   }
 
   const handleCargarRefAutomatica = (event) => {
+    setLoading(true)
     if(datoReferencia.idArticulo != 0){
       console.log("Cargar datos de referencias automatica....")
       referenciaService.insertarAutomatico({
         "id_articulo": datoReferencia.idArticulo,
         "nombre_base_datos_digital": publicacionSeleccionada.nombre_base_datos_digital
       }).then(value =>{
-        if(value.respuesta.error == "False"){
-          notify("tr", value.respuesta.valor, "primary");
-        }else{
-          notify("tr", value.respuesta.valor, "danger");
-        }
+        setLoading(false);
+        if (value.respuesta.error == "False") {
+          if(value.respuesta.mensajes.length > 0){
+            for( var i = 0; i< value.respuesta.mensajes.length; i++){
+              if(value.respuesta.mensajes[i].error== "False"){
+                notify("tr", value.respuesta.mensajes[i].mensaje, "primary");
+              }else{
+                notify("tr", value.respuesta.mensajes[i].mensaje, "danger");
+              }
+            }
+          }
+        } 
       })
     }else {
       notify("tr", 'No ha seleccionado ninguna publicación.', "danger");
     }
+    setLoading(false)
   }
 
   const handleCargarRefManual = (event) => {
