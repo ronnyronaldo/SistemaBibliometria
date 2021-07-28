@@ -8,9 +8,10 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify, make_response
 from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
-from controladores.AreaFrascatiController import buscarAreaFrascatiPorId
-from controladores.AreaUnescoController import buscarAreaUnescoPorId
-from controladores.MedioPublicacionController import buscaMedioPublicacionPorId
+from controladores.AreaFrascatiController import buscarAreaFrascatiPorId, validarAreaFrascatiPorNombre
+from controladores.AreaUnescoController import buscarAreaUnescoPorId, validarAreaUnescoPorNombre
+from controladores.MedioPublicacionController import buscaMedioPublicacionPorId, verificaMedioPublicacionPorNombre
+from controladores.BaseDatosDigitalController import  validarBaseDatosDigitalPorNombre
 
 db = SQLAlchemy()
 
@@ -59,44 +60,123 @@ def obtenerIdArticuloIngresarAutor(titulo, anio_publicacion, id_base_datos_digit
     articulo = articulo_schema.dump(get_articulo)
     return articulo
 
-def insertarArticulo(nuevoArticulo):
-    print(nuevoArticulo['titulo_alternativo'])
-    get_articulo = Articulo.query.filter((Articulo.id_base_datos_digital == nuevoArticulo['id_base_datos_digital']) & (Articulo.titulo == nuevoArticulo['titulo']) & (Articulo.anio_publicacion == nuevoArticulo['anio_publicacion']))
-    articulo_schema = ArticuloSchema(many=True)
-    articulos = articulo_schema.dump(get_articulo)
-    numeroArticulos = len(articulos)
-    if numeroArticulos == 0:
-        Articulo(nuevoArticulo['id_base_datos_digital'],
-        nuevoArticulo['id_area_unesco'],
-        nuevoArticulo['id_area_frascati'],
-        nuevoArticulo['id_medio_publicacion'],
-        nuevoArticulo['url_dspace'],
-        nuevoArticulo['titulo'],
-        nuevoArticulo['titulo_alternativo'],
-        nuevoArticulo['palabras_clave'],
-        nuevoArticulo['abstract'],
-        nuevoArticulo['resumen'],
-        nuevoArticulo['nombre_area_frascati_amplio'],
-        nuevoArticulo['nombre_area_unesco_amplio'],
-        nuevoArticulo['tipo_publicacion'],
-        nuevoArticulo['anio_publicacion'],
-        nuevoArticulo['link_revista'],
-        nuevoArticulo['doi'],
-        nuevoArticulo['estado_publicacion'],
-        nuevoArticulo['enlace_documento'],
-        nuevoArticulo['factor_impacto'],
-        nuevoArticulo['cuartil'],
-        nuevoArticulo['autor_identificación'],
-        nuevoArticulo['orden_autor'],
-        nuevoArticulo['nombres'],
-        nuevoArticulo['nombre_afiliacion'],
-        nuevoArticulo['nombre_medio_publicacion'],
-        nuevoArticulo['nombre_area_frascati_especifico'],
-        nuevoArticulo['nombre_area_unesco_especifico'],
-        ).create()
-        return make_response(jsonify({"respuesta": {"valor":"Artículo ingresado correctamente", "error":"False"}}))
-    else:
-        return make_response(jsonify({"respuesta": {"valor":"El artículo ya esta registrado", "error":"True"}}))
+def insertarArticulo(nuevosArticulos):
+    articulos = nuevosArticulos['nuevasPublicaciones']
+    mensajesRespuesta = []
+    for articulo in articulos:
+        resultado_base_datos_digital = validarBaseDatosDigitalPorNombre(articulo['nombre']).json['base_datos_digital']
+        resultado_area_frascati = validarAreaFrascatiPorNombre(articulo['nombre_area_frascati_especifico']).json['area_frascati']
+        resultado_area_unesco = validarAreaUnescoPorNombre(articulo['nombre_area_unesco_especifico']).json['area_unesco']
+        resultado_medio_publicacion = verificaMedioPublicacionPorNombre(articulo['nombre_medio_publicacion']).json['mediosPublicacion']
+    
+        if len(resultado_base_datos_digital) == 1:
+            id_base_datos_digital = resultado_base_datos_digital[0]['id_base_datos_digital']
+            if len(resultado_area_frascati) == 1:
+                id_area_frascati = resultado_area_frascati[0]['id_area_frascati']
+                if len(resultado_area_unesco) == 1:
+                    id_area_unesco = resultado_area_unesco[0]['id_area_unesco']
+                    if len(resultado_medio_publicacion) == 1:
+                        id_medio_publicacion = resultado_medio_publicacion[0]['id_medio_publicacion']
+                        get_articulo = Articulo.query.filter((Articulo.id_base_datos_digital == id_base_datos_digital) & (Articulo.titulo == articulo['titulo']) & (Articulo.anio_publicacion == articulo['anio_publicacion']))
+                        articulo_schema = ArticuloSchema(many=True)
+                        articulos = articulo_schema.dump(get_articulo)
+                        numeroArticulos = len(articulos)
+                        if numeroArticulos == 0:
+                            url_dspace = extraerDatos(articulo, 'url_dspace')
+                            titulo = extraerDatos(articulo, 'titulo')
+                            titulo_alternativo = extraerDatos(articulo,'titulo_alternativo')
+                            palabras_clave = extraerDatos(articulo, 'palabras_clave')
+                            abstract = extraerDatos(articulo, 'abstract')
+                            resumen = extraerDatos(articulo, 'resumen')
+                            nombre_area_frascati_amplio = extraerDatos(articulo, 'nombre_area_frascati_amplio')
+                            nombre_area_unesco_amplio = extraerDatos(articulo, 'nombre_area_unesco_amplio')
+                            tipo_publicacion = extraerDatos(articulo, 'tipo_publicacion')
+                            anio_publicacion = extraerDatos(articulo,'anio_publicacion')
+                            link_revista = extraerDatos(articulo, 'link_revista')
+                            doi = extraerDatos(articulo, 'doi')
+                            estado_publicacion = extraerDatos(articulo, 'estado_publicacion')
+                            enlace_documento = extraerDatos(articulo, 'enlace_documento')
+                            factor_impacto = extraerDatos(articulo, 'factor_impacto')
+                            cuartil = extraerDatos(articulo, 'cuartil')
+                            autor_identificacion = extraerDatos(articulo, 'autor_identificación')
+                            orden_autor = extraerDatos(articulo, 'orden_autor')
+                            nombres = extraerDatos(articulo, 'nombres')
+                            nombre_afiliacion = extraerDatos(articulo, 'nombre_afiliacion')
+                            nombre_medio_publicacion = extraerDatos(articulo, 'nombre_medio_publicacion')
+                            nombre_area_frascati_especifico = extraerDatos(articulo, 'nombre_area_frascati_especifico')
+                            nombre_area_unesco_especifico = extraerDatos(articulo, 'nombre_area_unesco_especifico')
+                            
+                            Articulo(id_base_datos_digital,
+                            id_area_unesco,
+                            id_area_frascati,
+                            id_medio_publicacion,
+                            url_dspace,
+                            titulo,
+                            titulo_alternativo,
+                            palabras_clave,
+                            abstract,
+                            resumen,
+                            nombre_area_frascati_amplio,
+                            nombre_area_unesco_amplio,
+                            tipo_publicacion,
+                            anio_publicacion,
+                            link_revista,
+                            doi,
+                            estado_publicacion,
+                            enlace_documento,
+                            factor_impacto,
+                            cuartil,
+                            autor_identificacion,
+                            orden_autor,
+                            nombres,
+                            nombre_afiliacion,
+                            nombre_medio_publicacion,
+                            nombre_area_frascati_especifico,
+                            nombre_area_unesco_especifico
+                            ).create()
+                            
+                            mensaje = {
+                                "error": "False",
+                                "mensaje": 'Artículo ingresado correctamente: '+articulo['titulo']
+                            }
+                            mensajesRespuesta.append(mensaje)
+                        else:
+                            mensaje = {
+                                "error": "True",
+                                "mensaje": 'La publicacion ya esta registrada: '+ articulo['titulo']
+                            }
+                            mensajesRespuesta.append(mensaje)
+                    else:
+                        mensaje = {
+                            "error": "True",
+                            "mensaje": 'No se ha registrado el medio de publicación: '+ articulo['nombre_medio_publicacion']
+                        }
+                        mensajesRespuesta.append(mensaje)
+                else:
+                    mensaje = {
+                            "error": "True",
+                            "mensaje": 'No se ha registrado el área unesco: ' + articulo['nombre_area_unesco_especifico']
+                        }
+                    mensajesRespuesta.append(mensaje)
+            else:
+                mensaje = {
+                        "error": "True",
+                        "mensaje": 'No se ha registrado el área frascati: ' + articulo['nombre_area_frascati_especifico']
+                    }
+                mensajesRespuesta.append(mensaje)
+        else:
+            mensaje = {
+                    "error": "True",
+                    "mensaje": 'No se encuentra registrado la base de datos digital: ' + articulo['nombre']
+                }
+            mensajesRespuesta.append(mensaje)
+    return make_response(jsonify({"respuesta": {"mensajes":mensajesRespuesta, "error":"False"}}))
+
+def extraerDatos(articulo, campo):
+    try:
+        return articulo[campo]
+    except:
+        return ""
 
 def listaArticulos():
     articulosRespuesta = (db.session.query(Articulo, BaseDatosDigital, MedioPublicacion, AreaFrascati, AreaUnesco)
