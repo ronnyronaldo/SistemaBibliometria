@@ -633,5 +633,37 @@ def redesAutoresAreas(area):
     
     return make_response(jsonify({"valorimagenarea": pic_hash}))
 
+def clusterCuartilAreaUnesco(num_cluster):
+    respuesta = (listaArticulosMineria()).json
+    numeroRegistros = len(respuesta)
+    if numeroRegistros < num_cluster:
+        return make_response(jsonify("Error"))
+    
+    dataframe = pd.json_normalize(respuesta)
+    
+    dataframe.cuartil = pd.Categorical(dataframe.cuartil)
+    dataframe['Quartil'] = dataframe.cuartil.cat.codes
+    dataframe['Quartil'].head()
+    
+    X = np.array(dataframe[["id_area_unesco","Quartil"]])
+    y = np.array(dataframe['anio_publicacion'])
+    print(X.shape)
+
+    kmeans = KMeans(n_clusters=num_cluster).fit(X)
+    centroids = kmeans.cluster_centers_
+
+    labels = kmeans.predict(X)
+
+    dataframe['KMeans_Clusters'] = labels
+    # Getting the values and plotting it
+    f1 = dataframe['id_area_unesco'].values
+    f2 = dataframe['Quartil'].values
+
+    areas = pd.concat([dataframe[['id_area_unesco']], dataframe[['Quartil']],dataframe['KMeans_Clusters'], dataframe['id_articulo']], axis = 1)
+    area = areas.to_json()
+
+    return make_response(jsonify(area))
+
+
 
 

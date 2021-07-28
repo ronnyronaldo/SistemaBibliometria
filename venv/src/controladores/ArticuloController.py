@@ -100,7 +100,7 @@ def insertarArticulo(nuevoArticulo):
 
 def listaArticulos():
     articulosRespuesta = (db.session.query(Articulo, BaseDatosDigital, MedioPublicacion, AreaFrascati, AreaUnesco)
-        .with_entities(Articulo.id_articulo, Articulo.nombres, Articulo.orden_autor, Articulo.titulo, Articulo.anio_publicacion, Articulo.doi, BaseDatosDigital.nombre_base_datos_digital, Articulo.tipo_publicacion, Articulo.url_dspace, MedioPublicacion.nombre, AreaUnesco.descripcion_unesco, AreaFrascati.descripcion)
+        .with_entities(Articulo.id_articulo, Articulo.nombres, Articulo.orden_autor, Articulo.titulo, Articulo.anio_publicacion, Articulo.doi, BaseDatosDigital.nombre_base_datos_digital, Articulo.tipo_publicacion, Articulo.url_dspace, MedioPublicacion.nombre, AreaUnesco.descripcion_unesco, AreaFrascati.descripcion, Articulo.cuartil)
         .join(BaseDatosDigital, Articulo.id_base_datos_digital == BaseDatosDigital.id_base_datos_digital)
         .join(MedioPublicacion, Articulo.id_medio_publicacion == MedioPublicacion.id_medio_publicacion)
         .join(AreaFrascati, Articulo.id_area_frascati == AreaFrascati.id_area_frascati )
@@ -174,6 +174,21 @@ def obtenerDetalleClusterAreasPub(resultadoClusterAreas):
         respuestaAreaFrascati = buscarAreaFrascatiPorId(respuestaArticulo['id_area_frascati']).json['area_frascati'][0]
         respuestaAreaUnesco = buscarAreaUnescoPorId(respuestaArticulo['id_area_unesco']).json['area_unesco'][0]
         valor = {"areaFrascati": respuestaAreaFrascati['descripcion'], "areaUnesco": respuestaAreaUnesco['descripcion_unesco'], "id_articulo": registro['id_articulo']}
+        for i in range(numero_cluster):
+            if registro['id_cluster'] == i:
+                clusters[i][i].append(valor)
+    return make_response(jsonify(clusters))
+
+def obtenerDetalleClusterCuartilAreUne(resultadoClusterAreas):
+    numero_cluster = resultadoClusterAreas[0]['num_cluster']
+    clusters = []
+    for i in range(numero_cluster):
+        valor = {i: []}
+        clusters.append(valor) 
+    for registro in resultadoClusterAreas:
+        respuestaArticulo = buscarArticuloPorId(registro['id_articulo']).json['articulo'][0]
+        respuestaAreaUnesco = buscarAreaUnescoPorId(respuestaArticulo['id_area_unesco']).json['area_unesco'][0]
+        valor = {"cuartil": respuestaArticulo['cuartil'], "areaUnesco": respuestaAreaUnesco['descripcion_unesco'], "id_articulo": registro['id_articulo']}
         for i in range(numero_cluster):
             if registro['id_cluster'] == i:
                 clusters[i][i].append(valor)
