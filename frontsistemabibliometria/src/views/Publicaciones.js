@@ -430,7 +430,7 @@ function Publicaciones() {
                         <td width="5%">{item.nombre_base_datos_digital}</td>
                         <td width="5%">{item.cuartil}</td>
                         <td width="5%">
-                          <a href={item.url_dspace} target="_blank"><i className="fas fa-external-link-alt"></i>Abrir documento</a>
+                          <a href={item.enlace_documento != null ? item.enlace_documento : item.url_dspace} target="_blank"><i className="fas fa-external-link-alt"></i>Abrir documento</a>
                         </td>
                         <td width="5%"><Link to="#" id="eliminarArticulo" className="link col-sm-12 col-md-3" onClick={()=>handleEliminarArticulo(item.id_articulo)}><i className="fas fa-trash-alt fa-2x"></i></Link></td>
                       </tr>

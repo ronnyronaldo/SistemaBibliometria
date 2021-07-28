@@ -217,7 +217,7 @@ function Autores() {
                     {autores.map(item => (
                       <tr className="small" key={item.id_autor}>
                         <td>{item.titulo}</td>
-                        <td>{item.identificacion}</td>
+                        <td>{item.identificacion.substr(1)}</td>
                         <td>{item.nombre}</td>
                         <td width="5%"><Link to="#" id="eliminarAutor" className="link col-sm-12 col-md-3" onClick={() => handleEliminarAutor(item.id_autor)}><i className="fas fa-trash-alt fa-2x"></i></Link></td>
                       </tr>
