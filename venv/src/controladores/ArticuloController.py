@@ -100,7 +100,7 @@ def insertarArticulo(nuevoArticulo):
 
 def listaArticulos():
     articulosRespuesta = (db.session.query(Articulo, BaseDatosDigital, MedioPublicacion, AreaFrascati, AreaUnesco)
-        .with_entities(Articulo.id_articulo, Articulo.nombres, Articulo.orden_autor, Articulo.titulo, Articulo.anio_publicacion, Articulo.doi, BaseDatosDigital.nombre_base_datos_digital, Articulo.tipo_publicacion, Articulo.url_dspace, MedioPublicacion.nombre, AreaUnesco.descripcion_unesco, AreaFrascati.descripcion, Articulo.cuartil)
+        .with_entities(Articulo.id_articulo, Articulo.nombres, Articulo.orden_autor, Articulo.titulo, Articulo.anio_publicacion, Articulo.doi, BaseDatosDigital.nombre_base_datos_digital, Articulo.tipo_publicacion, Articulo.url_dspace,Articulo.enlace_documento, MedioPublicacion.nombre, AreaUnesco.descripcion_unesco, AreaFrascati.descripcion, Articulo.cuartil)
         .join(BaseDatosDigital, Articulo.id_base_datos_digital == BaseDatosDigital.id_base_datos_digital)
         .join(MedioPublicacion, Articulo.id_medio_publicacion == MedioPublicacion.id_medio_publicacion)
         .join(AreaFrascati, Articulo.id_area_frascati == AreaFrascati.id_area_frascati )
