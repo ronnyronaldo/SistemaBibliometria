@@ -55,29 +55,60 @@ def insertarReferenciaManual(nuevaReferencia):
         return make_response(jsonify({"respuesta": {"valor":"La referencia ya esta ingresada.", "error":"True"}}))
 
 def insertarReferenciaAutomatico(nuevaReferencia):
+    mensajesRespuesta = []
     resultado = validarBaseDatosDigitalPorNombre(nuevaReferencia['nombre_base_datos_digital'])
-    nombre_base_datos_digital = (resultado.json['base_datos_digital'][0]['nombre_base_datos_digital'])
-    if nombre_base_datos_digital == 'SCOPUS':
-        respuestaArticulo = buscarArticuloPorId(nuevaReferencia['id_articulo'])
-        respuestaArticuloScopus = buscarArticuloParaExtraerReferencias(respuestaArticulo.json['articulo'][0]['titulo'], respuestaArticulo.json['articulo'][0]['titulo_alternativo'], respuestaArticulo.json['articulo'][0]['anio_publicacion'])
-        articulo_scopus = respuestaArticuloScopus.json['articulo_scopus'][0]
-        id_article = articulo_scopus['id_article']
-        referencesString = articulo_scopus['References']
-        referencesList = []
-        if not referencesString == None: 
-            referencesList = referencesString.split(';')
-            for reference in referencesList:
-                get_referencia = Referencia.query.filter((Referencia.id_articulo == nuevaReferencia['id_articulo']) & (Referencia.referencia == reference))
-                referencia_schema = ReferenciaSchema(many=True)
-                referencia = referencia_schema.dump(get_referencia)
-                numeroReferencias = len(referencia)
-                if numeroReferencias == 0:
-                    Referencia(nuevaReferencia['id_articulo'], reference).create()
+    if len(resultado.json['base_datos_digital']) == 1:
+        nombre_base_datos_digital = (resultado.json['base_datos_digital'][0]['nombre_base_datos_digital'])
+        if nombre_base_datos_digital == 'SCOPUS':
+            respuestaArticulo = buscarArticuloPorId(nuevaReferencia['id_articulo'])
+            if len(respuestaArticulo.json['articulo']) == 1:
+                respuestaArticuloScopus = buscarArticuloParaExtraerReferencias(respuestaArticulo.json['articulo'][0]['titulo'], respuestaArticulo.json['articulo'][0]['titulo_alternativo'], respuestaArticulo.json['articulo'][0]['anio_publicacion'])
+                if len(respuestaArticuloScopus.json['articulo_scopus']) == 1:
+                    articulo_scopus = respuestaArticuloScopus.json['articulo_scopus'][0]
+                    id_article = articulo_scopus['id_article']
+                    referencesString = articulo_scopus['References']
+                    referencesList = []
+                    if not referencesString == None: 
+                        referencesList = referencesString.split(';')
+                        for reference in referencesList:
+                            get_referencia = Referencia.query.filter((Referencia.id_articulo == nuevaReferencia['id_articulo']) & (Referencia.referencia == reference))
+                            referencia_schema = ReferenciaSchema(many=True)
+                            referencia = referencia_schema.dump(get_referencia)
+                            numeroReferencias = len(referencia)
+                            if numeroReferencias == 0:
+                                Referencia(nuevaReferencia['id_articulo'], reference).create()
+                            else:
+                                return make_response(jsonify({"respuesta": {"mensajes":[{"error": "True", "mensaje": "Ya existen referencias ingresadas previamente"}], "error":"False"}}))
+                        mensaje = {
+                                "error": "False",
+                                "mensaje": 'Referencias ingresada correctamente.'
+                            }
+                        mensajesRespuesta.append(mensaje)
                 else:
-                    return make_response(jsonify({"respuesta": {"valor":"Ya existen referencias ingresadas previamente.", "error":"True"}}))
-            return make_response(jsonify({"respuesta": {"valor":"Referencias ingresadas correctamente.", "error":"False"}}))
+                    mensaje = {
+                                "error": "True",
+                                "mensaje": 'No existen datos de referencias para cargar.'
+                        }
+                    mensajesRespuesta.append(mensaje)
+            else:
+                mensaje = {
+                            "error": "True",
+                            "mensaje": 'No se encuentra registrado el articulo seleccionado.'
+                    }
+                mensajesRespuesta.append(mensaje)
+        else:
+            mensaje = {
+                        "error": "True",
+                        "mensaje": 'No exiten datos de la base de datos digital: '+ nombre_base_datos_digital 
+                }
+            mensajesRespuesta.append(mensaje)
     else:
-        return make_response(jsonify({"respuesta": {"valor":"No existen datos de referencias para cargar.", "error":"True"}}))
+        mensaje = {
+                "error": "True",
+                "mensaje": 'No exiten esta registrada la base de datos digital: '+ nombre_base_datos_digital 
+        }
+        mensajesRespuesta.append(mensaje)
+    return make_response(jsonify({"respuesta": {"mensajes":mensajesRespuesta, "error":"False"}}))
     
 def eliminarReferencia(id_referencia):
     referencia = Referencia.query.get(id_referencia)
