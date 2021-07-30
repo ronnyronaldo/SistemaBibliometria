@@ -9,7 +9,8 @@ const endpoints = {
     baseUrlAutor: `http://localhost:5000/autor`,
     baseUrlClustering: `http://localhost:5000/cluster`,
     baseUrlDetalleReferencia: `http://localhost:5000/detalleReferencia`,
-    baseUrlLeyBradford: `http://localhost:5000/leyBradford`
+    baseUrlLeyBradford: `http://localhost:5000/leyBradford`,
+    baseUrlAnalisisEstadistico: `http://localhost:5000/analisisEstadistico`
 }
 export default endpoints;
 
