@@ -47,6 +47,9 @@ from rutas.servicio_clustering import servicio_clustering
 #Objeto leyBradford
 from rutas.servicio_ley_bradford import servicio_ley_bradford
 #Objeto leyBradford
+#Objeto analisis estadistico
+from rutas.servicio_analisis_estadistico import servicio_analisis_estadistico
+#Objeto analisis esdistico
 #Configuracion de la aplicacion y de la base de datos
 app = Flask(__name__)
 CORS(app, allow_headers=["Content-Type", "Authorization", "Access-Control-Allow-Credentials"], supports_credentials=True)
@@ -68,6 +71,7 @@ app.register_blueprint(servicio_articulo_scopus, url_prefix='/articuloScopus')
 app.register_blueprint(servicio_clustering, url_prefix='/cluster')
 app.register_blueprint(servicio_detalle_referencia, url_prefix='/detalleReferencia')
 app.register_blueprint(servicio_ley_bradford, url_prefix='/leyBradford')
+app.register_blueprint(servicio_analisis_estadistico, url_prefix='/analisisEstadistico')
 
 # Correr la aplicacion
 app.run()
