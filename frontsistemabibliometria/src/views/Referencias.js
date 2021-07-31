@@ -278,7 +278,6 @@ function Referencias() {
       medioPublicacion:venue
       
     });
-
     openModal()
   }
 
@@ -322,7 +321,7 @@ function Referencias() {
         } else {
           notify("tr", 'La opción seleccionada no esta disponible.', "danger");
         }
-        
+
         //await handleDetalleReferenciaPorFiltros();
       })
 

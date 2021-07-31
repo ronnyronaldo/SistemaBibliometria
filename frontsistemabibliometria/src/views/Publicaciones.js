@@ -45,6 +45,8 @@ const override = css`
 /**Spinner */
 
 function Publicaciones() {
+  const [modalIsOpen, setModalIsOpen] = React.useState(false);
+
   /**Spinner */
   let [loading, setLoading] = React.useState(false);
   /**Spinner */
@@ -56,6 +58,15 @@ function Publicaciones() {
     idArticulo: 0,
     referencia: ""
   });
+
+  const [publicacionObj, setPublicacionObj] = React.useState({
+    id_articulo:0, 
+    nombres: "", 
+    titulo: "", 
+    anio_publicacion: "", 
+    tipo_publicacion: "", 
+    cuartil:""
+  })
 
   const notify = (place, mensaje, type) => {
     //var color = Math.floor(Math.random() * 5 + 1);
@@ -305,6 +316,57 @@ function Publicaciones() {
     }
     setLoading(false)
   }
+
+  function closeModal() {
+    setModalIsOpen(false);
+  }
+
+  function openModal() {
+    setModalIsOpen(true);
+  }
+
+  function handleCargarDetallePublicacion(id_articulo, nombres, titulo, anio_publicacion, tipo_publicacion, cuartil) {
+    setPublicacionObj({
+      id_articulo:id_articulo, 
+      nombres: nombres, 
+      titulo: titulo, 
+      anio_publicacion: anio_publicacion, 
+      tipo_publicacion: tipo_publicacion, 
+      cuartil:cuartil
+    })
+    openModal()
+  }
+
+  function actualizarPublicacion() {
+    let id_articulo = publicacionObj.id_articulo;
+    let autor = document.getElementById("autorText").value;
+    let titulo = document.getElementById("tituloText").value;
+    let anio = document.getElementById("anioText").value;
+    let tipoPublicacion = document.getElementById("tipoPublicacionText").value;
+    let cuartil = document.getElementById("cuartilText").value;
+
+    if(validacionInputService.campoVacio(autor) && validacionInputService.campoVacio(titulo) && validacionInputService.campoVacio(anio) && validacionInputService.campoVacio(tipoPublicacion)){
+      publicacionService.actualizar({
+        "id_articulo": id_articulo,
+        "autor": autor,
+        "titulo": titulo,
+        "anio": anio,
+        "tipoPublicacion": tipoPublicacion,
+        "cuartil": cuartil
+
+      }).then(value => {
+        if(value.respuesta.error== "False"){
+          notify("tr", value.respuesta.valor, "primary");
+          handleCargarDatosPublicaciones();
+        }
+        closeModal();
+      })
+     
+    }else{
+      notify("tr", 'Existen campos sin llenar.', "danger");
+    }
+  }
+
   React.useEffect(() => {
     handleCargarDatosPublicaciones();
   }, []);
@@ -385,7 +447,8 @@ function Publicaciones() {
                         <td width="5%">
                           <a href={item.enlace_documento != null ? item.enlace_documento : item.url_dspace} target="_blank"><i className="fas fa-external-link-alt"></i>Abrir documento</a>
                         </td>
-                        <td width="5%"><Link to="#" id="eliminarArticulo" className="link col-sm-12 col-md-3" onClick={()=>handleEliminarArticulo(item.id_articulo)}><i className="fas fa-trash-alt fa-2x"></i></Link></td>
+                        <td width="5%"><Link to="#" id="actualizarPublicacion" className="link col-sm-12 col-md-3" onClick={() => handleCargarDetallePublicacion(item.id_articulo, item.nombres, item.titulo, item.anio_publicacion, item.tipo_publicacion, item.cuartil)} ><i className="fas fa-pen-square fa-2x"></i></Link>
+                        <Link to="#" id="eliminarArticulo" className="link col-sm-12 col-md-3" onClick={()=>handleEliminarArticulo(item.id_articulo)}><i className="fas fa-trash-alt fa-2x"></i></Link></td>
                       </tr>
                     ))}
                   </tbody>
@@ -572,6 +635,89 @@ function Publicaciones() {
           </Col>
         </Row>
       </Container>
+      <Modal
+          className="modal modal-primary"
+          show={modalIsOpen}
+        >
+          <Modal.Header className="justify-content-center">
+            <div className="modal-profile">
+              <i className="nc-icon nc-single-copy-04"></i>
+            </div>
+          </Modal.Header>
+          <Modal.Body className="text-center">
+            <p>Actualizar Publicación</p>
+          </Modal.Body>
+          <div className="modal-footer">
+            <Col className="pr-1" md="12">
+              <Form.Group>
+                <label>AUTOR</label>
+                <Form.Control
+                  id="autorText"
+                  defaultValue={publicacionObj.nombres}
+                  type="text"
+                ></Form.Control>
+              </Form.Group>
+            </Col>
+            <Col className="pr-1" md="12">
+              <Form.Group>
+                <label>TITULO</label>
+                <Form.Control
+                  id="tituloText"
+                  defaultValue={publicacionObj.titulo}
+                  cols="80"
+                  rows="4"
+                  as="textarea"
+                ></Form.Control>
+              </Form.Group>
+            </Col>
+            <Col className="pr-1" md="12">
+              <Form.Group>
+                <label>AÑO PUBLICACION</label>
+                <Form.Control
+                  id="anioText"
+                  defaultValue={publicacionObj.anio_publicacion}
+                  type="text"
+                ></Form.Control>
+              </Form.Group>
+            </Col>
+            <Col className="pr-1" md="12">
+              <Form.Group>
+                <label>TIPO PUBLICACIÓN</label>
+                <Form.Control
+                  id="tipoPublicacionText"
+                  defaultValue={publicacionObj.tipo_publicacion}
+                  type="text"
+                ></Form.Control>
+              </Form.Group>
+            </Col>
+            <Col className="pr-1" md="12">
+              <Form.Group>
+                <label>CUARTIL</label>
+                <Form.Control
+                  id="cuartilText"
+                  defaultValue={publicacionObj.cuartil}
+                  type="text"
+                ></Form.Control>
+              </Form.Group>
+            </Col>
+            <Button
+              className="btn-simple"
+              type="button"
+              variant="link"
+              onClick={() => closeModal()}
+            >
+              Regresar
+            </Button>
+            <Button
+              className="btn-simple"
+              type="button"
+              variant="link"
+              onClick={() => actualizarPublicacion()}
+            >
+              Grabar
+            </Button>
+          </div>
+        </Modal>
     </>
   );
 }
