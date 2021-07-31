@@ -1107,7 +1107,7 @@ function AnalisisDataMining() {
       setLoading(true)
       analisisEstadisticoService.numeroPublicacionesPorCuartil().then(value => {
         setTituloGraficoEstadistica('PRODUCTIVIDAD POR CUARTIL');
-        
+
         setBackgroundColor(["#9B59B6", "#45B39D", "#F1C40F", "#5D6D7E", "#EBF5FB"]);
         setBorderColor(["#9B59B6", "#45B39D", "#F1C40F", "#5D6D7E", "#EBF5FB"])
         setHoverBackgroundColor(["#F5EEF8", "#D1F2EB", "#FCF3CF", "#E5E8E8", "#EBF5FB"])

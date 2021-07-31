@@ -1,6 +1,9 @@
 import React from "react";
 import { tablaPaginacionService } from '../utils/tablaPaginacion.service';
 import { publicacionService } from '../_services/publicacion.service';
+import { areaFrascatiService } from "_services/areaFrascati.service";
+import { detalleReferenciaService } from "_services/detalle_referencia.service";
+import { areaUnescoService } from "_services/areaUnesco.service";
 import { Link } from "react-router-dom";
 import { referenciaService } from '../_services/referencia.service';
 import NotificationAlert from "react-notification-alert";
@@ -29,6 +32,11 @@ import {
   Form
 } from "react-bootstrap";
 function Referencias() {
+
+  const [areasFracati, setAreasFrascati] = React.useState([]);
+  const [areasUnesco, setAreasUnesco] = React.useState([]);
+  const [datosDetalleReferencia, setDatosDetalleReferencia] = React.useState([]);
+
   /**Spinner */
   let [loading, setLoading] = React.useState(false);
   /**Spinner */
@@ -188,9 +196,60 @@ function Referencias() {
       }
     }*/
   }
+   /** Carga las areas frascati para el filtro*/
+  async function handleAreasFrascati() {
+    setLoading(true);
+    await areaFrascatiService.listaAreasFrascati().then(value => {
+      setAreasFrascati(value.area_frascati);
+      setLoading(false);
+    });
+  }
+  /**Carga las areas unesco para el filtro */
+  async function handleAreasUnesco() {
+    setLoading(true);
+    await areaUnescoService.listaAreasUnesco().then(value => {
+      setAreasUnesco(value.area_unesco);
+      setLoading(false);
+    });
+  }
+
+  /**Carga las referencias detalle */
+  async function handleDetalleReferenciaPorFiltros(){
+    setDatosDetalleReferencia([]);
+    await tablaPaginacionService.destruirTabla('#dataTableMantenimientoDetalleReferencias');
+    let idAnio = parseInt(document.getElementById("idAnio").value);
+    let idAreaUnesco = parseInt(document.getElementById("idAreaUnesco").value);
+    let idAreaFrascati = parseInt(document.getElementById("idAreaFrascati").value);
+
+    if(idAnio == 0 && idAreaUnesco != 0 && idAreaFrascati == 0){
+        detalleReferenciaService.detalleReferenciaPorAreaUnesco(idAreaUnesco).then(async(value) => {
+          setDatosDetalleReferencia(value)
+          await tablaPaginacionService.paginacion('#dataTableMantenimientoDetalleReferencias');
+        })
+    } else if(idAnio == 0 && idAreaUnesco == 0 && idAreaFrascati != 0){
+      detalleReferenciaService.detalleReferenciaPorAreaFrascati(idAreaFrascati).then(async(value) => {
+        setDatosDetalleReferencia(value)
+        await tablaPaginacionService.paginacion('#dataTableMantenimientoDetalleReferencias');
+      })
+    } else if(idAnio != 0 && idAreaUnesco != 0 && idAreaFrascati == 0){
+      detalleReferenciaService.detalleReferenciaPorAreaUnescoPorAnio(idAnio, idAreaUnesco).then(async(value) => {
+        setDatosDetalleReferencia(value)
+        await tablaPaginacionService.paginacion('#dataTableMantenimientoDetalleReferencias');
+      })
+    }else if(idAnio != 0 && idAreaUnesco == 0 && idAreaFrascati != 0){
+      detalleReferenciaService.detalleReferenciaPorAreaFrascatiPorAnio(idAnio, idAreaFrascati).then(async(value) => {
+        setDatosDetalleReferencia(value)
+        await tablaPaginacionService.paginacion('#dataTableMantenimientoDetalleReferencias');
+      })
+    } else {
+      notify("tr", 'La opción seleccionada no esta disponible.', "danger");
+    }
+  }
 
   React.useEffect(() => {
     handleCargarDatosPublicaciones();
+    handleAreasFrascati();
+    handleAreasUnesco();
   }, []);
 
   return (
@@ -322,6 +381,97 @@ function Referencias() {
                   </Col>
                 </Row>
               </Card.Header>
+            </Card>
+          </Col>
+          <Col md="12">
+            <Card className="strpied-tabled-with-hover">
+              <Card.Header>
+                <Card.Title as="h4">Mantenimiento Detalle Referencia</Card.Title>
+                <p className="card-category">
+                  Detalle Referencia de cada Área
+                </p>
+                <Row>
+                  <Col className="pr-1" md="1">
+                    <Form.Group>
+                      <label>AÑO</label>
+                      <Form.Row>
+                        <select className="form-control" id="idAnio">
+                          <option value="0">Seleccione</option>
+                          <option value="2016">2016</option>
+                          <option value="2017">2017</option>
+                          <option value="2018">2018</option>
+                          <option value="2019">2019</option>
+                          <option value="2020">2020</option>
+                          <option value="2021">2021</option>
+                        </select>
+                      </Form.Row>
+                    </Form.Group>
+                  </Col>
+                  <Col className="pr-1" md="3">
+                    <Form.Group>
+                      <label>Area Frascati</label>
+                      <Form.Row>
+                        <select className="form-control" id="idAreaFrascati">
+                          <option value="0">Seleccione</option>
+                          {areasFracati.map(item => (
+                            <option value={item.id_area_frascati} key={item.id_area_frascati}>{item.descripcion}</option>
+                          ))}
+                        </select>
+                      </Form.Row>
+                    </Form.Group>
+                  </Col>
+                  <Col className="pr-1" md="3">
+                    <Form.Group>
+                      <label>Area Unesco</label>
+                      <Form.Row>
+                        <select className="form-control" id="idAreaUnesco">
+                          <option value="0">Seleccione</option>
+                          {areasUnesco.map(item => (
+                            <option value={item.id_area_unesco} key={item.id_area_unesco}>{item.descripcion_unesco}</option>
+                          ))}
+                        </select>
+                      </Form.Row>
+                    </Form.Group>
+                  </Col>
+                  <Col className="pr-1" md="1">
+                    <Form.Group>
+                      <label></label>
+                      <Form.Control
+                        defaultValue="EJECUTAR"
+                        type="button"
+                        className="btn-outline-success"
+                        onClick={handleDetalleReferenciaPorFiltros}
+                      ></Form.Control>
+                    </Form.Group>
+                  </Col>
+                </Row>
+              </Card.Header>
+              <Card.Body className="table-full-width table-responsive px-3">
+                <table className="table table-bordered table-hover" id="dataTableMantenimientoDetalleReferencias" width="100%" cellSpacing="0">
+                  <thead className="thead-dark">
+                    <tr>
+                      <th>REFERENCIA TEXTO</th>
+                      <th>TITULO</th>
+                      <th>AUTOR</th>
+                      <th>AÑO</th>
+                      <th>MEDIO PUBLICACION</th>
+                      <th>OPERACIONES</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {datosDetalleReferencia.map(item => (
+                      <tr className="small" key={item.id_detalle_referencia}>
+                        <td width="10%">{item.referencia}</td>
+                        <td>{item.title}</td>
+                        <td>{item.author}</td>
+                        <td>{item.pub_year}</td>
+                        <td>{item.venue}</td>
+                        <td width="5%"><Link to="#" id="actualizarDetalleReferencia" className="link col-sm-12 col-md-3"><i className="fas fa-pen-square fa-2x"></i></Link></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </Card.Body>
             </Card>
           </Col>
         </Row>
