@@ -7,8 +7,8 @@ export const detalleReferenciaService = {
     detalleReferenciaPorAreaUnesco,
     detalleReferenciaPorAreaFrascati,
     detalleReferenciaPorAreaUnescoPorAnio,
-    detalleReferenciaPorAreaFrascatiPorAnio
-
+    detalleReferenciaPorAreaFrascatiPorAnio,
+    actualizarDetalleReferencia
 };
 
 async function numeroDetalleReferencia() {
@@ -32,4 +32,8 @@ async function detalleReferenciaPorAreaUnescoPorAnio(anio_publicacion, id_area_u
 
 async function detalleReferenciaPorAreaFrascatiPorAnio(anio_publicacion, id_area_frascati) {
     return fetchWrapper.get(`${endpoints.baseUrlDetalleReferencia}/listaDetalleReferenciaPorAreaFrascatiYAnio/`+ anio_publicacion+ "/" +id_area_frascati);
+}
+
+async function actualizarDetalleReferencia(params) {
+    return fetchWrapper.post(`${endpoints.baseUrlDetalleReferencia}/actualizarDetalleReferencia`, params);
 }

@@ -4,6 +4,7 @@ import { publicacionService } from '../_services/publicacion.service';
 import { areaFrascatiService } from "_services/areaFrascati.service";
 import { detalleReferenciaService } from "_services/detalle_referencia.service";
 import { areaUnescoService } from "_services/areaUnesco.service";
+import { validacionInputService } from '../_services/validacionInput.service';
 import { Link } from "react-router-dom";
 import { referenciaService } from '../_services/referencia.service';
 import NotificationAlert from "react-notification-alert";
@@ -29,13 +30,18 @@ import {
   Container,
   Row,
   Col,
-  Form
+  Form,
+  Modal,
+  ModalTitle,
+  ModalBody,
+  ModalFooter
 } from "react-bootstrap";
 function Referencias() {
 
   const [areasFracati, setAreasFrascati] = React.useState([]);
   const [areasUnesco, setAreasUnesco] = React.useState([]);
   const [datosDetalleReferencia, setDatosDetalleReferencia] = React.useState([]);
+  const [modalIsOpen, setModalIsOpen] = React.useState(false);
 
   /**Spinner */
   let [loading, setLoading] = React.useState(false);
@@ -47,6 +53,14 @@ function Referencias() {
   const [datoReferencia, setDatoReferencia] = React.useState({
     idArticulo: 0,
     referencia: ""
+  });
+
+  const [datoDetalleReferencia, setDatoDetalleReferencia] = React.useState({
+    id_detalle_referencia : 0,
+    titulo: "",
+    autor:"",
+    anio:"",
+    medioPublicacion:""
   });
  
   const notify = (place, mensaje, type) => {
@@ -245,6 +259,78 @@ function Referencias() {
       notify("tr", 'La opción seleccionada no esta disponible.', "danger");
     }
   }
+
+  
+  function closeModal() {
+    setModalIsOpen(false);
+  }
+
+  function openModal() {
+    setModalIsOpen(true);
+  }
+
+  function handleCargarDatosDetalleReferencia(id_detalle_referencia, title, author, pub_year, venue) {
+    setDatoDetalleReferencia({
+      id_detalle_referencia : id_detalle_referencia,
+      titulo: title,
+      autor: author,
+      anio:pub_year,
+      medioPublicacion:venue
+      
+    });
+
+    openModal()
+  }
+
+  function actualizarDetalleReferencia() {
+    let id_detalle_referencia = datoDetalleReferencia.id_detalle_referencia;
+    let medio_publicacion = document.getElementById("medioPublicacionText").value;
+    if( validacionInputService.campoVacio(medio_publicacion) ){
+      detalleReferenciaService.actualizarDetalleReferencia({
+        "id_detalle_referencia": id_detalle_referencia,
+        "medio_publicacion": medio_publicacion
+      }).then(async(value) => {
+        if(value.respuesta.error== "False"){
+          notify("tr", value.respuesta.valor, "primary");
+        }
+        await closeModal();
+        await tablaPaginacionService.destruirTabla('#dataTableMantenimientoDetalleReferencias');
+        let idAnio = parseInt(document.getElementById("idAnio").value);
+        let idAreaUnesco = parseInt(document.getElementById("idAreaUnesco").value);
+        let idAreaFrascati = parseInt(document.getElementById("idAreaFrascati").value);
+    
+        if(idAnio == 0 && idAreaUnesco != 0 && idAreaFrascati == 0){
+            detalleReferenciaService.detalleReferenciaPorAreaUnesco(idAreaUnesco).then(async(value) => {
+              setDatosDetalleReferencia(value)
+              await tablaPaginacionService.paginacion('#dataTableMantenimientoDetalleReferencias');
+            })
+        } else if(idAnio == 0 && idAreaUnesco == 0 && idAreaFrascati != 0){
+          detalleReferenciaService.detalleReferenciaPorAreaFrascati(idAreaFrascati).then(async(value) => {
+            setDatosDetalleReferencia(value)
+            await tablaPaginacionService.paginacion('#dataTableMantenimientoDetalleReferencias');
+          })
+        } else if(idAnio != 0 && idAreaUnesco != 0 && idAreaFrascati == 0){
+          detalleReferenciaService.detalleReferenciaPorAreaUnescoPorAnio(idAnio, idAreaUnesco).then(async(value) => {
+            setDatosDetalleReferencia(value)
+            await tablaPaginacionService.paginacion('#dataTableMantenimientoDetalleReferencias');
+          })
+        }else if(idAnio != 0 && idAreaUnesco == 0 && idAreaFrascati != 0){
+          detalleReferenciaService.detalleReferenciaPorAreaFrascatiPorAnio(idAnio, idAreaFrascati).then(async(value) => {
+            setDatosDetalleReferencia(value)
+            await tablaPaginacionService.paginacion('#dataTableMantenimientoDetalleReferencias');
+          })
+        } else {
+          notify("tr", 'La opción seleccionada no esta disponible.', "danger");
+        }
+        
+        //await handleDetalleReferenciaPorFiltros();
+      })
+
+    }else{
+      notify("tr", 'Ingrese el medio de publicación.', "danger");
+    }
+  }
+
 
   React.useEffect(() => {
     handleCargarDatosPublicaciones();
@@ -455,6 +541,7 @@ function Referencias() {
                       <th>AUTOR</th>
                       <th>AÑO</th>
                       <th>MEDIO PUBLICACION</th>
+                      <th>ENLACE DOCUMENTO</th>
                       <th>OPERACIONES</th>
                     </tr>
                   </thead>
@@ -466,7 +553,10 @@ function Referencias() {
                         <td>{item.author}</td>
                         <td>{item.pub_year}</td>
                         <td>{item.venue}</td>
-                        <td width="5%"><Link to="#" id="actualizarDetalleReferencia" className="link col-sm-12 col-md-3"><i className="fas fa-pen-square fa-2x"></i></Link></td>
+                        <td width="5%">
+                          <a href={item.pub_url} target="_blank"><i className="fas fa-external-link-alt"></i>Abrir documento</a>
+                        </td>
+                        <td width="5%"><Link to="#" id="actualizarDetalleReferencia" className="link col-sm-12 col-md-3" onClick={()=> handleCargarDatosDetalleReferencia(item.id_detalle_referencia, item.title, item.author, item.pub_year, item.venue)}><i className="fas fa-pen-square fa-2x"></i></Link></td>
                       </tr>
                     ))}
                   </tbody>
@@ -476,6 +566,82 @@ function Referencias() {
           </Col>
         </Row>
       </Container>
+      <Modal
+          className="modal modal-primary"
+          show={modalIsOpen}
+        >
+          <Modal.Header className="justify-content-center">
+            <div className="modal-profile">
+              <i className="nc-icon nc-single-copy-04"></i>
+            </div>
+          </Modal.Header>
+          <Modal.Body className="text-center">
+            <p>Actualizar Detalle Referencia</p>
+          </Modal.Body>
+          <div className="modal-footer">
+            <Col className="pr-1" md="12">
+              <Form.Group>
+                <label>TITULO</label>
+                <Form.Control
+                  id="tituloText"
+                  defaultValue={datoDetalleReferencia.titulo}
+                  cols="80"
+                  rows="4"
+                  as="textarea"
+                  disabled
+                ></Form.Control>
+              </Form.Group>
+            </Col>
+            <Col className="pr-1" md="12">
+              <Form.Group>
+                <label>AUTOR</label>
+                <Form.Control
+                  id="autorText"
+                  defaultValue={datoDetalleReferencia.autor}
+                  type="text"
+                  disabled
+                ></Form.Control>
+              </Form.Group>
+            </Col>
+            <Col className="pr-1" md="12">
+              <Form.Group>
+                <label>AÑO</label>
+                <Form.Control
+                  id="anioText"
+                  defaultValue={datoDetalleReferencia.anio}
+                  type="text"
+                  disabled
+                ></Form.Control>
+              </Form.Group>
+            </Col>
+            <Col className="pr-1" md="12">
+              <Form.Group>
+                <label>MEDIO PUBLICACIÓN</label>
+                <Form.Control
+                  id="medioPublicacionText"
+                  defaultValue={datoDetalleReferencia.medioPublicacion}
+                  type="text"
+                ></Form.Control>
+              </Form.Group>
+            </Col>
+            <Button
+              className="btn-simple"
+              type="button"
+              variant="link"
+              onClick={() => closeModal()}
+            >
+              Regresar
+            </Button>
+            <Button
+              className="btn-simple"
+              type="button"
+              variant="link"
+              onClick={() => actualizarDetalleReferencia()}
+            >
+              Grabar
+            </Button>
+          </div>
+        </Modal>
     </>
   );
 }
