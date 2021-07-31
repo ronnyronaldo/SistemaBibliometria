@@ -70,7 +70,7 @@ async function numeroPublicacionesPorCuartilPorAreaUnesco(id_area_unesco) {
 }
 
 async function numeroPublicacionesPorCuartilPorAreaFrascati(id_area_frascati) {
-    return fetchWrapper.get(`${endpoints.baseUrlAnalisisEstadistico}/numeroPublicacionesPorCuartilPorAreaFrascati` + id_area_frascati);
+    return fetchWrapper.get(`${endpoints.baseUrlAnalisisEstadistico}/numeroPublicacionesPorCuartilPorAreaFrascati/` + id_area_frascati);
 }
 
 async function numeroPublicacionesPorCuartilPorAreaUnescoPorAnio(id_area_unesco, anio_publicacion) {
@@ -92,7 +92,7 @@ async function numeroPublicacionesPorFactorImpactoPorAreaUnesco(id_area_unesco) 
 }
 
 async function numeroPublicacionesPorFactorImpactoPorAreaFrascati(id_area_frascati) {
-    return fetchWrapper.get(`${endpoints.baseUrlAnalisisEstadistico}/numeroPublicacionesPorFactorImpactoPorAreaFrascati` + id_area_frascati);
+    return fetchWrapper.get(`${endpoints.baseUrlAnalisisEstadistico}/numeroPublicacionesPorFactorImpactoPorAreaFrascati/` + id_area_frascati);
 }
 
 async function numeroPublicacionesPorFactorImpactoPorAreaUnescoPorAnio(id_area_unesco, anio_publicacion) {
