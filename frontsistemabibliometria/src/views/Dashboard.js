@@ -175,7 +175,7 @@ function Dashboard() {
         "venue": datos[i].venue,
         "contador": datos[i].contador,
         "numeroAcumuladoCitas": suma,
-        "procentajeAcumuladoCitas": suma/totalCitas*100
+        "procentajeAcumuladoCitas": (suma/totalCitas*100).toFixed(2)
       }
       datosYPorcentajes.push(dato);
     }
