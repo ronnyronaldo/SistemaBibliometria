@@ -329,3 +329,14 @@ def eliminarArticulo(id_articulo):
     articulo = Articulo.query.get(id_articulo)
     Articulo.delete(articulo)
     return make_response(jsonify({"respuesta": {"valor":"Publicación eliminada correctamente.", "error":"False"}}))
+
+
+def actualizarArticulo(publicacion):
+    articulo = Articulo.query.get_or_404(publicacion['id_articulo'])
+    articulo.nombres  = publicacion['autor']
+    articulo.titulo  = publicacion['titulo']
+    articulo.anio_publicacion  = publicacion['anio']
+    articulo.tipo_publicacion  = publicacion['tipoPublicacion']
+    articulo.cuartil  = publicacion['cuartil']
+    Articulo.create(articulo)
+    return make_response(jsonify({"respuesta": {"valor":"Publicacion actualizada correctamente.", "error":"False"}}))
