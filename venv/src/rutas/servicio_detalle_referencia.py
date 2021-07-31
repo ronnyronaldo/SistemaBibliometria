@@ -4,7 +4,7 @@ from controladores.DetalleReferenciaController import listaDetalleReferenciaPorA
 from controladores.DetalleReferenciaController import listaDetalleReferenciaPorAreaFrascati
 from controladores.DetalleReferenciaController import listaDetalleReferenciaPorAreaUnesco
 from controladores.DetalleReferenciaController import listaDetalleReferenciaPorAreaFrascatiYAnioPublicacion
-from controladores.DetalleReferenciaController import listaDetalleReferenciaPorAreaUnescoYAnioPublicacion
+from controladores.DetalleReferenciaController import listaDetalleReferenciaPorAreaUnescoYAnioPublicacion, actualizarDetalleReferencia
 
 servicio_detalle_referencia =  Blueprint('servicio_detalle_referencia', __name__)
 
@@ -35,3 +35,8 @@ def listarDetalleReferenciaPorAreaFrascatiYAnio(anio_publicacion, id_area_frasca
 @servicio_detalle_referencia.route('/listaDetalleReferenciaPorAreaUnescoYAnio/<int:anio_publicacion>/<int:id_area_unesco>', methods=['GET']) 
 def listarDetalleReferenciaPorAreaUnescoYAnio(anio_publicacion, id_area_unesco):
     return listaDetalleReferenciaPorAreaUnescoYAnioPublicacion(anio_publicacion, id_area_unesco)
+
+@servicio_detalle_referencia.route('/actualizarDetalleReferencia', methods=['POST']) 
+def actualizar():
+    detalleReferencia = request.json #Obtengo los datos de las estadísticas de uso para el Nuevo Ingreso
+    return actualizarDetalleReferencia(detalleReferencia)
