@@ -12,6 +12,8 @@ import matplotlib
 import base64
 from flask import Flask, request, jsonify, make_response
 from controladores.ArticuloController import listaArticulos, listaArticulosMineria,listaArticulosMineriaPorAreaUnescoYAnioPublicacion
+from controladores.ArticuloController import  listaArticulosMineriaPorAnio, listaArticulosMineriaPorAreaFrascati
+from controladores.ArticuloController import  listaArticulosMineriaPorAreaUnesco, listaArticulosMineriaPorAreaFrascatiYAnioPublicacion
 from controladores.DetalleReferenciaController import listaDetalleReferencia, listaDetalleReferenciaPorAnio 
 from controladores.DetalleReferenciaController import listaDetalleReferenciaPorAreaFrascati, listaDetalleReferenciaPorAreaUnesco
 from controladores.DetalleReferenciaController import listaDetalleReferenciaPorAreaFrascatiYAnioPublicacion, listaDetalleReferenciaPorAreaUnescoYAnioPublicacion
@@ -20,256 +22,243 @@ from mpl_toolkits.mplot3d import Axes3D
 
 def clusterFactorImpactoXCuartil(num_cluster):
     respuesta = (listaArticulosMineria()).json
-    
-    dataframe = pd.json_normalize(respuesta)
-    
-    dataframe.cuartil = pd.Categorical(dataframe.cuartil)
-    dataframe['quartil'] = dataframe.cuartil.cat.codes
-    
-    dataframe.factor_impacto = pd.Categorical(dataframe.factor_impacto)
-    dataframe['fi'] = dataframe.factor_impacto.cat.codes
+    numeroRegistros = len(respuesta)
+    if numeroRegistros < num_cluster:
+        return make_response(jsonify("Error"))
 
-    df1 = dataframe[["quartil","fi","anio_publicacion","titulo","cuartil","id_articulo"]]
-    datos = df1[["titulo","cuartil","id_articulo"]]
-    df1= df1.drop(['titulo','cuartil','id_articulo'], 1)
-    datos_norm = (df1-df1.min())/(df1.max()-df1.min())
-    datos_norm
+    try:
+        dataframe = pd.json_normalize(respuesta)
+        
+        dataframe.cuartil = pd.Categorical(dataframe.cuartil)
+        dataframe['quartil'] = dataframe.cuartil.cat.codes
+        
+        dataframe.factor_impacto = pd.Categorical(dataframe.factor_impacto)
+        dataframe['fi'] = dataframe.factor_impacto.cat.codes
 
-    clustering = KMeans(n_clusters = num_cluster , max_iter=300) # se crea el modelo
-    clustering.fit(datos_norm) 
+        df1 = dataframe[["quartil","fi","anio_publicacion","titulo","cuartil","id_articulo"]]
+        datos = df1[["titulo","cuartil","id_articulo"]]
+        df1= df1.drop(['titulo','cuartil','id_articulo'], 1)
+        datos_norm = (df1-df1.min())/(df1.max()-df1.min())
+        datos_norm
 
-    df1['KMeans_Clusters'] = clustering.labels_ 
+        clustering = KMeans(n_clusters = num_cluster , max_iter=300) # se crea el modelo
+        clustering.fit(datos_norm) 
+
+        df1['KMeans_Clusters'] = clustering.labels_ 
 
 
-    pca = PCA(n_components = 2)
-    pca_datos = pca.fit_transform(datos_norm)
-    pca_datos_df = pd.DataFrame(data = pca_datos, columns = ['Componente_1','Componente_2'])
-    pca_nombres_datos = pd.concat([pca_datos_df,df1[['KMeans_Clusters']]], axis = 1)
-    pca_nombres_datos
+        pca = PCA(n_components = 2)
+        pca_datos = pca.fit_transform(datos_norm)
+        pca_datos_df = pd.DataFrame(data = pca_datos, columns = ['Componente_1','Componente_2'])
+        pca_nombres_datos = pd.concat([pca_datos_df,df1[['KMeans_Clusters']]], axis = 1)
+        pca_nombres_datos
 
-    datos_a_verificar = pd.concat([pca_datos_df,datos,df1], axis = 1)
-    datos_a_enviar = datos_a_verificar.to_json()
+        datos_a_verificar = pd.concat([pca_datos_df,datos,df1], axis = 1)
+        datos_a_enviar = datos_a_verificar.to_json()
 
-    return make_response(jsonify(datos_a_enviar))
+        return make_response(jsonify(datos_a_enviar))
+    except:
+        return make_response(jsonify("Error"))
 
 
 def clusterCuarFIPorAnio(anio_publicacion, num_cluster):
-    respuesta = (listaArticulosMineria()).json
-    
+
+    respuesta = (listaArticulosMineriaPorAnio(anio_publicacion)).json
     numeroRegistros = len(respuesta)
     if numeroRegistros < num_cluster:
         return make_response(jsonify("Error"))
-    
-    df = pd.json_normalize(respuesta)
+    try:
+        dataframe = pd.json_normalize(respuesta)
+        
+        dataframe.cuartil = pd.Categorical(dataframe.cuartil)
+        dataframe['quartil'] = dataframe.cuartil.cat.codes
+        
+        dataframe.factor_impacto = pd.Categorical(dataframe.factor_impacto)
+        dataframe['fi'] = dataframe.factor_impacto.cat.codes
 
-    df11= df['anio_publicacion']==anio_publicacion
+        df1 = dataframe[["quartil","fi","titulo","cuartil","id_articulo"]]
+        datos = df1[["titulo","cuartil","id_articulo"]]
+        df1= df1.drop(['titulo','cuartil','id_articulo'], 1)
+        datos_norm = (df1-df1.min())/(df1.max()-df1.min())
+        datos_norm
 
-    dataframe = df[df11]
-    
-    dataframe.cuartil = pd.Categorical(dataframe.cuartil)
-    dataframe['quartil'] = dataframe.cuartil.cat.codes
-    
-    dataframe.factor_impacto = pd.Categorical(dataframe.factor_impacto)
-    dataframe['fi'] = dataframe.factor_impacto.cat.codes
+        clustering = KMeans(n_clusters = num_cluster , max_iter=300) # se crea el modelo
+        clustering.fit(datos_norm) 
 
-    df1 = dataframe[["quartil","fi","titulo","cuartil","id_articulo"]]
-    datos = df1[["titulo","cuartil","id_articulo"]]
-    df1= df1.drop(['titulo','cuartil','id_articulo'], 1)
-    datos_norm = (df1-df1.min())/(df1.max()-df1.min())
-    datos_norm
-
-    clustering = KMeans(n_clusters = num_cluster , max_iter=300) # se crea el modelo
-    clustering.fit(datos_norm) 
-
-    df1['KMeans_Clusters'] = clustering.labels_ 
+        df1['KMeans_Clusters'] = clustering.labels_ 
 
 
-    pca = PCA(n_components = 2)
-    pca_datos = pca.fit_transform(datos_norm)
-    pca_datos_df = pd.DataFrame(data = pca_datos, columns = ['Componente_1','Componente_2'])
-    pca_nombres_datos = pd.concat([pca_datos_df,df1[['KMeans_Clusters']]], axis = 1)
-    pca_nombres_datos
+        pca = PCA(n_components = 2)
+        pca_datos = pca.fit_transform(datos_norm)
+        pca_datos_df = pd.DataFrame(data = pca_datos, columns = ['Componente_1','Componente_2'])
+        pca_nombres_datos = pd.concat([pca_datos_df,df1[['KMeans_Clusters']]], axis = 1)
+        pca_nombres_datos
 
-    datos_a_verificar = pd.concat([pca_datos_df,datos,df1], axis = 1)
-    datos_a_enviar = datos_a_verificar.to_json()
+        datos_a_verificar = pd.concat([pca_datos_df,datos,df1], axis = 1)
+        datos_a_enviar = datos_a_verificar.to_json()
 
-    return make_response(jsonify(datos_a_enviar))
+        return make_response(jsonify(datos_a_enviar))
+    except:
+        return make_response(jsonify("Error"))
+
+
 
 def clusterCuarFIPorAreaFrascati(id_area_frascati, num_cluster):
-    respuesta = (listaArticulosMineria()).json
-    
+    respuesta = (listaArticulosMineriaPorAreaFrascati(id_area_frascati)).json
     numeroRegistros = len(respuesta)
     if numeroRegistros < num_cluster:
         return make_response(jsonify("Error"))
-    
-    df = pd.json_normalize(respuesta)
+    try:
+        dataframe = pd.json_normalize(respuesta)
+        
+        dataframe.cuartil = pd.Categorical(dataframe.cuartil)
+        dataframe['quartil'] = dataframe.cuartil.cat.codes
+        
+        dataframe.factor_impacto = pd.Categorical(dataframe.factor_impacto)
+        dataframe['fi'] = dataframe.factor_impacto.cat.codes
 
-    df11= df['id_area_frascati']==id_area_frascati
+        df1 = dataframe[["quartil","fi","anio_publicacion","titulo","cuartil","id_articulo"]]
+        datos = df1[["titulo","cuartil","id_articulo"]]
+        df1= df1.drop(['titulo','cuartil','id_articulo'], 1)
+        datos_norm = (df1-df1.min())/(df1.max()-df1.min())
+        datos_norm
 
-    dataframe = df[df11]
-    
-    dataframe.cuartil = pd.Categorical(dataframe.cuartil)
-    dataframe['quartil'] = dataframe.cuartil.cat.codes
-    
-    dataframe.factor_impacto = pd.Categorical(dataframe.factor_impacto)
-    dataframe['fi'] = dataframe.factor_impacto.cat.codes
+        clustering = KMeans(n_clusters = num_cluster , max_iter=300) # se crea el modelo
+        clustering.fit(datos_norm) 
 
-    df1 = dataframe[["quartil","fi","titulo","cuartil","id_articulo"]]
-    datos = df1[["titulo","cuartil","id_articulo"]]
-    df1= df1.drop(['titulo','cuartil','id_articulo'], 1)
-    datos_norm = (df1-df1.min())/(df1.max()-df1.min())
-    datos_norm
-
-    clustering = KMeans(n_clusters = num_cluster , max_iter=300) # se crea el modelo
-    clustering.fit(datos_norm) 
-
-    df1['KMeans_Clusters'] = clustering.labels_ 
+        df1['KMeans_Clusters'] = clustering.labels_ 
 
 
-    pca = PCA(n_components = 2)
-    pca_datos = pca.fit_transform(datos_norm)
-    pca_datos_df = pd.DataFrame(data = pca_datos, columns = ['Componente_1','Componente_2'])
-    pca_nombres_datos = pd.concat([pca_datos_df,df1[['KMeans_Clusters']]], axis = 1)
-    pca_nombres_datos
+        pca = PCA(n_components = 2)
+        pca_datos = pca.fit_transform(datos_norm)
+        pca_datos_df = pd.DataFrame(data = pca_datos, columns = ['Componente_1','Componente_2'])
+        pca_nombres_datos = pd.concat([pca_datos_df,df1[['KMeans_Clusters']]], axis = 1)
+        pca_nombres_datos
 
-    datos_a_verificar = pd.concat([pca_datos_df,datos,df1], axis = 1)
-    datos_a_enviar = datos_a_verificar.to_json()
+        datos_a_verificar = pd.concat([pca_datos_df,datos,df1], axis = 1)
+        datos_a_enviar = datos_a_verificar.to_json()
 
-    return make_response(jsonify(datos_a_enviar))
+        return make_response(jsonify(datos_a_enviar))
+    except:
+        return make_response(jsonify("Error"))
 
 def clusterCuarFIPorAreaUnesco(id_area_unesco, num_cluster):
-    respuesta = (listaArticulosMineria()).json
-    
+    respuesta = (listaArticulosMineriaPorAreaUnesco(id_area_unesco)).json
     numeroRegistros = len(respuesta)
     if numeroRegistros < num_cluster:
         return make_response(jsonify("Error"))
-    
-    df = pd.json_normalize(respuesta)
+    try:
+        dataframe = pd.json_normalize(respuesta)
+        
+        dataframe.cuartil = pd.Categorical(dataframe.cuartil)
+        dataframe['quartil'] = dataframe.cuartil.cat.codes
+        
+        dataframe.factor_impacto = pd.Categorical(dataframe.factor_impacto)
+        dataframe['fi'] = dataframe.factor_impacto.cat.codes
 
-    df11= df['id_area_unesco']==id_area_unesco
+        df1 = dataframe[["quartil","fi","anio_publicacion","titulo","cuartil","id_articulo"]]
+        datos = df1[["titulo","cuartil","id_articulo"]]
+        df1= df1.drop(['titulo','cuartil','id_articulo'], 1)
+        datos_norm = (df1-df1.min())/(df1.max()-df1.min())
+        datos_norm
 
-    dataframe = df[df11]
-    
-    dataframe.cuartil = pd.Categorical(dataframe.cuartil)
-    dataframe['quartil'] = dataframe.cuartil.cat.codes
-    
-    dataframe.factor_impacto = pd.Categorical(dataframe.factor_impacto)
-    dataframe['fi'] = dataframe.factor_impacto.cat.codes
+        clustering = KMeans(n_clusters = num_cluster , max_iter=300) # se crea el modelo
+        clustering.fit(datos_norm) 
 
-    df1 = dataframe[["quartil","fi","titulo","cuartil","id_articulo"]]
-    datos = df1[["titulo","cuartil","id_articulo"]]
-    df1= df1.drop(['titulo','cuartil','id_articulo'], 1)
-    datos_norm = (df1-df1.min())/(df1.max()-df1.min())
-    datos_norm
-
-    clustering = KMeans(n_clusters = num_cluster , max_iter=300) # se crea el modelo
-    clustering.fit(datos_norm) 
-
-    df1['KMeans_Clusters'] = clustering.labels_ 
+        df1['KMeans_Clusters'] = clustering.labels_ 
 
 
-    pca = PCA(n_components = 2)
-    pca_datos = pca.fit_transform(datos_norm)
-    pca_datos_df = pd.DataFrame(data = pca_datos, columns = ['Componente_1','Componente_2'])
-    pca_nombres_datos = pd.concat([pca_datos_df,df1[['KMeans_Clusters']]], axis = 1)
-    pca_nombres_datos
+        pca = PCA(n_components = 2)
+        pca_datos = pca.fit_transform(datos_norm)
+        pca_datos_df = pd.DataFrame(data = pca_datos, columns = ['Componente_1','Componente_2'])
+        pca_nombres_datos = pd.concat([pca_datos_df,df1[['KMeans_Clusters']]], axis = 1)
+        pca_nombres_datos
 
-    datos_a_verificar = pd.concat([pca_datos_df,datos,df1], axis = 1)
-    datos_a_enviar = datos_a_verificar.to_json()
+        datos_a_verificar = pd.concat([pca_datos_df,datos,df1], axis = 1)
+        datos_a_enviar = datos_a_verificar.to_json()
 
-    return make_response(jsonify(datos_a_enviar))
+        return make_response(jsonify(datos_a_enviar))
+    except:
+        return make_response(jsonify("Error"))
 
 def clusterCuarFIPorAreaFrascatiYAnioPublicacion(anio_publicacion, id_area_frascati, num_cluster):
-    respuesta = (listaArticulosMineria()).json
-    
+    respuesta = (listaArticulosMineriaPorAreaFrascatiYAnioPublicacion(anio_publicacion, id_area_frascati)).json
     numeroRegistros = len(respuesta)
     if numeroRegistros < num_cluster:
         return make_response(jsonify("Error"))
-    
-    df = pd.json_normalize(respuesta)
+    try:
+        dataframe = pd.json_normalize(respuesta)
+        
+        dataframe.cuartil = pd.Categorical(dataframe.cuartil)
+        dataframe['quartil'] = dataframe.cuartil.cat.codes
+        
+        dataframe.factor_impacto = pd.Categorical(dataframe.factor_impacto)
+        dataframe['fi'] = dataframe.factor_impacto.cat.codes
 
-    dataframeAnios= df['anio_publicacion']==anio_publicacion
-    dataframe1 = df[dataframeAnios]
+        df1 = dataframe[["quartil","fi","titulo","cuartil","id_articulo"]]
+        datos = df1[["titulo","cuartil","id_articulo"]]
+        df1= df1.drop(['titulo','cuartil','id_articulo'], 1)
+        datos_norm = (df1-df1.min())/(df1.max()-df1.min())
+        datos_norm
 
-    df12= dataframe1['id_area_frascati']==id_area_frascati
-    dataframe = dataframe1[df12]
+        clustering = KMeans(n_clusters = num_cluster , max_iter=300) # se crea el modelo
+        clustering.fit(datos_norm) 
 
-    
-    dataframe.cuartil = pd.Categorical(dataframe.cuartil)
-    dataframe['quartil'] = dataframe.cuartil.cat.codes
-    
-    dataframe.factor_impacto = pd.Categorical(dataframe.factor_impacto)
-    dataframe['fi'] = dataframe.factor_impacto.cat.codes
-
-    df1 = dataframe[["quartil","fi","titulo","cuartil","id_articulo"]]
-    datos = df1[["titulo","cuartil","id_articulo"]]
-    df1= df1.drop(['titulo','cuartil','id_articulo'], 1)
-    datos_norm = (df1-df1.min())/(df1.max()-df1.min())
-    datos_norm
-
-    clustering = KMeans(n_clusters = num_cluster , max_iter=300) # se crea el modelo
-    clustering.fit(datos_norm) 
-
-    df1['KMeans_Clusters'] = clustering.labels_ 
+        df1['KMeans_Clusters'] = clustering.labels_ 
 
 
-    pca = PCA(n_components = 2)
-    pca_datos = pca.fit_transform(datos_norm)
-    pca_datos_df = pd.DataFrame(data = pca_datos, columns = ['Componente_1','Componente_2'])
-    pca_nombres_datos = pd.concat([pca_datos_df,df1[['KMeans_Clusters']]], axis = 1)
-    pca_nombres_datos
+        pca = PCA(n_components = 2)
+        pca_datos = pca.fit_transform(datos_norm)
+        pca_datos_df = pd.DataFrame(data = pca_datos, columns = ['Componente_1','Componente_2'])
+        pca_nombres_datos = pd.concat([pca_datos_df,df1[['KMeans_Clusters']]], axis = 1)
+        pca_nombres_datos
 
-    datos_a_verificar = pd.concat([pca_datos_df,datos,df1], axis = 1)
-    datos_a_enviar = datos_a_verificar.to_json()
+        datos_a_verificar = pd.concat([pca_datos_df,datos,df1], axis = 1)
+        datos_a_enviar = datos_a_verificar.to_json()
 
-    return make_response(jsonify(datos_a_enviar))
+        return make_response(jsonify(datos_a_enviar))
+    except:
+        return make_response(jsonify("Error"))
 
 def clusterCuarFIPorAnioAreaUnescoYAnioPublicacion(anio_publicacion, id_area_unesco, num_cluster):
     respuesta = (listaArticulosMineriaPorAreaUnescoYAnioPublicacion(anio_publicacion,id_area_unesco)).json
-    
     numeroRegistros = len(respuesta)
     if numeroRegistros < num_cluster:
         return make_response(jsonify("Error"))
-    
-    dataframe = pd.json_normalize(respuesta)
+    try:
+        dataframe = pd.json_normalize(respuesta)
+        
+        dataframe.cuartil = pd.Categorical(dataframe.cuartil)
+        dataframe['quartil'] = dataframe.cuartil.cat.codes
+        
+        dataframe.factor_impacto = pd.Categorical(dataframe.factor_impacto)
+        dataframe['fi'] = dataframe.factor_impacto.cat.codes
 
-    # dataframeAnios= df['anio_publicacion']==anio_publicacion
-    # dataframe1 = df[dataframeAnios]
+        df1 = dataframe[["quartil","fi","titulo","cuartil","id_articulo"]]
+        datos = df1[["titulo","cuartil","id_articulo"]]
+        df1= df1.drop(['titulo','cuartil','id_articulo'], 1)
+        datos_norm = (df1-df1.min())/(df1.max()-df1.min())
+        datos_norm
 
-    # df12= dataframe1['id_area_unesco']==id_area_unesco
-    # dataframe = dataframe1[df12]
+        clustering = KMeans(n_clusters = num_cluster , max_iter=300) # se crea el modelo
+        clustering.fit(datos_norm) 
 
-    
-    dataframe.cuartil = pd.Categorical(dataframe.cuartil)
-    dataframe['quartil'] = dataframe.cuartil.cat.codes
-    
-    dataframe.factor_impacto = pd.Categorical(dataframe.factor_impacto)
-    dataframe['fi'] = dataframe.factor_impacto.cat.codes
-
-    df1 = dataframe[["quartil","fi","titulo","cuartil","id_articulo"]]
-    datos = df1[["titulo","cuartil","id_articulo"]]
-    df1= df1.drop(['titulo','cuartil','id_articulo'], 1)
-    datos_norm = (df1-df1.min())/(df1.max()-df1.min())
-    datos_norm
+        df1['KMeans_Clusters'] = clustering.labels_ 
 
 
-    clustering = KMeans(n_clusters = num_cluster , max_iter=300) # se crea el modelo
-    clustering.fit(datos_norm) 
+        pca = PCA(n_components = 2)
+        pca_datos = pca.fit_transform(datos_norm)
+        pca_datos_df = pd.DataFrame(data = pca_datos, columns = ['Componente_1','Componente_2'])
+        pca_nombres_datos = pd.concat([pca_datos_df,df1[['KMeans_Clusters']]], axis = 1)
+        pca_nombres_datos
 
-    df1['KMeans_Clusters'] = clustering.labels_ 
+        datos_a_verificar = pd.concat([pca_datos_df,datos,df1], axis = 1)
+        datos_a_enviar = datos_a_verificar.to_json()
 
-    print(df1['KMeans_Clusters'])
+        return make_response(jsonify(datos_a_enviar))
+    except:
+        return make_response(jsonify("Error"))
 
-    pca = PCA(n_components = 2)
-    pca_datos = pca.fit_transform(datos_norm)
-    pca_datos_df = pd.DataFrame(data = pca_datos, columns = ['Componente_1','Componente_2'])
-    pca_nombres_datos = pd.concat([pca_datos_df,df1[['KMeans_Clusters']]], axis = 1)
-
-
-    datos_a_verificar = pd.concat([pca_datos_df,datos,df1], axis = 1)
-    datos_a_enviar = datos_a_verificar.to_json()
-
-    return make_response(jsonify(datos_a_enviar))
 
 def redesAutoresAreasOrden(orden, area):
     respuesta = (listaArticulosMineria()).json

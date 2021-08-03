@@ -213,21 +213,22 @@ def listaArticulosMineria():
     articulos = articulo_schema.dump(get_articulo)
     return make_response(jsonify(articulos))
 
-def obtenerDetalleClusterCuartilFI(resultadoClusterAreas):
-    numero_cluster = resultadoClusterAreas[0]['num_cluster']
+def obtenerDetalleClusterCuartilFI(resultadoCluster):
+    numero_cluster = resultadoCluster[0]['num_cluster']
     clusters = []
     for i in range(numero_cluster):
         valor = {i: []}
         clusters.append(valor) 
-    for registro in resultadoClusterAreas:
+    for registro in resultadoCluster:
         respuestaArticulo = buscarArticuloPorId(registro['id_articulo']).json['articulo'][0]
-        valor = {"cuartil": respuestaArticulo['cuartil'], "fi": respuestaArticulo['factor_impacto'], "id_articulo": registro['id_articulo']}
+        respuestaAreaFrascati = buscarAreaFrascatiPorId(respuestaArticulo['id_area_frascati']).json['area_frascati'][0]
+        respuestaAreaUnesco = buscarAreaUnescoPorId(respuestaArticulo['id_area_unesco']).json['area_unesco'][0]
+        valor = {"cuartil": respuestaArticulo['cuartil'], "fi": respuestaArticulo['factor_impacto'], "id_articulo": registro['id_articulo'], "areaFrascati": respuestaAreaFrascati['descripcion'], "areaUnesco": respuestaAreaUnesco['descripcion_unesco']}
         for i in range(numero_cluster):
             if registro['id_cluster'] == i:
                 clusters[i][i].append(valor)
-    
     return make_response(jsonify(clusters))
-    
+
 def asignarMedioPublicacion():
     articulosRespuesta = (db.session.query(Articulo, MedioPublicacion)
         .with_entities(Articulo.id_articulo, Articulo.nombre_medio_publicacion, MedioPublicacion.nombre, MedioPublicacion.id_medio_publicacion)
@@ -262,6 +263,30 @@ def actualizarArticulo(publicacion):
 
 def listaArticulosMineriaPorAreaUnescoYAnioPublicacion(anio_publicacion, id_area_unesco):
     get_articulo = Articulo.query.filter((Articulo.anio_publicacion == anio_publicacion) & (Articulo.id_area_unesco == id_area_unesco))
+    articulo_schema = ArticuloSchema(many=True)
+    articulos = articulo_schema.dump(get_articulo)
+    return make_response(jsonify(articulos))
+
+def listaArticulosMineriaPorAnio(anio_publicacion):
+    get_articulo = Articulo.query.filter(Articulo.anio_publicacion == anio_publicacion)
+    articulo_schema = ArticuloSchema(many=True)
+    articulos = articulo_schema.dump(get_articulo)
+    return make_response(jsonify(articulos))
+
+def listaArticulosMineriaPorAreaFrascati(id_area_frascati):
+    get_articulo = Articulo.query.filter(Articulo.id_area_frascati == id_area_frascati)
+    articulo_schema = ArticuloSchema(many=True)
+    articulos = articulo_schema.dump(get_articulo)
+    return make_response(jsonify(articulos))
+
+def listaArticulosMineriaPorAreaUnesco(id_area_unesco):
+    get_articulo = Articulo.query.filter(Articulo.id_area_unesco == id_area_unesco)
+    articulo_schema = ArticuloSchema(many=True)
+    articulos = articulo_schema.dump(get_articulo)
+    return make_response(jsonify(articulos))
+
+def listaArticulosMineriaPorAreaFrascatiYAnioPublicacion(anio_publicacion, id_area_frascati):
+    get_articulo = Articulo.query.filter((Articulo.anio_publicacion == anio_publicacion) & (Articulo.id_area_frascati == id_area_frascati))
     articulo_schema = ArticuloSchema(many=True)
     articulos = articulo_schema.dump(get_articulo)
     return make_response(jsonify(articulos))
