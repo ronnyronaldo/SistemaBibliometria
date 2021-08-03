@@ -252,9 +252,9 @@ function AnalisisDataMining() {
     })
   }
 
-  async function handleEjecutarClusteringMedPubOrdAutPorAnio(anio, numeroCluster) {
+  async function handleEjecutarClusteringCuaFIPorAnio(anio, numeroCluster) {
     setLoading(true);
-    setTituloGrafico('PRODUCTIVIDAD POR MEDIOS PUBLICACIÓN');
+    setTituloGrafico('CUARTIL POR FACTOR DE IMPACTO');
     setResultadoClusterAreas([]);
     setResultadoClusterRevNumCit([]);
     setResultadoClusterMediosPublicacionOrdenAutor([]);
@@ -388,7 +388,7 @@ function AnalisisDataMining() {
           else if (idAnio != 0 && idAreaFrascati == 0 && idAreaUnesco == 0) {
             if (validacionInputService.esNumero(numeroCluster) && validacionInputService.campoVacio(numeroCluster)) {
               setNumeroCluster(numeroCluster);
-              handleEjecutarClusteringMedPubOrdAutPorAnio(idAnio, numeroCluster)
+              handleEjecutarClusteringCuaFIPorAnio(idAnio, numeroCluster)
             } else {
               notify("tr", 'El número de cluster ingresado no es válido.', "danger");
             }
