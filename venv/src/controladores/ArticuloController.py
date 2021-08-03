@@ -274,6 +274,21 @@ def obtenerDetalleClusterCuartilAreUne(resultadoClusterAreas):
                 clusters[i][i].append(valor)
     return make_response(jsonify(clusters))
 
+def obtenerDetalleClusterCuartilFI(resultadoClusterAreas):
+    numero_cluster = resultadoClusterAreas[0]['num_cluster']
+    clusters = []
+    for i in range(numero_cluster):
+        valor = {i: []}
+        clusters.append(valor) 
+    for registro in resultadoClusterAreas:
+        respuestaArticulo = buscarArticuloPorId(registro['id_articulo']).json['articulo'][0]
+        valor = {"cuartil": respuestaArticulo['cuartil'], "fi": respuestaArticulo['factor_impacto'], "id_articulo": registro['id_articulo']}
+        for i in range(numero_cluster):
+            if registro['id_cluster'] == i:
+                clusters[i][i].append(valor)
+    
+    return make_response(jsonify(clusters))
+
 def obtenerDetalleClusterMediosPublicacion(resultadoClusterMediosPublicacion):
     numero_cluster = resultadoClusterMediosPublicacion[0]['num_cluster']
     clusters = []

@@ -1,11 +1,11 @@
 from flask import Blueprint
-from controladores.Clustering import clusterAreas, clusterMediosPublicacionOrdenAutor, clusterRevistasRefNumCit, clusterAreasPorAnio, clusterMediosPublicacionOrdenAutorPorAnio
+from controladores.Clustering import clusterAreas, clusterMediosPublicacionOrdenAutor, clusterRevistasRefNumCit, clusterAreasPorAnio, clusterCuarFIPorAnio
 from controladores.Clustering import clusterMediosPublicacionOrdenAutorPorAreaFrascati, clusterMediosPublicacionOrdenAutorPorAreaUnesco
 from controladores.Clustering import clusterMediosPublicacionOrdenAutorPorAreaFrascatiYAnioPublicacion, clusterMediosPublicacionOrdenAutorPorAreaUnescoYAnioPublicacion
 from controladores.Clustering import clusterRevistasRefNumCitPorAnio, clusterRevistasRefNumCitPorAreaFrascati
 from controladores.Clustering import clusterRevistasRefNumCitPorAreaUnesco, clusterRevistasRefNumCitPorAreFraYAniPub
 from controladores.Clustering import clusterRevistasRefNumCitPorAreUneYAniPub, redesAutores, redesAutoresAreas
-from controladores.Clustering import clusterCuartilAreaUnesco
+from controladores.Clustering import clusterCuartilAreaUnesco, clusterFactorImpactoXCuartil, redesAutoresAreasOrden
 servicio_clustering =  Blueprint('servicio_clustering', __name__)
 @servicio_clustering.route('/ejecutarClusterAreas/<int:num_cluster>', methods=['GET']) 
 def clusteringAreas(num_cluster):
@@ -23,9 +23,9 @@ def clusteringRevistasRefNumCit(num_cluster):
 def clusteringAreasPorAnio(anio_publicacion, num_cluster):
     return clusterAreasPorAnio(anio_publicacion, num_cluster)
 # Medios Publicacion
-@servicio_clustering.route('/ejecutarClusterMediosPublicacionPorAnio/<int:anio_publicacion>/<int:num_cluster>', methods=['GET']) 
-def clusteringMediosPublicacionPorAnio(anio_publicacion, num_cluster):
-    return clusterMediosPublicacionOrdenAutorPorAnio(anio_publicacion, num_cluster)
+@servicio_clustering.route('/ejecutarClusterCuarFIPorAnio/<int:anio_publicacion>/<int:num_cluster>', methods=['GET']) 
+def clusteringCuarFIPorAnio(anio_publicacion, num_cluster):
+    return clusterCuarFIPorAnio(anio_publicacion, num_cluster)
 
 @servicio_clustering.route('/ejecutarClusterMediosPublicacionPorAreaFrascati/<int:id_area_frascati>/<int:num_cluster>', methods=['GET']) 
 def clusteringMediosPublicacionPorAreaFrascati(id_area_frascati, num_cluster):
@@ -77,4 +77,15 @@ def clusteringRedesAutoresAreas(area):
 @servicio_clustering.route('/ejecutarCuartilAreaUnesco/<int:num_cluster>', methods=['GET']) 
 def clusteringCuartilArea(num_cluster):
     return clusterCuartilAreaUnesco(num_cluster)
+
+@servicio_clustering.route('/ejecutarFactorImpactoXCuartil/<int:num_cluster>', methods=['GET']) 
+def clusteringFactorImpactoXCuartil(num_cluster):
+    return clusterFactorImpactoXCuartil(num_cluster)
+
+@servicio_clustering.route('/ejecutarRedesAutoresAreasOrden/<int:orden>/<int:area>', methods=['GET']) 
+def clusteringRedesAutoresAreasOrden(orden,area):
+    return redesAutoresAreasOrden(orden,area)
+
+
+    
 
