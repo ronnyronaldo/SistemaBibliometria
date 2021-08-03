@@ -259,3 +259,9 @@ def actualizarArticulo(publicacion):
     articulo.cuartil  = publicacion['cuartil']
     Articulo.create(articulo)
     return make_response(jsonify({"respuesta": {"valor":"Publicacion actualizada correctamente.", "error":"False"}}))
+
+def listaArticulosMineriaPorAreaUnescoYAnioPublicacion(anio_publicacion, id_area_unesco):
+    get_articulo = Articulo.query.filter((Articulo.anio_publicacion == anio_publicacion) & (Articulo.id_area_unesco == id_area_unesco))
+    articulo_schema = ArticuloSchema(many=True)
+    articulos = articulo_schema.dump(get_articulo)
+    return make_response(jsonify(articulos))
