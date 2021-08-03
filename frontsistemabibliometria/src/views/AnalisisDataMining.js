@@ -148,13 +148,13 @@ function AnalisisDataMining() {
 
   const opcionesBarVertical = {
     maintainAspectRatio: false,
-    responsive: true,
+    responsive: true/*,
     plugins: {
       title: {
         display: true,
         text: tituloGraficoEstadistica,
       },
-    },
+    },*/
   }
 
   const opcionesBarHorizontal = {
@@ -1122,6 +1122,9 @@ function AnalisisDataMining() {
               </Card.Body>
             </Card>
             <Card className="strpied-tabled-with-hover">
+              <Card.Header>
+                <Card.Title as="h4">{tituloGraficoEstadistica}</Card.Title>
+              </Card.Header>
               <Card.Body className="table-full-width table-responsive px-3">
                 {numeroPublicacionesUnesco.length !== 0 && (
                   <div style={{ width: '100%', height: '500px' }}>
