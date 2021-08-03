@@ -110,9 +110,9 @@ function campoVacio(texto, mensaje) {
 }
 
 function valorColor(valor){
-    if(valor == 1) return "blue"
-    if(valor == 2) return "green"
-    if(valor == 3) return "orange"
+    if(valor == 1) return "lightskyblue"
+    if(valor == 2) return "lightgreen"
+    if(valor == 3) return "LightCoral"
     if(valor == 4) return "red"
     if(valor == 5) return "black"
     if(valor == 6) return "cyan"

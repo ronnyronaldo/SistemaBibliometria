@@ -13,6 +13,7 @@ import ChartClusterMedPubOrdAut from './ChartClusterMedPubOrdAut';
 import ChartClusterRevNumCit from './ChartClusterRevNumCit';
 import { medioPublicacionService } from '../_services/medio_publicacion.service';
 import ChartClusterCuartilAreUne from './ChartClusterCuartilAreUne';
+import ChartClusterFICuartil from './ChartClusterFICuartil';
 import { Bar, Doughnut, Pie, PolarArea, Bubble } from 'react-chartjs-2';
 
 // react plugin for creating notifications over the dashboard
@@ -92,6 +93,7 @@ function AnalisisDataMining() {
   const [nombre_cluster, setNombreCluster] = React.useState([]);
   const [detalleDatosClusterAreas, setDetalleDatosClusterAreas] = React.useState([]);
   const [detalleDatosClusterAreasCuartil, setDetalleDatosClusterAreasCuartil] = React.useState([]);
+  const [detalleDatosClusterCuartilFI, setDetalleDatosClusterCuartilFI] = React.useState([]);
   const [detalleDatosClusterMediosPublciacion, setDetalleDatosClusterMediosPublicacion] = React.useState([]);
   const [detalleDatosClusterMediosPublciacionRef, setDetalleDatosClusterMediosPublicacionRef] = React.useState([]);
   const [tituloGrafico, setTituloGrafico] = React.useState('');
@@ -102,6 +104,7 @@ function AnalisisDataMining() {
   const [numeroAreaUnesco, setNumeroAreaUnesco] = React.useState(0);
   const [totalClusterAreas, setTotalClusterAreas] = React.useState([]);
   const [totalClusterAreasCuartil, setTotalClusterAreasCuartil] = React.useState([]);
+  const [totalClusterCuartilFI, setTotalClusterCuartilFI] = React.useState([]);
   const [totalClusterMediosPublicacion, setTotalClusterMediosPublicacion] = React.useState([]);
   const [totalClusterMediosPublicacionReferencias, setTotalClusterMediosPublicacionReferencias] = React.useState([]);
   const [resultadoClusterMediosPublicacionOrdenAutor, setResultadoClusterMediosPublicacionOrdenAutor] = React.useState([]);
@@ -110,11 +113,13 @@ function AnalisisDataMining() {
   const [filtroPorArea, setFiltroArea] = React.useState(true);
   const [filtroPorAreaEstadistica, setFiltroPorAreaEstadistica] = React.useState(false);
   const [resultadoClusterCuartilAreas, setResultadoClusterCuartilAreas] = React.useState([]);
+  const [resultadoClusterCuartilFI, setResultadoClusterCuartilFI] = React.useState([]);
 
   const ordenAutor = 19;
   const num_citations = 300000;
   const num_revistas = 6000;
-  const num_cuartil = 5;
+  const num_cuartil = 1;
+  const num_factorI = 1;
 
   const [etiquetas, setEtiquetas] = React.useState([]);
   const [datos, setDatos] = React.useState([]);
@@ -181,6 +186,7 @@ function AnalisisDataMining() {
     setResultadoClusterMediosPublicacionOrdenAutor([]);
     setResultadoClusterRevNumCit([]);
     setResultadoClusterCuartilAreas([]);
+    setResultadoClusterCuartilFI([]);
     await clusteringService.ejecutarClusterAreas(numeroCluster).then(value => {
       handleProcesarDatosClusteringAreas(value, numeroCluster);
       setLoading(false);
@@ -194,6 +200,7 @@ function AnalisisDataMining() {
     setResultadoClusterMediosPublicacionOrdenAutor([]);
     setResultadoClusterRevNumCit([]);
     setResultadoClusterCuartilAreas([]);
+    setResultadoClusterCuartilFI([]);
     await clusteringService.ejecutarclusteringAreasPorAnio(anio, numeroCluster).then(async (value) => {
       handleProcesarDatosClusteringAreas(value, numeroCluster);
       setLoading(false);
@@ -296,7 +303,6 @@ function AnalisisDataMining() {
     }
 
 
-
     await publicacionService.obtenerDetalleClusteringCuartilAreaUnesco(resultadoArticuloCluster).then(value => {
       if (value.length != 0) {
         let totales = [];
@@ -319,6 +325,64 @@ function AnalisisDataMining() {
     });
   }
 
+  async function handleProcesarDatosClusteringFICuartil(value, numeroCluster) {
+    //console.log(value);
+    if (value == 'Error') {
+      notify("tr", 'Debido a la cantidad de datos no es posible realizar el número de cluster que ingreso.', "danger");
+      return;
+    }
+
+    setLoading(true);
+    var objeto = JSON.parse(value);
+    var id_cuartil = objeto.Componente_1;
+    var id_factor_impacto = objeto.Componente_2;
+    var KMeans_Clusters = objeto.KMeans_Clusters
+    var id_articulo = objeto.id_articulo
+    var listaCuartil = Object.values(id_cuartil)
+    var listaFactorImpacto = Object.values(id_factor_impacto)
+    var listaKMeans_Clusters = Object.values(KMeans_Clusters)
+    var listaArticulo = Object.values(id_articulo)
+    var resultadoAreas = []
+    var resultadoArticuloCluster = []
+    for (var i = 0; i < listaFactorImpacto.length; i++) {
+      const registro = {
+        id_cuartil: listaCuartil[i],
+        id_factor_impacto: listaFactorImpacto[i],
+        id_cluster: listaKMeans_Clusters[i],
+        id_articulo: listaArticulo[i]
+      }
+      const idArticuloCluster = {
+        id_cluster: listaKMeans_Clusters[i],
+        id_articulo: listaArticulo[i],
+        num_cluster: numeroCluster
+      }
+      resultadoArticuloCluster.push(idArticuloCluster)
+      resultadoAreas.push(registro)
+    }
+   
+
+    await publicacionService.obtenerDetalleClusteringCuartilFI(resultadoArticuloCluster).then(value => {
+      if (value.length != 0) {
+        let totales = [];
+        let nombre_cluster = [];
+        for (var i = 0; i < numeroCluster; i++) {
+          let registro_nombre_cluster = { "codigo": i, "nombre": "Cluster " + i }
+          nombre_cluster.push(registro_nombre_cluster)
+          totales.push(value[i][i].length)
+        }
+        setNombreCluster(nombre_cluster);
+        setTotalClusterCuartilFI(totales);
+        setDetalleDatosClusterCuartilFI(value)
+      }
+      setLoading(false);
+    })
+
+    areaUnescoService.listaAreasUnesco().then(value => {
+      setNumeroAreaUnesco(value.area_unesco.length)
+      setResultadoClusterCuartilFI(resultadoAreas);
+    });
+  }
+
   async function handleEjecutarClusteringMedPubOrdAut(numeroCluster) {
     setLoading(true)
     setTituloGrafico('PRODUCTIVIDAD POR MEDIOS PUBLICACIÓN');
@@ -326,6 +390,7 @@ function AnalisisDataMining() {
     setResultadoClusterRevNumCit([]);
     setResultadoClusterMediosPublicacionOrdenAutor([]);
     setResultadoClusterCuartilAreas([]);
+    setResultadoClusterCuartilFI([]);
     await clusteringService.ejecutarClusterMediosPublicacionOrden(numeroCluster).then(value => {
       handleProcesarDatosClusteringMediosPublicacion(value, numeroCluster);
       setLoading(false)
@@ -339,8 +404,23 @@ function AnalisisDataMining() {
     setResultadoClusterRevNumCit([]);
     setResultadoClusterMediosPublicacionOrdenAutor([]);
     setResultadoClusterCuartilAreas([]);
+    setResultadoClusterCuartilFI([]);
     await clusteringService.ejecutarClusterCuartilAreaUnesco(numeroCluster).then(value => {
       handleProcesarDatosClusteringCuartilAreasUnesco(value, numeroCluster);
+      setLoading(false)
+    })
+  }
+
+  async function handleEjecutarClusteringFICuartil(numeroCluster) {
+    setLoading(true)
+    setTituloGrafico('CUARTIL POR FACTOR DE IMPACTO');
+    setResultadoClusterAreas([]);
+    setResultadoClusterRevNumCit([]);
+    setResultadoClusterMediosPublicacionOrdenAutor([]);
+    setResultadoClusterCuartilAreas([]);
+    setResultadoClusterCuartilFI([]);
+    await clusteringService.ejecutarClusterFactorImpactoXCuartil(numeroCluster).then(value => {
+      handleProcesarDatosClusteringFICuartil(value, numeroCluster);
       setLoading(false)
     })
   }
@@ -352,8 +432,9 @@ function AnalisisDataMining() {
     setResultadoClusterRevNumCit([]);
     setResultadoClusterMediosPublicacionOrdenAutor([]);
     setResultadoClusterCuartilAreas([]);
-    await clusteringService.ejecutarclusteringMediosPublicacionPorAnio(anio, numeroCluster).then(async (value) => {
-      handleProcesarDatosClusteringMediosPublicacion(value, numeroCluster);
+    setResultadoClusterCuartilFI([]);
+    await clusteringService.ejecutarclusteringCuarFIPorAnio(anio, numeroCluster).then(async (value) => {
+      handleProcesarDatosClusteringFICuartil(value, numeroCluster);
       setLoading(false);
     });
   }
@@ -365,6 +446,7 @@ function AnalisisDataMining() {
     setResultadoClusterRevNumCit([]);
     setResultadoClusterMediosPublicacionOrdenAutor([]);
     setResultadoClusterCuartilAreas([]);
+    setResultadoClusterCuartilFI([]);
     await clusteringService.ejecutarclusteringMediosPublicacionPorAreaFrascati(id_area_frascati, numeroCluster).then(async (value) => {
       handleProcesarDatosClusteringMediosPublicacion(value, numeroCluster);
       setLoading(false);
@@ -378,6 +460,7 @@ function AnalisisDataMining() {
     setResultadoClusterRevNumCit([]);
     setResultadoClusterMediosPublicacionOrdenAutor([]);
     setResultadoClusterCuartilAreas([]);
+    setResultadoClusterCuartilFI([]);
     await clusteringService.ejecutarclusteringMediosPublicacionPorAreaUnesco(id_area_unesco, numeroCluster).then(async (value) => {
       handleProcesarDatosClusteringMediosPublicacion(value, numeroCluster);
       setLoading(false);
@@ -391,6 +474,7 @@ function AnalisisDataMining() {
     setResultadoClusterRevNumCit([]);
     setResultadoClusterMediosPublicacionOrdenAutor([]);
     setResultadoClusterCuartilAreas([]);
+    setResultadoClusterCuartilFI([]);
     await clusteringService.ejecutarclusteringMediosPublicacionPorAreaFrascatiYAnioPublicacion(anio_publicacion, id_area_frascati, numeroCluster).then(async (value) => {
       handleProcesarDatosClusteringMediosPublicacion(value, numeroCluster);
       setLoading(false);
@@ -404,6 +488,7 @@ function AnalisisDataMining() {
     setResultadoClusterRevNumCit([]);
     setResultadoClusterMediosPublicacionOrdenAutor([]);
     setResultadoClusterCuartilAreas([]);
+    setResultadoClusterCuartilFI([]);
     await clusteringService.ejecutarclusteringMediosPublicacionPorAreaUnescoYAnioPublicacion(anio_publicacion, id_area_unesco, numeroCluster).then(async (value) => {
       handleProcesarDatosClusteringMediosPublicacion(value, numeroCluster);
       setLoading(false);
@@ -474,6 +559,7 @@ function AnalisisDataMining() {
     setResultadoClusterRevNumCit([]);
     setResultadoClusterAreas([]);
     setResultadoClusterCuartilAreas([]);
+    setResultadoClusterCuartilFI([]);
     await clusteringService.ejecutarclusteringRevRefNumCit(numeroCluster).then(value => {
       handleProcesarDatosClusteringMediosPublicacionReferencias(value, numeroCluster);
       setLoading(false);
@@ -499,6 +585,7 @@ function AnalisisDataMining() {
     setResultadoClusterRevNumCit([]);
     setResultadoClusterAreas([]);
     setResultadoClusterCuartilAreas([]);
+    setResultadoClusterCuartilFI([]);
     await clusteringService.ejecutarclusteringRevRefNumCitPorAreaFrascati(id_area_frascati, numeroCluster).then(value => {
       handleProcesarDatosClusteringMediosPublicacionReferencias(value, numeroCluster);
       setLoading(false);
@@ -512,6 +599,7 @@ function AnalisisDataMining() {
     setResultadoClusterRevNumCit([]);
     setResultadoClusterAreas([]);
     setResultadoClusterCuartilAreas([]);
+    setResultadoClusterCuartilFI([]);
     await clusteringService.ejecutarclusteringRevRefNumCitPorAreaUnesco(id_area_unesco, numeroCluster).then(value => {
       handleProcesarDatosClusteringMediosPublicacionReferencias(value, numeroCluster);
       setLoading(false);
@@ -525,6 +613,7 @@ function AnalisisDataMining() {
     setResultadoClusterRevNumCit([]);
     setResultadoClusterAreas([]);
     setResultadoClusterCuartilAreas([]);
+    setResultadoClusterCuartilFI([]);
     await clusteringService.ejecutarclusteringRevRefNumCitPorAreaFrascatiYAnioPublicacion(anio_publicacion, id_area_frascati, numeroCluster).then(value => {
       handleProcesarDatosClusteringMediosPublicacionReferencias(value, numeroCluster);
       setLoading(false);
@@ -538,6 +627,7 @@ function AnalisisDataMining() {
     setResultadoClusterRevNumCit([]);
     setResultadoClusterAreas([]);
     setResultadoClusterCuartilAreas([]);
+    setResultadoClusterCuartilFI([]);
     await clusteringService.ejecutarclusteringRevRefNumCitPorAreaUnescoYAnioPublicacion(anio_publicacion, id_area_unesco, numeroCluster).then(value => {
       handleProcesarDatosClusteringMediosPublicacionReferencias(value, numeroCluster);
       setLoading(false);
@@ -843,6 +933,59 @@ function AnalisisDataMining() {
             } else {
               notify("tr", 'El número de cluster ingresado no es válido.', "danger");
             }
+          }
+        }
+        if (idCampo == 5) {
+          if (idAnio == 0 && idAreaFrascati == 0 && idAreaUnesco == 0) {
+            if (validacionInputService.esNumero(numeroCluster) && validacionInputService.campoVacio(numeroCluster)) {
+              setNumeroCluster(numeroCluster);
+              handleEjecutarClusteringFICuartil(numeroCluster)
+            } else {
+              notify("tr", 'El número de cluster ingresado no es válido.', "danger");
+            }
+          }
+          else if (idAnio != 0 && idAreaFrascati == 0 && idAreaUnesco == 0) {
+            if (validacionInputService.esNumero(numeroCluster) && validacionInputService.campoVacio(numeroCluster)) {
+              setNumeroCluster(numeroCluster);
+              handleEjecutarClusteringMedPubOrdAutPorAnio(idAnio, numeroCluster)
+            } else {
+              notify("tr", 'El número de cluster ingresado no es válido.', "danger");
+            }
+          }
+          else if (idAnio == 0 && idAreaFrascati != 0 && idAreaUnesco == 0) {
+            if (validacionInputService.esNumero(numeroCluster) && validacionInputService.campoVacio(numeroCluster)) {
+              setNumeroCluster(numeroCluster);
+              handleEjecutarClusteringMedPubOrdAutPorAreaFrascati(idAreaFrascati, numeroCluster)
+            } else {
+              notify("tr", 'El número de cluster ingresado no es válido.', "danger");
+            }
+          }
+          else if (idAnio == 0 && idAreaFrascati == 0 && idAreaUnesco != 0) {
+            if (validacionInputService.esNumero(numeroCluster) && validacionInputService.campoVacio(numeroCluster)) {
+              setNumeroCluster(numeroCluster);
+              handleEjecutarClusteringMedPubOrdAutPorAreaUnesco(idAreaUnesco, numeroCluster)
+            } else {
+              notify("tr", 'El número de cluster ingresado no es válido.', "danger");
+            }
+          }
+          else if (idAnio != 0 && idAreaFrascati != 0 && idAreaUnesco == 0) {
+            if (validacionInputService.esNumero(numeroCluster) && validacionInputService.campoVacio(numeroCluster)) {
+              setNumeroCluster(numeroCluster);
+              handleEjecutarClusteringMedPubOrdAutPorAreaFraYAñoPub(idAnio, idAreaFrascati, numeroCluster)
+            } else {
+              notify("tr", 'El número de cluster ingresado no es válido.', "danger");
+            }
+          }
+          else if (idAnio != 0 && idAreaFrascati == 0 && idAreaUnesco != 0) {
+            if (validacionInputService.esNumero(numeroCluster) && validacionInputService.campoVacio(numeroCluster)) {
+              setNumeroCluster(numeroCluster);
+              handleEjecutarClusteringMedPubOrdAutPorAreaUneYAñoPub(idAnio, idAreaUnesco, numeroCluster)
+            } else {
+              notify("tr", 'El número de cluster ingresado no es válido.', "danger");
+            }
+          }
+          else if (idAreaUnesco != 0 && idAreaFrascati != 0) {
+            notify("tr", 'Solo puede seleccionar un filtro de área (Frascati o Unesco).', "danger");
           }
         }
       }
@@ -1398,6 +1541,7 @@ function AnalisisDataMining() {
                           <option value="2">Medios Publicacion (Publicaciones)</option>
                           <option value="3">Medios Publicacion (Referencias)</option>
                           <option value="4">Cuartil</option>
+                          <option value="5">Cuartil vs Factor de Impacto</option>
                         </select>
                       </Form.Row>
                     </Form.Group>
@@ -1484,6 +1628,9 @@ function AnalisisDataMining() {
                 )}
                 {resultadoClusterCuartilAreas.length !== 0 && (
                   <ChartClusterCuartilAreUne data={resultadoClusterCuartilAreas} w={w} h={h} nc={num_cuartil} au={numeroAreaUnesco} totales={totalClusterAreasCuartil}></ChartClusterCuartilAreUne>
+                )}
+                {resultadoClusterCuartilFI.length !== 0 && (
+                  <ChartClusterFICuartil data={resultadoClusterCuartilFI} w={w} h={h} nc={num_cuartil} fi={num_factorI} totales={totalClusterCuartilFI}></ChartClusterFICuartil>
                 )}
               </Card.Body>
             </Card>

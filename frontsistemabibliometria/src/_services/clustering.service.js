@@ -7,7 +7,7 @@ export const clusteringService = {
     ejecutarClusterMediosPublicacionOrden,
     ejecutarclusteringRevRefNumCit,
     ejecutarclusteringAreasPorAnio,
-    ejecutarclusteringMediosPublicacionPorAnio,
+    ejecutarclusteringCuarFIPorAnio,
     ejecutarclusteringMediosPublicacionPorAreaFrascati,
     ejecutarclusteringMediosPublicacionPorAreaUnesco,
     ejecutarclusteringMediosPublicacionPorAreaFrascatiYAnioPublicacion,
@@ -19,8 +19,15 @@ export const clusteringService = {
     ejecutarclusteringRevRefNumCitPorAreaUnescoYAnioPublicacion,
     ejecutarclusteringRedesAutores,
     ejecutarclusteringRedesAutoresAreas,
-    ejecutarClusterCuartilAreaUnesco
+    ejecutarClusterCuartilAreaUnesco,
+    ejecutarClusterFactorImpactoXCuartil,
+    ejecutarclusteringRedesAutoresAreasOrden
 };
+
+// Redes de autores por orden de autor y area unesco
+async function ejecutarclusteringRedesAutoresAreasOrden(orden,area) {
+    return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarRedesAutoresAreasOrden/`+ orden +'/'+ area);
+}
 
 // Redes de autores por orden de autor
 async function ejecutarclusteringRedesAutores(orden) {
@@ -47,8 +54,8 @@ async function ejecutarclusteringAreasPorAnio(anio_publicacion, num_cluster) {
 async function ejecutarClusterMediosPublicacionOrden(numeroCluster) {
     return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarMediosPublicacionOrdenAutor/` +  numeroCluster);
 }
-async function ejecutarclusteringMediosPublicacionPorAnio(anio_publicacion, num_cluster) {
-    return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarClusterMediosPublicacionPorAnio/`+ anio_publicacion+'/'+ num_cluster);
+async function ejecutarclusteringCuarFIPorAnio(anio_publicacion, num_cluster) {
+    return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarClusterCuarFIPorAnio/`+ anio_publicacion+'/'+ num_cluster);
 }
 async function ejecutarclusteringMediosPublicacionPorAreaFrascati(id_area_frascati, num_cluster) {
     return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarClusterMediosPublicacionPorAreaFrascati/`+ id_area_frascati +'/'+ num_cluster);
@@ -89,6 +96,12 @@ async function ejecutarclusteringRevRefNumCitPorAreaUnescoYAnioPublicacion(anio_
 async function ejecutarClusterCuartilAreaUnesco(num_cluster) {
     return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarCuartilAreaUnesco/`+ num_cluster);
 }
+
+// Cluster por Cuartil y Factor de Impacto
+async function ejecutarClusterFactorImpactoXCuartil(num_cluster) {
+    return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarFactorImpactoXCuartil/`+ num_cluster);
+}
+
 
 
 

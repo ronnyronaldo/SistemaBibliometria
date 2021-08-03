@@ -95,6 +95,7 @@ function Dashboard() {
   const [numeroDetalleReferencias, setNumeroDetalleReferencias] = React.useState(0);
   const [numeroOrdenAutor, setnumeroOrdenAutor] = React.useState("");
   const [redesAreas, setRedesAreas] = React.useState("");
+  const [redesAreasOrden, setRedesAreasOrden] = React.useState("");
   const [areasFracati, setAreasFrascati] = React.useState([]);
   const [areasUnesco, setAreasUnesco] = React.useState([]);
   const [datosLeyBradford, setDatosLeyBradford] = React.useState([]);
@@ -128,7 +129,6 @@ function Dashboard() {
     setLoading(true)
     let orden_autor = document.getElementById("idOrdenAutor").value;
     await clusteringService.ejecutarclusteringRedesAutores(orden_autor).then(value => {
-      console.log("Imagene de orden"+value.valorimagen);
       setnumeroOrdenAutor(value.valorimagen);
       setLoading(false)
     });
@@ -138,8 +138,17 @@ function Dashboard() {
     setLoading(true)
     let idAreaUnesco = parseInt(document.getElementById("idAreaUnescoGrafo").value);
     await clusteringService.ejecutarclusteringRedesAutoresAreas(idAreaUnesco).then(value => {
-      console.log("Imagene de area"+value.valorimagenarea);
       setRedesAreas(value.valorimagenarea);
+      setLoading(false)
+    });
+  }
+
+  async function handleCargarRedesDeAutoresAreasOrden() {
+    setLoading(true)
+    let orden_autor = document.getElementById("idOrdenAutor").value;
+    let idAreaUnesco = parseInt(document.getElementById("idAreaUnescoGrafo").value);
+    await clusteringService.ejecutarclusteringRedesAutoresAreasOrden(orden_autor,idAreaUnesco).then(value => {
+      setRedesAreasOrden(value.valorimagenarea);
       setLoading(false)
     });
   }
@@ -231,12 +240,13 @@ function Dashboard() {
   }
   React.useEffect(() => {
     document.getElementById("idOrdenAutor").value=1;
-    parseInt(document.getElementById("idAreaUnescoGrafo").value="1");
+    document.getElementById("idAreaUnescoGrafo").value=1;
     handleCargarTotalesArticulosReferencias();
-    handleCargarRedesDeAutores();
+    // handleCargarRedesDeAutores();
     handleAreasUnesco();
     handleAreasFrascati();
-    handleCargarRedesDeAutoresAreas();
+    // handleCargarRedesDeAutoresAreas();
+    handleCargarRedesDeAutoresAreasOrden();
   }, []);
   return (
     <>
@@ -335,7 +345,7 @@ function Dashboard() {
                   <Form.Group>
                     <label>Orden de Autores</label>
                     <Form.Row>
-                      <select className="form-control" id="idOrdenAutor" onChange={handleCargarRedesDeAutores}>
+                      <select className="form-control" id="idOrdenAutor" onChange={handleCargarRedesDeAutoresAreasOrden}>
                         <option value="0">Seleccione</option>
                         <option value="1">Primer Autor</option>
                         <option value="2">Segundo Autor</option>
@@ -359,7 +369,7 @@ function Dashboard() {
                     <Form.Group>
                       <label>Area Unesco</label>
                       <Form.Row>
-                        <select className="form-control" id="idAreaUnescoGrafo" onChange={handleCargarRedesDeAutoresAreas}>
+                        <select className="form-control" id="idAreaUnescoGrafo" onChange={handleCargarRedesDeAutoresAreasOrden}>
                           <option value="0">Seleccione</option>
                           {areasUnesco.map(item => (
                             <option value={item.id_area_unesco} key={item.id_area_unesco}>{item.descripcion_unesco}</option>
@@ -370,11 +380,11 @@ function Dashboard() {
                   </Col>
               </Row>
               <div>
-                <img src={"data:image/png;base64,"+ numeroOrdenAutor} width="100%" height="100%" alt="Red dot" />
+                <img src={"data:image/png;base64,"+ redesAreasOrden} width="100%" height="100%" alt="Grafo Autores" />
               </div>
-              <div>
+              {/* <div>
                 <img src={"data:image/png;base64,"+ redesAreas} width="100%" height="100%" alt="Red dot" />
-              </div>
+              </div> */}
               </Card.Body>
             </Card>
           </Col>
