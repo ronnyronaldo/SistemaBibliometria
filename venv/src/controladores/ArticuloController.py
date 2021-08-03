@@ -64,11 +64,29 @@ def insertarArticulo(nuevosArticulos):
     articulos = nuevosArticulos['nuevasPublicaciones']
     mensajesRespuesta = []
     for articulo in articulos:
-        resultado_base_datos_digital = validarBaseDatosDigitalPorNombre(articulo['nombre']).json['base_datos_digital']
-        resultado_area_frascati = validarAreaFrascatiPorNombre(articulo['nombre_area_frascati_especifico']).json['area_frascati']
-        resultado_area_unesco = validarAreaUnescoPorNombre(articulo['nombre_area_unesco_especifico']).json['area_unesco']
-        resultado_medio_publicacion = verificaMedioPublicacionPorNombre(articulo['nombre_medio_publicacion']).json['mediosPublicacion']
-    
+        try: 
+            baseDatos = articulo['nombre']
+            areaFrascati = articulo['nombre_area_frascati_especifico']
+            areaUnesco =  articulo['nombre_area_unesco_especifico']
+            medioPublicacion =  articulo['nombre_medio_publicacion']
+            titulo = articulo['titulo']
+        except:
+            mensaje = {
+                        "error": "True",
+                        "mensaje": 'Los campos del archivo no se encuentran correctos.'
+                    }
+            mensajesRespuesta.append(mensaje)
+            return make_response(jsonify({"respuesta": {"mensajes":mensajesRespuesta, "error":"False"}}))
+            
+        resultado_base_datos_digital = validarBaseDatosDigitalPorNombre(baseDatos).json['base_datos_digital']
+        print(resultado_base_datos_digital)
+        resultado_area_frascati = validarAreaFrascatiPorNombre(areaFrascati).json['area_frascati']
+        print(resultado_area_frascati)
+        resultado_area_unesco = validarAreaUnescoPorNombre(areaUnesco).json['area_unesco']
+        print(resultado_area_unesco)
+        resultado_medio_publicacion = verificaMedioPublicacionPorNombre(medioPublicacion).json['mediosPublicacion']
+        print(resultado_medio_publicacion)
+
         if len(resultado_base_datos_digital) == 1:
             id_base_datos_digital = resultado_base_datos_digital[0]['id_base_datos_digital']
             if len(resultado_area_frascati) == 1:
@@ -137,37 +155,37 @@ def insertarArticulo(nuevosArticulos):
                             
                             mensaje = {
                                 "error": "False",
-                                "mensaje": 'Artículo ingresado correctamente: '+articulo['titulo']
+                                "mensaje": 'Artículo ingresado correctamente: '+titulo
                             }
                             mensajesRespuesta.append(mensaje)
                         else:
                             mensaje = {
                                 "error": "True",
-                                "mensaje": 'La publicacion ya esta registrada: '+ articulo['titulo']
+                                "mensaje": 'La publicacion ya esta registrada: '+ titulo
                             }
                             mensajesRespuesta.append(mensaje)
                     else:
                         mensaje = {
                             "error": "True",
-                            "mensaje": 'No se ha registrado el medio de publicación: '+ articulo['nombre_medio_publicacion']
+                            "mensaje": 'No se ha registrado el medio de publicación: '+ medioPublicacion
                         }
                         mensajesRespuesta.append(mensaje)
                 else:
                     mensaje = {
                             "error": "True",
-                            "mensaje": 'No se ha registrado el área unesco: ' + articulo['nombre_area_unesco_especifico']
+                            "mensaje": 'No se ha registrado el área unesco: ' + areaUnesco
                         }
                     mensajesRespuesta.append(mensaje)
             else:
                 mensaje = {
                         "error": "True",
-                        "mensaje": 'No se ha registrado el área frascati: ' + articulo['nombre_area_frascati_especifico']
+                        "mensaje": 'No se ha registrado el área frascati: ' + areaFrascati
                     }
                 mensajesRespuesta.append(mensaje)
         else:
             mensaje = {
                     "error": "True",
-                    "mensaje": 'No se encuentra registrado la base de datos digital: ' + articulo['nombre']
+                    "mensaje": 'No se encuentra registrado la base de datos digital: ' + baseDatos
                 }
             mensajesRespuesta.append(mensaje)
     return make_response(jsonify({"respuesta": {"mensajes":mensajesRespuesta, "error":"False"}}))

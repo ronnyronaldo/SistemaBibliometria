@@ -10,7 +10,7 @@ from flask import Flask, request, jsonify, make_response
 from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
 from scraper_api import ScraperAPIClient
-# from scholarly import scholarly, ProxyGenerator 
+from scholarly import scholarly, ProxyGenerator 
 
 db = SQLAlchemy()
 
@@ -182,48 +182,48 @@ def obtenerDetalleReferenciaTotal(articuloBuscar):
         respuestaDetalleReferencia = listaDetalleReferenciaPorId(id_referencia).json['detalleReferencia']
         numeroDetalleReferencia = len(respuestaDetalleReferencia)
         print(numeroDetalleReferencia)
-        #if numeroDetalleReferencia == 0:
-            # pg = ProxyGenerator()
-            # pg.ScraperAPI('81ded0ad907a5555e982aa011ff2e75b')
-            # scholarly.use_proxy(pg)
-            # try:
-            #     search_queryAux = scholarly.search_pubs(referenciaString)
-            #     detalleReferencia = search_queryAux.__next__()
-            #     # Extraer detalle de la referencia
-            #     print(detalleReferencia)
-            #     container_type = detalleReferencia.get('container_type')
-            #     source = detalleReferencia.get('source')
-            #     filled = detalleReferencia.get('filled')
-            #     gsrank = detalleReferencia.get('gsrank')
-            #     pub_url = detalleReferencia.get('pub_url')
-            #     author_id = detalleReferencia.get('author_id')
-            #     num_citations = detalleReferencia.get('num_citations')
-            #     url_scholarbib = detalleReferencia.get('url_scholarbib')
-            #     url_add_sclib = detalleReferencia.get('url_add_sclib')
-            #     citedby_url = detalleReferencia.get('citedby_url')
-            #     url_related_articles = detalleReferencia.get('url_related_articles')
-            #     title = (detalleReferencia.get('bib')).get('title')
-            #     author = (detalleReferencia.get('bib')).get('author')
-            #     pub_year = (detalleReferencia.get('bib')).get('pub_year')
-            #     venue = (detalleReferencia.get('bib')).get('venue')
-            #     abstract = (detalleReferencia.get('bib')).get('abstract')
-            #     # Extraer detalle de la referencia
-            #     #Transformar a string una lista
-            #     author_id_string = ";".join(author_id)
-            #     author_string =  ";".join(author)
-            #     #Transformar a string una lista
-            #     referenciaSinEspacios = referenciaString.replace(' ','') 
-            #     print(referenciaSinEspacios)
-            #     tituloSinEspacios = title.replace(' ','')  
-            #     print(tituloSinEspacios)
-            #     anioSinEspacios = pub_year.replace(' ','')  
-            #     print(anioSinEspacios)
-            #     print(tituloSinEspacios in referenciaSinEspacios)
-            #     #print( pub_year in referenciaString)
-            #     if (tituloSinEspacios in referenciaSinEspacios) and (anioSinEspacios in referenciaSinEspacios):
-            #         DetalleReferencia(id_referencia, container_type, source, filled, gsrank, pub_url, author_id_string, num_citations, url_scholarbib, url_add_sclib, citedby_url, url_related_articles, title, author_string, pub_year, venue, abstract).create()
-            # except:
-            #     print('Referencia no encontrada')
+        if numeroDetalleReferencia == 0:
+            pg = ProxyGenerator()
+            pg.ScraperAPI('81ded0ad907a5555e982aa011ff2e75b')
+            scholarly.use_proxy(pg)
+            try:
+                search_queryAux = scholarly.search_pubs(referenciaString)
+                detalleReferencia = search_queryAux.__next__()
+                # Extraer detalle de la referencia
+                print(detalleReferencia)
+                container_type = detalleReferencia.get('container_type')
+                source = detalleReferencia.get('source')
+                filled = detalleReferencia.get('filled')
+                gsrank = detalleReferencia.get('gsrank')
+                pub_url = detalleReferencia.get('pub_url')
+                author_id = detalleReferencia.get('author_id')
+                num_citations = detalleReferencia.get('num_citations')
+                url_scholarbib = detalleReferencia.get('url_scholarbib')
+                url_add_sclib = detalleReferencia.get('url_add_sclib')
+                citedby_url = detalleReferencia.get('citedby_url')
+                url_related_articles = detalleReferencia.get('url_related_articles')
+                title = (detalleReferencia.get('bib')).get('title')
+                author = (detalleReferencia.get('bib')).get('author')
+                pub_year = (detalleReferencia.get('bib')).get('pub_year')
+                venue = (detalleReferencia.get('bib')).get('venue')
+                abstract = (detalleReferencia.get('bib')).get('abstract')
+                # Extraer detalle de la referencia
+                #Transformar a string una lista
+                author_id_string = ";".join(author_id)
+                author_string =  ";".join(author)
+                #Transformar a string una lista
+                referenciaSinEspacios = referenciaString.replace(' ','') 
+                print(referenciaSinEspacios)
+                tituloSinEspacios = title.replace(' ','')  
+                print(tituloSinEspacios)
+                anioSinEspacios = pub_year.replace(' ','')  
+                print(anioSinEspacios)
+                print(tituloSinEspacios in referenciaSinEspacios)
+                #print( pub_year in referenciaString)
+                if (tituloSinEspacios in referenciaSinEspacios) and (anioSinEspacios in referenciaSinEspacios):
+                    DetalleReferencia(id_referencia, container_type, source, filled, gsrank, pub_url, author_id_string, num_citations, url_scholarbib, url_add_sclib, citedby_url, url_related_articles, title, author_string, pub_year, venue, abstract).create()
+            except:
+                print('Referencia no encontrada')
     return make_response(jsonify({"respuesta": {"valor":"Proceso Búsqueda Terminado.", "error":"False"}}))
 
 
