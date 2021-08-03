@@ -63,7 +63,7 @@ class Barchar extends Component {
         
         function nombre(cluster){
             for (var  i = 0; totales.length; i++){
-                if(cluster == i) return "Cluster "+i+" (" + totales[i]+")"
+                if(cluster == i) return "Grupo "+i+" (" + totales[i]+")"
             }
         }
 

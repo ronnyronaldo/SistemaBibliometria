@@ -180,9 +180,9 @@ function AnalisisDataMining() {
   const [areasUnesco, setAreasUnesco] = React.useState([]);
 
   async function handleProcesarDatosClusteringFICuartil(value, numeroCluster) {
-    //console.log(value);
+    //console.log(value)
     if (value == 'Error') {
-      notify("tr", 'Debido a la cantidad de datos no es posible realizar el número de cluster que ingreso.', "danger");
+      notify("tr", 'Debido a la cantidad de datos no es posible realizar el agrupamiento que ingreso.', "danger");
       return;
     }
 
@@ -196,7 +196,7 @@ function AnalisisDataMining() {
     var listaFactorImpacto = Object.values(id_factor_impacto)
     var listaKMeans_Clusters = Object.values(KMeans_Clusters)
     var listaArticulo = Object.values(id_articulo)
-    var resultadoAreas = []
+    var listaRegistros = []
     var resultadoArticuloCluster = []
     for (var i = 0; i < listaFactorImpacto.length; i++) {
       const registro = {
@@ -211,16 +211,15 @@ function AnalisisDataMining() {
         num_cluster: numeroCluster
       }
       resultadoArticuloCluster.push(idArticuloCluster)
-      resultadoAreas.push(registro)
+      listaRegistros.push(registro)
     }
-   
 
     await publicacionService.obtenerDetalleClusteringCuartilFI(resultadoArticuloCluster).then(value => {
       if (value.length != 0) {
         let totales = [];
         let nombre_cluster = [];
         for (var i = 0; i < numeroCluster; i++) {
-          let registro_nombre_cluster = { "codigo": i, "nombre": "Cluster " + i }
+          let registro_nombre_cluster = { "codigo": i, "nombre": "Grupo " + i }
           nombre_cluster.push(registro_nombre_cluster)
           totales.push(value[i][i].length)
         }
@@ -231,10 +230,8 @@ function AnalisisDataMining() {
       setLoading(false);
     })
 
-    areaUnescoService.listaAreasUnesco().then(value => {
-      setNumeroAreaUnesco(value.area_unesco.length)
-      setResultadoClusterCuartilFI(resultadoAreas);
-    });
+    setResultadoClusterCuartilFI(listaRegistros);
+    
   }
 
 
@@ -266,58 +263,58 @@ function AnalisisDataMining() {
     });
   }
 
-  async function handleEjecutarClusteringMedPubOrdAutPorAreaFrascati(id_area_frascati, numeroCluster) {
+  async function handleEjecutarClusteringCuaFIPorAreaFrascati(id_area_frascati, numeroCluster) {
     setLoading(true);
-    setTituloGrafico('PRODUCTIVIDAD POR MEDIOS PUBLICACIÓN');
+    setTituloGrafico('CUARTIL POR FACTOR DE IMPACTO');
     setResultadoClusterAreas([]);
     setResultadoClusterRevNumCit([]);
     setResultadoClusterMediosPublicacionOrdenAutor([]);
     setResultadoClusterCuartilAreas([]);
     setResultadoClusterCuartilFI([]);
-    await clusteringService.ejecutarclusteringMediosPublicacionPorAreaFrascati(id_area_frascati, numeroCluster).then(async (value) => {
-      handleProcesarDatosClusteringMediosPublicacion(value, numeroCluster);
+    await clusteringService.ejecutarclusteringCuarFIPorAreaFrascati(id_area_frascati, numeroCluster).then(async (value) => {
+      handleProcesarDatosClusteringFICuartil(value, numeroCluster);
       setLoading(false);
     });
   }
 
-  async function handleEjecutarClusteringMedPubOrdAutPorAreaUnesco(id_area_unesco, numeroCluster) {
+  async function handleEjecutarClusteringCuaFIPorAreaUnesco(id_area_unesco, numeroCluster) {
     setLoading(true);
-    setTituloGrafico('PRODUCTIVIDAD POR MEDIOS PUBLICACIÓN');
+    setTituloGrafico('CUARTIL POR FACTOR DE IMPACTO');
     setResultadoClusterAreas([]);
     setResultadoClusterRevNumCit([]);
     setResultadoClusterMediosPublicacionOrdenAutor([]);
     setResultadoClusterCuartilAreas([]);
     setResultadoClusterCuartilFI([]);
-    await clusteringService.ejecutarclusteringMediosPublicacionPorAreaUnesco(id_area_unesco, numeroCluster).then(async (value) => {
-      handleProcesarDatosClusteringMediosPublicacion(value, numeroCluster);
+    await clusteringService.ejecutarclusteringCuarFIPorAreaUnesco(id_area_unesco, numeroCluster).then(async (value) => {
+      handleProcesarDatosClusteringFICuartil(value, numeroCluster);
       setLoading(false);
     });
   }
 
-  async function handleEjecutarClusteringMedPubOrdAutPorAreaFraYAñoPub(anio_publicacion, id_area_frascati, numeroCluster) {
+  async function handleEjecutarClusteringCuaFIPorAreaFraYAñoPub(anio_publicacion, id_area_frascati, numeroCluster) {
     setLoading(true);
-    setTituloGrafico('PRODUCTIVIDAD POR MEDIOS PUBLICACIÓN');
+    setTituloGrafico('CUARTIL POR FACTOR DE IMPACTO');
     setResultadoClusterAreas([]);
     setResultadoClusterRevNumCit([]);
     setResultadoClusterMediosPublicacionOrdenAutor([]);
     setResultadoClusterCuartilAreas([]);
     setResultadoClusterCuartilFI([]);
-    await clusteringService.ejecutarclusteringMediosPublicacionPorAreaFrascatiYAnioPublicacion(anio_publicacion, id_area_frascati, numeroCluster).then(async (value) => {
-      handleProcesarDatosClusteringMediosPublicacion(value, numeroCluster);
+    await clusteringService.ejecutarclusteringCuarFIPorAreaFrascatiYAnioPublicacion(anio_publicacion, id_area_frascati, numeroCluster).then(async (value) => {
+      handleProcesarDatosClusteringFICuartil(value, numeroCluster);
       setLoading(false);
     });
   }
 
-  async function handleEjecutarClusteringMedPubOrdAutPorAreaUneYAñoPub(anio_publicacion, id_area_unesco, numeroCluster) {
+  async function handleEjecutarClusteringCuaFIPorAreaUneYAñoPub(anio_publicacion, id_area_unesco, numeroCluster) {
     setLoading(true);
-    setTituloGrafico('PRODUCTIVIDAD POR MEDIOS PUBLICACIÓN');
+    setTituloGrafico('CUARTIL POR FACTOR DE IMPACTO');
     setResultadoClusterAreas([]);
     setResultadoClusterRevNumCit([]);
     setResultadoClusterMediosPublicacionOrdenAutor([]);
     setResultadoClusterCuartilAreas([]);
     setResultadoClusterCuartilFI([]);
-    await clusteringService.ejecutarclusteringMediosPublicacionPorAreaUnescoYAnioPublicacion(anio_publicacion, id_area_unesco, numeroCluster).then(async (value) => {
-      handleProcesarDatosClusteringMediosPublicacion(value, numeroCluster);
+    await clusteringService.ejecutarclusteringCuarFIPorAreaUnescoYAnioPublicacion(anio_publicacion, id_area_unesco, numeroCluster).then(async (value) => {
+      handleProcesarDatosClusteringFICuartil(value, numeroCluster);
       setLoading(false);
     });
   }
@@ -347,22 +344,22 @@ function AnalisisDataMining() {
   }
 
 
-  async function handleSeleccionarDatosClusterMediosPublicacion() {
+  async function handleSeleccionarDatosClusterCuartilFactorImpacto() {
+
     setDetalleDatosClusterEsp([]);
-    await tablaPaginacionService.destruirTabla('#dataClusterMediosPublicacion');
-    let idCluster = document.getElementById("idClusterMediosPublicacion").value;
-    if (idCluster == 'N') {
-      console.log('No  ha seleccionado el cluster')
-    } else {
+    await tablaPaginacionService.destruirTabla('#dataClusterCuartilFI');
+    let idCluster = document.getElementById("idClusterCuartilFI").value;
+    if (idCluster != 'N') {
       for (var i = 0; i < numero_cluster; i++) {
         if (idCluster == i) {
-          await handleValoresUnicosMediosPublicacion(detalleDatosClusterMediosPublciacion[i][i]).then(value => {
+          setDetalleDatosClusterEsp(detalleDatosClusterCuartilFI[i][i]);
+          /*await handleValoresUnicosMediosPublicacion(detalleDatosClusterCuartilFI[i][i]).then(value => {
             setDetalleDatosClusterEsp(value)
-          })
+          })*/
         }
       }
     }
-    await tablaPaginacionService.paginacion('#dataClusterMediosPublicacion');
+    await tablaPaginacionService.paginacion('#dataClusterCuartilFI');
   }
 
   async function handleEjecutarOperacion() {
@@ -396,7 +393,7 @@ function AnalisisDataMining() {
           else if (idAnio == 0 && idAreaFrascati != 0 && idAreaUnesco == 0) {
             if (validacionInputService.esNumero(numeroCluster) && validacionInputService.campoVacio(numeroCluster)) {
               setNumeroCluster(numeroCluster);
-              handleEjecutarClusteringMedPubOrdAutPorAreaFrascati(idAreaFrascati, numeroCluster)
+              handleEjecutarClusteringCuaFIPorAreaFrascati(idAreaFrascati, numeroCluster)
             } else {
               notify("tr", 'El número de cluster ingresado no es válido.', "danger");
             }
@@ -404,7 +401,7 @@ function AnalisisDataMining() {
           else if (idAnio == 0 && idAreaFrascati == 0 && idAreaUnesco != 0) {
             if (validacionInputService.esNumero(numeroCluster) && validacionInputService.campoVacio(numeroCluster)) {
               setNumeroCluster(numeroCluster);
-              handleEjecutarClusteringMedPubOrdAutPorAreaUnesco(idAreaUnesco, numeroCluster)
+              handleEjecutarClusteringCuaFIPorAreaUnesco(idAreaUnesco, numeroCluster)
             } else {
               notify("tr", 'El número de cluster ingresado no es válido.', "danger");
             }
@@ -412,7 +409,7 @@ function AnalisisDataMining() {
           else if (idAnio != 0 && idAreaFrascati != 0 && idAreaUnesco == 0) {
             if (validacionInputService.esNumero(numeroCluster) && validacionInputService.campoVacio(numeroCluster)) {
               setNumeroCluster(numeroCluster);
-              handleEjecutarClusteringMedPubOrdAutPorAreaFraYAñoPub(idAnio, idAreaFrascati, numeroCluster)
+              handleEjecutarClusteringCuaFIPorAreaFraYAñoPub(idAnio, idAreaFrascati, numeroCluster)
             } else {
               notify("tr", 'El número de cluster ingresado no es válido.', "danger");
             }
@@ -420,7 +417,7 @@ function AnalisisDataMining() {
           else if (idAnio != 0 && idAreaFrascati == 0 && idAreaUnesco != 0) {
             if (validacionInputService.esNumero(numeroCluster) && validacionInputService.campoVacio(numeroCluster)) {
               setNumeroCluster(numeroCluster);
-              handleEjecutarClusteringMedPubOrdAutPorAreaUneYAñoPub(idAnio, idAreaUnesco, numeroCluster)
+              handleEjecutarClusteringCuaFIPorAreaUneYAñoPub(idAnio, idAreaUnesco, numeroCluster)
             } else {
               notify("tr", 'El número de cluster ingresado no es válido.', "danger");
             }
@@ -459,20 +456,6 @@ function AnalisisDataMining() {
       setLoading(false);
     });
     await tablaPaginacionService.paginacion('#dataTableAreasUnesco');
-  }
-
-  /**Muestra los filtros de areas*/
-  async function mostrarFiltroAreas() {
-    let idCampo = document.getElementById("idCampo").value;
-    if (idCampo == 1) {
-      document.getElementById("idAreaFrascati").value = "0";
-      document.getElementById("idAreaFrascati").disabled = true;
-      document.getElementById("idAreaUnesco").value = "0";
-      document.getElementById("idAreaUnesco").disabled = true;
-    } else {
-      document.getElementById("idAreaFrascati").disabled = false;
-      document.getElementById("idAreaUnesco").disabled = false;
-    }
   }
 
   async function handleEjecutarOperacionEstadistica() {
@@ -967,7 +950,7 @@ function AnalisisDataMining() {
                       <Form.Row>
                         <select className="form-control" id="idOperacion">
                           <option value="0">Seleccione</option>
-                          <option value="1">Cluster</option>
+                          <option value="1">Agrupamiento</option>
                         </select>
                       </Form.Row>
                     </Form.Group>
@@ -976,7 +959,7 @@ function AnalisisDataMining() {
                     <Form.Group>
                       <label>Campo</label>
                       <Form.Row>
-                        <select className="form-control" id="idCampo" onClick={mostrarFiltroAreas}>
+                        <select className="form-control" id="idCampo">
                           <option value="0">Seleccione</option>
                           <option value="1">Cuartil vs Factor de Impacto</option>
                         </select>
@@ -1003,7 +986,7 @@ function AnalisisDataMining() {
                     <Form.Group>
                       <label>Area Frascati</label>
                       <Form.Row>
-                        <select className="form-control" id="idAreaFrascati" disabled={filtroPorArea}>
+                        <select className="form-control" id="idAreaFrascati">
                           <option value="0">Seleccione</option>
                           {areasFracati.map(item => (
                             <option value={item.id_area_frascati} key={item.id_area_frascati}>{item.descripcion}</option>
@@ -1016,7 +999,7 @@ function AnalisisDataMining() {
                     <Form.Group>
                       <label>Area Unesco</label>
                       <Form.Row>
-                        <select className="form-control" id="idAreaUnesco" disabled={filtroPorArea}>
+                        <select className="form-control" id="idAreaUnesco">
                           <option value="0">Seleccione</option>
                           {areasUnesco.map(item => (
                             <option value={item.id_area_unesco} key={item.id_area_unesco}>{item.descripcion_unesco}</option>
@@ -1027,7 +1010,7 @@ function AnalisisDataMining() {
                   </Col>
                   <Col className="pr-1" md="2">
                     <Form.Group>
-                      <label>NUMERO CLUSTER</label>
+                      <label>NUMERO GRUPOS</label>
                       <Form.Control
                         id="numeroClusterText"
                         defaultValue=""
@@ -1168,7 +1151,7 @@ function AnalisisDataMining() {
               </Card.Body>
             </Card>
           </Col>
-          {resultadoClusterMediosPublicacionOrdenAutor.length !== 0 && (
+          {resultadoClusterCuartilFI.length !== 0 && (
             <Col md="12">
               <Card className="strpied-tabled-with-hover">
                 <Card.Header>
@@ -1177,10 +1160,10 @@ function AnalisisDataMining() {
                 <Card.Body className="table-full-width table-responsive px-3">
                   <Col className="pr-1" md="2">
                     <Form.Group>
-                      <label>Cluster</label>
+                      <label>Grupos</label>
                       <Form.Row>
-                        <select className="form-control" id="idClusterMediosPublicacion" onClick={handleSeleccionarDatosClusterMediosPublicacion}>
-                          <option value="N">Seleccione el Cluster</option>
+                        <select className="form-control" id="idClusterCuartilFI" onClick={handleSeleccionarDatosClusterCuartilFactorImpacto}>
+                          <option value="N">Seleccione el Grupo</option>
                           {nombre_cluster.map(item => (
                             <option value={item.codigo} key={item.codigo}>{item.nombre}</option>
                           ))}
@@ -1188,16 +1171,22 @@ function AnalisisDataMining() {
                       </Form.Row>
                     </Form.Group>
                   </Col>
-                  <table className="table table-bordered table-hover" id="dataClusterMediosPublicacion" width="100%" cellSpacing="0">
+                  <table className="table table-bordered table-hover" id="dataClusterCuartilFI" width="100%" cellSpacing="0">
                     <thead className="thead-dark">
                       <tr>
-                        <th>MEDIO PUBLICACION</th>
+                        <th>AREA UNESCO</th>
+                        <th>AREA FRASCATI</th>
+                        <th>CUARTIL</th>
+                        <th>FACTOR IMPACTO</th>
                       </tr>
                     </thead>
                     <tbody>
                       {detalleDatosClusterEsp.map(item => (
                         <tr className="small" key={item.id_articulo}>
-                          <td width="15%">{item.medioPublicacion}</td>
+                          <td width="15%">{item.areaUnesco}</td>
+                          <td width="15%">{item.areaFrascati}</td>
+                          <td width="15%">{item.cuartil}</td>
+                          <td width="15%">{item.fi}</td>
                         </tr>
                       ))}
                     </tbody>

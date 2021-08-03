@@ -5,12 +5,8 @@ export const publicacionService = {
     listar,
     insertar,
     eliminar,
-    obtenerDetalleClusterAreasPub,
-    obtenerDetalleClusterMediosPublicacion,
-    obtenerDetalleClusterMediosPublicacionReferencias,
     numeroArticulosIngresados,
     numeroArticulosNoTienenReferencias,
-    obtenerDetalleClusteringCuartilAreaUnesco,
     obtenerDetalleClusteringCuartilFI,    
     actualizar
 };
@@ -33,22 +29,6 @@ async function insertar(params) {
 
 async function eliminar(id_articulo) {
     return fetchWrapper.get(`${endpoints.baseUrlPublicacion}/eliminar/` + id_articulo);
-}
-
-async function obtenerDetalleClusterAreasPub(params) {
-    return fetchWrapper.post(`${endpoints.baseUrlPublicacion}/obtenerDetalleClusterAreasPub`, params);
-}
-
-async function obtenerDetalleClusterMediosPublicacion(params) {
-    return fetchWrapper.post(`${endpoints.baseUrlPublicacion}/obtenerDetalleMediosPublicacion`, params);
-}
-
-async function obtenerDetalleClusterMediosPublicacionReferencias(params) {
-    return fetchWrapper.post(`${endpoints.baseUrlPublicacion}/obtenerDetalleMediosPublicacionReferencias`, params);
-}
-
-async function obtenerDetalleClusteringCuartilAreaUnesco(params) {
-    return fetchWrapper.post(`${endpoints.baseUrlPublicacion}/obtenerDetalleClusterCuartilAreUne`, params);
 }
 
 async function obtenerDetalleClusteringCuartilFI(params) {
