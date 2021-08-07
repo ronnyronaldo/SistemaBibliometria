@@ -1,5 +1,5 @@
 from flask import Blueprint
-from controladores.Clustering import clusterFactorImpactoXCuartil, clusterCuarFIPorAnio, redesAutoresAreasOrden, clusterCuarFIPorAreaFrascati,clusterCuarFIPorAreaUnesco, clusterCuarFIPorAreaFrascatiYAnioPublicacion,clusterCuarFIPorAnioAreaUnescoYAnioPublicacion
+from controladores.Clustering import clusterFactorImpactoXCuartil, clusterCuarFIPorAnio, redesAutoresAreasOrden, clusterCuarFIPorAreaFrascati,clusterCuarFIPorAreaUnesco, clusterCuarFIPorAreaFrascatiYAnioPublicacion,clusterCuarFIPorAnioAreaUnescoYAnioPublicacion, datosHighChart
 servicio_clustering =  Blueprint('servicio_clustering', __name__)
 @servicio_clustering.route('/ejecutarFactorImpactoXCuartil/<int:num_cluster>', methods=['GET']) 
 def clusteringFactorImpactoXCuartil(num_cluster):
@@ -28,6 +28,10 @@ def clusteringCuarFIPorAnioAreaUnescoYAnioPublicacion(anio_publicacion, id_area_
 @servicio_clustering.route('/ejecutarRedesAutoresAreasOrden/<int:orden>/<int:area>', methods=['GET']) 
 def clusteringRedesAutoresAreasOrden(orden,area):
     return redesAutoresAreasOrden(orden,area)
+
+@servicio_clustering.route('/ejecutarDatosHighChart', methods=['GET']) 
+def ejecutarDatosChart():
+    return datosHighChart()
 
 
     

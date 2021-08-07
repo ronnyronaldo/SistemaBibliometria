@@ -14,11 +14,15 @@ from flask import Flask, request, jsonify, make_response
 from controladores.ArticuloController import listaArticulos, listaArticulosMineria,listaArticulosMineriaPorAreaUnescoYAnioPublicacion
 from controladores.ArticuloController import  listaArticulosMineriaPorAnio, listaArticulosMineriaPorAreaFrascati
 from controladores.ArticuloController import  listaArticulosMineriaPorAreaUnesco, listaArticulosMineriaPorAreaFrascatiYAnioPublicacion
+from controladores.AutorController import listaAutoresNumPub
 from controladores.DetalleReferenciaController import listaDetalleReferencia, listaDetalleReferenciaPorAnio 
 from controladores.DetalleReferenciaController import listaDetalleReferenciaPorAreaFrascati, listaDetalleReferenciaPorAreaUnesco
 from controladores.DetalleReferenciaController import listaDetalleReferenciaPorAreaFrascatiYAnioPublicacion, listaDetalleReferenciaPorAreaUnescoYAnioPublicacion
 from sklearn.decomposition import PCA
 from mpl_toolkits.mplot3d import Axes3D
+
+# Nueva Libreia
+import json
 
 def clusterFactorImpactoXCuartil(num_cluster):
     respuesta = (listaArticulosMineria()).json
@@ -404,6 +408,20 @@ def redesAutoresAreasOrden(orden, area):
     pic_hash = base64.b64encode(imagenArea.read()).decode()
     
     return make_response(jsonify({"valorimagenarea": pic_hash}))
+
+def datosHighChart():
+    respuesta = (listaAutoresNumPub()).json
+
+    try:
+        dataframe = pd.json_normalize(respuesta)
+        dataframe = dataframe.groupby(['nombre','orden_autor']).size().to_frame('num_pub').reset_index()
+        lista = dataframe.to_numpy().tolist()
+        columns_names = dataframe.columns.values
+        datos_a_enviar = dataframe.to_json()
+        #print(datos_a_enviar)
+        return make_response(jsonify(datos_a_enviar))
+    except:
+        return make_response(jsonify("Error"))
 
 
 

@@ -28,6 +28,14 @@ def listaAutores():
         autores.append(dict(autor)) # Serializo cada fila
     return make_response(jsonify({"autor": autores}))
 
+# Listar autores para grafico en dashborad
+def listaAutoresNumPub():
+    get_articulo = Autor.query.all()
+    autor_schema = AutorSchema(many=True)
+    articulos = autor_schema.dump(get_articulo)
+    return make_response(jsonify(articulos))
+
+
 def eliminarAutores(id_autor):
     autor = Autor.query.get(id_autor)
     Autor.delete(autor)
