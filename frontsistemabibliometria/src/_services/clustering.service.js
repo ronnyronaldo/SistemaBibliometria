@@ -8,7 +8,8 @@ export const clusteringService = {
     ejecutarclusteringCuarFIPorAreaFrascatiYAnioPublicacion,
     ejecutarclusteringCuarFIPorAreaUnescoYAnioPublicacion,
     ejecutarClusterFactorImpactoXCuartil,
-    ejecutarclusteringRedesAutoresAreasOrden
+    ejecutarclusteringRedesAutoresAreasOrden,
+    ejecutarDatosChart
 };
 
 // Redes de autores por orden de autor y area unesco
@@ -35,6 +36,10 @@ async function ejecutarclusteringCuarFIPorAreaUnescoYAnioPublicacion(anio_public
 // Cluster por Cuartil y Factor de Impacto
 async function ejecutarClusterFactorImpactoXCuartil(num_cluster) {
     return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarFactorImpactoXCuartil/`+ num_cluster);
+}
+
+async function ejecutarDatosChart() {
+    return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarDatosHighChart`);
 }
 
 

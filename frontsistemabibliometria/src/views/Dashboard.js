@@ -21,6 +21,37 @@ const override = css`
 `;
 /**Spinner */
 
+// * libreria highcharts
+// * libreria
+import * as Highcharts from 'highcharts';
+// * mensaje de visualizacion cuando no existe la data
+import noData from 'highcharts/modules/no-data-to-display';
+// * para exportar como imagenes
+import exporting from 'highcharts/modules/exporting';
+import exportData from 'highcharts/modules/export-data.js';
+import more from 'highcharts/highcharts-more.js'
+noData(Highcharts);
+exporting(Highcharts);
+exportData(Highcharts);
+more(Highcharts);
+
+Highcharts.setOptions({
+  lang: {
+    downloadJPEG: 'Descargar como JPEG',
+    downloadPDF: 'Descargar como PDF',
+    downloadPNG: 'Descargar como PNG',
+    downloadSVG: 'Descargar como SVG',
+    viewFullscreen: 'Ver pantalla completa',
+    printChart: 'Imprimir',
+    exitFullscreen: 'Salir de pantalla completa',
+    downloadCSV: 'Descargar como csv',
+    downloadXLS: 'Descargar como xlsx',
+    viewData: 'Mostrar datos',
+    hideData: 'Ocultar datos'
+  }
+});
+// ! fin libreria highcharts
+
 // react-bootstrap components
 import {
   Badge,
@@ -38,6 +69,7 @@ import {
 } from "react-bootstrap";
 
 function Dashboard() {
+
 
   /**Spinner */
   let [loading, setLoading] = React.useState(false);
@@ -98,6 +130,7 @@ function Dashboard() {
   const [redesAreasOrden, setRedesAreasOrden] = React.useState("");
   const [areasFracati, setAreasFrascati] = React.useState([]);
   const [areasUnesco, setAreasUnesco] = React.useState([]);
+  const [grafo, setGrafo] = React.useState([]);
   const [datosLeyBradford, setDatosLeyBradford] = React.useState([]);
   const handleCargarTotalesArticulosReferencias = () => {
     setLoading(true)
@@ -143,6 +176,60 @@ function Dashboard() {
     });
   }
 
+  function graficarGrafo(primerAutor, segundoAutor,tercerAutor,cuartoAutor,quintoAutor){
+    
+    Highcharts.chart('redes-autores-grafo', {
+      chart: {
+          type: 'packedbubble',
+          height: '100%'
+      },
+      title: {
+          text: 'Numero de publicaciones por Autor según se orden de autor'
+      },
+      tooltip: {
+          useHTML: true,
+          pointFormat: '<b>{point.name}:</b> {point.value} Pub'
+      },
+      plotOptions: {
+          packedbubble: {
+              minSize: '30%',
+              maxSize: '120%',
+              zMin: 0,
+              zMax: 10,
+              layoutAlgorithm: {
+                  splitSeries: false,
+                  gravitationalConstant: 0.02
+              },
+              dataLabels: {
+                  enabled: true,
+                  format: '{point.name}',
+                  filter: {
+                      property: 'y',
+                      operator: '>',
+                      value: 3
+                  },
+                  style: {
+                      color: 'black',
+                      textOutline: 'none',
+                      fontWeight: 'normal'
+                  }
+              }
+          }
+      },
+      credits: {
+        enabled: false
+      },
+      series: [{name: 'Pimer Autor',data:primerAutor},
+      {name: 'Segundo Autor', data: segundoAutor },
+      {name: 'Tercer Autor', data: tercerAutor },
+      {name: 'Cuarto Autor', data: cuartoAutor },
+      {name: 'Quinto Autor', data: quintoAutor }
+    
+    ]
+  });
+  
+  }
+
   async function handleCargarRedesDeAutoresAreasOrden() {
     setLoading(true)
     let orden_autor = document.getElementById("idOrdenAutor").value;
@@ -151,6 +238,7 @@ function Dashboard() {
       setRedesAreasOrden(value.valorimagenarea);
       setLoading(false)
     });
+
   }
 
    /** Carga las areas frascati para el filtro*/
@@ -166,6 +254,58 @@ function Dashboard() {
     setLoading(true);
     await areaUnescoService.listaAreasUnesco().then(value => {
       setAreasUnesco(value.area_unesco);
+      setLoading(false);
+    });
+  }
+  /**Carga los datos para la red de autores */
+  async function handleGrafo() {
+    setLoading(true);
+    
+    await clusteringService.ejecutarDatosChart().then(value => {
+      let objeto = JSON.parse(value);
+      let nombres = objeto.nombre;
+      let orden = objeto.orden_autor;
+      let numeros = objeto.num_pub;
+      let listaAutores = Object.values(nombres)
+      let listaOrdenAutores = Object.values(orden)
+      let listaNumPub = Object.values(numeros)
+      let listaPrimerAutor = [];
+      let listaSegundoAutor = [];
+      let listaTercerAutor = [];
+      let listaCuartoAutor = [];
+      let listaQuintoAutor = [];
+      // Aqui se cambia la longitud de los autores para no tener delay en la vista
+      let longitud= (listaAutores.length)/4;
+      for (let i = 0; i < longitud ; i++) {
+        if(listaOrdenAutores[i]==1){
+          let primerAutor = { "name": listaAutores[i], "value": listaNumPub[i]}
+          listaPrimerAutor.push(primerAutor);
+        }
+        if(listaOrdenAutores[i]==2){
+          let segundoAutor = { "name": listaAutores[i], "value": listaNumPub[i]}
+          listaSegundoAutor.push(segundoAutor);
+        }
+        if(listaOrdenAutores[i]==3){
+          let tercerAutor = { "name": listaAutores[i], "value": listaNumPub[i]}
+          listaTercerAutor.push(tercerAutor);
+        }
+        if(listaOrdenAutores[i]==4){
+          let cuartoAutor = { "name": listaAutores[i], "value": listaNumPub[i]}
+          listaCuartoAutor.push(cuartoAutor);
+        }
+        if(listaOrdenAutores[i]==5){
+          let quintoAutor = { "name": listaAutores[i], "value": listaNumPub[i]}
+          listaQuintoAutor.push(quintoAutor);
+        }
+        
+      }
+    
+      // setNombreCluster(nombre_cluster);
+      // setTotalClusterCuartilFI(totales);
+      // setDetalleDatosClusterCuartilFI(value)
+      
+      // setGrafo(listaPrimerAutor);
+      graficarGrafo(listaPrimerAutor,listaSegundoAutor,listaTercerAutor,listaCuartoAutor,listaQuintoAutor);
       setLoading(false);
     });
   }
@@ -239,14 +379,15 @@ function Dashboard() {
     }
   }
   React.useEffect(() => {
-    document.getElementById("idOrdenAutor").value=1;
-    document.getElementById("idAreaUnescoGrafo").value=1;
+    // document.getElementById("idOrdenAutor").value=1;
+    // document.getElementById("idAreaUnescoGrafo").value=1;
     handleCargarTotalesArticulosReferencias();
     // handleCargarRedesDeAutores();
     handleAreasUnesco();
     handleAreasFrascati();
+    handleGrafo();
     // handleCargarRedesDeAutoresAreas();
-    handleCargarRedesDeAutoresAreasOrden();
+    // handleCargarRedesDeAutoresAreasOrden();
   }, []);
   return (
     <>
@@ -338,11 +479,12 @@ function Dashboard() {
             <Card>
               <Card.Header>
                 <Card.Title as="h4">Redes de Autores</Card.Title>
+                <div id="redes-autores-grafo" ></div>
               </Card.Header>
               <Card.Body>
               <Row>
                 <Col className="pr-1" md="4">
-                  <Form.Group>
+                  {/* <Form.Group>
                     <label>Orden de Autores</label>
                     <Form.Row>
                       <select className="form-control" id="idOrdenAutor" onChange={handleCargarRedesDeAutoresAreasOrden}>
@@ -363,10 +505,10 @@ function Dashboard() {
                         <option value="19">Decimo Noveno Autor</option>
                       </select>
                     </Form.Row>
-                  </Form.Group>
+                  </Form.Group> */}
                 </Col>
                   <Col className="pr-1" md="3">
-                    <Form.Group>
+                    {/* <Form.Group>
                       <label>Area Unesco</label>
                       <Form.Row>
                         <select className="form-control" id="idAreaUnescoGrafo" onChange={handleCargarRedesDeAutoresAreasOrden}>
@@ -376,12 +518,13 @@ function Dashboard() {
                           ))}
                         </select>
                       </Form.Row>
-                    </Form.Group>
+                    </Form.Group> */}
                   </Col>
+                  
               </Row>
-              <div>
+              {/* <div>
                 <img src={"data:image/png;base64,"+ redesAreasOrden} width="100%" height="100%" alt="Grafo Autores" />
-              </div>
+              </div> */}
               {/* <div>
                 <img src={"data:image/png;base64,"+ redesAreas} width="100%" height="100%" alt="Red dot" />
               </div> */}
