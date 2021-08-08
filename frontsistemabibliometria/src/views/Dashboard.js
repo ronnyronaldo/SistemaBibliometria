@@ -335,10 +335,20 @@ function Dashboard() {
 
   async function handleCargarDatosLeyBradford(){
     setDatosLeyBradford([]);
-    let idAnio = parseInt(document.getElementById("idAnio").value);
+    let idAnioDesde = parseInt(document.getElementById("idAnioDesde").value);
+    let idAnioHasta = parseInt(document.getElementById("idAnioHasta").value);
     let idAreaUnesco = parseInt(document.getElementById("idAreaUnesco").value);
     let idAreaFrascati = parseInt(document.getElementById("idAreaFrascati").value);
-    if(idAnio == 0 && idAreaFrascati != 0 && idAreaUnesco == 0){
+    if(idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati == 0 && idAreaUnesco == 0){
+      setLoading(true)
+      await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
+      await leyBradfordService.numeroMediosPublicacionesReferencias().then(async(value) => {
+        await handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
+        await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
+        setLoading(false)
+      })
+    }
+    else if(idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati != 0 && idAreaUnesco == 0){
       setLoading(true)
       await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
       await leyBradfordService.numeroMediosPublicacionPorAreaFrascati(idAreaFrascati).then(async(value) => {
@@ -347,7 +357,7 @@ function Dashboard() {
         setLoading(false)
       })
     }
-    else if(idAnio == 0 && idAreaFrascati == 0 && idAreaUnesco != 0){
+    else if(idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati == 0 && idAreaUnesco != 0){
       setLoading(true)
       await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
       await leyBradfordService.numeroMediosPublicacionPorAreaUnesco(idAreaUnesco).then(async(value) => {
@@ -356,19 +366,19 @@ function Dashboard() {
         setLoading(false)
       })
     }
-    else if(idAnio != 0 && idAreaFrascati != 0 && idAreaUnesco == 0){
+    else if(idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati != 0 && idAreaUnesco == 0){
       setLoading(true)
       await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
-      await leyBradfordService.numeroMediosPublicacionPorAreaFrascatiPorAnio(idAnio, idAreaFrascati).then(async(value) => {
+      await leyBradfordService.numeroMediosPublicacionPorAreaFrascatiPorAnio(idAnioDesde, idAnioHasta, idAreaFrascati).then(async(value) => {
         handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
         await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
         setLoading(false)
       }) 
     }
-    else if(idAnio != 0 && idAreaFrascati == 0 && idAreaUnesco != 0){
+    else if(idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati == 0 && idAreaUnesco != 0){
       setLoading(true)
       await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
-      await leyBradfordService.numeroMediosPublicacionPorAreaUnescoPorAnio(idAnio, idAreaUnesco).then(async(value) => {
+      await leyBradfordService.numeroMediosPublicacionPorAreaUnescoPorAnio(idAnioDesde, idAnioHasta, idAreaUnesco).then(async(value) => {
         handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
         await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
         setLoading(false)
@@ -541,9 +551,25 @@ function Dashboard() {
                 <Row>
                   <Col className="pr-1" md="1">
                     <Form.Group>
-                      <label>AÑO</label>
+                      <label>AÑO DESDE</label>
                       <Form.Row>
-                        <select className="form-control" id="idAnio">
+                        <select className="form-control" id="idAnioDesde">
+                          <option value="0">Seleccione</option>
+                          <option value="2016">2016</option>
+                          <option value="2017">2017</option>
+                          <option value="2018">2018</option>
+                          <option value="2019">2019</option>
+                          <option value="2020">2020</option>
+                          <option value="2021">2021</option>
+                        </select>
+                      </Form.Row>
+                    </Form.Group>
+                  </Col>
+                  <Col className="pr-1" md="1">
+                    <Form.Group>
+                      <label>AÑO HASTA</label>
+                      <Form.Row>
+                        <select className="form-control" id="idAnioHasta">
                           <option value="0">Seleccione</option>
                           <option value="2016">2016</option>
                           <option value="2017">2017</option>
