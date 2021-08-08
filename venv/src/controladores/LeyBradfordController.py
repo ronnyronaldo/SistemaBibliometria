@@ -9,6 +9,17 @@ from modelos.Referencia import Referencia
 
 db = SQLAlchemy()
 
+def numeroMediosPublicacionReferenicasPorAnio(anio_publicacion_desde, anio_publicacion_hasta):
+    count_ = func.count('*')
+    referenciaRespuesta = (db.session.query(DetalleReferencia.venue, count_, DetalleReferencia.id_referencia).filter((Articulo.anio_publicacion >= anio_publicacion_desde) & (Articulo.anio_publicacion <= anio_publicacion_hasta) & (Articulo.id_articulo == Referencia.id_articulo) & (Referencia.id_referencia == DetalleReferencia.id_referencia))
+    .group_by(DetalleReferencia.venue)
+    .order_by(count_.desc())).all()
+    detalleReferencias = []
+    for detalleReferencia in referenciaRespuesta:
+        referencia = {"venue": detalleReferencia[0], "contador": detalleReferencia[1], "id_referencia": detalleReferencia[2]}
+        detalleReferencias.append(dict(referencia)) # Serializo cada fila
+    return make_response(jsonify({"numeroMediosPublicacion": detalleReferencias}))
+
 def numeroMediosPublicacionReferenicas():
     count_ = func.count('*')
     referenciaRespuesta = (db.session.query(DetalleReferencia.venue, count_, DetalleReferencia.id_referencia).filter((Articulo.id_articulo == Referencia.id_articulo) & (Referencia.id_referencia == DetalleReferencia.id_referencia))

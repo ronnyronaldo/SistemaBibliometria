@@ -1,12 +1,16 @@
 from flask import Blueprint
 from flask import request
 from controladores.LeyBradfordController import numeroMediosPublicacionReferenicasAreaFrascati, numeroMediosPublicacionReferenicasAreaUnesco, numeroMediosPublicacionReferenicasAreaFrascatiPorAnio, numeroMediosPublicacionReferenicasAreaUnescoPorAnio
-from controladores.LeyBradfordController  import numeroMediosPublicacionReferenicas
+from controladores.LeyBradfordController  import numeroMediosPublicacionReferenicas, numeroMediosPublicacionReferenicasPorAnio
 servicio_ley_bradford =  Blueprint('servicio_ley_bradford', __name__)
 
 @servicio_ley_bradford.route('/numeroMediosPublicacion', methods=['GET']) 
 def contarMediosPublicacionReferencias():
     return numeroMediosPublicacionReferenicas()
+
+@servicio_ley_bradford.route('/numeroMediosPublicacionPorAnio/<int:anio_publicacion_desde>/<int:anio_publicacion_hasta>', methods=['GET']) 
+def contarMediosPublicacionReferenciasPorAnio(anio_publicacion_desde, anio_publicacion_hasta):
+    return numeroMediosPublicacionReferenicasPorAnio(anio_publicacion_desde, anio_publicacion_hasta)
 
 @servicio_ley_bradford.route('/numeroMediosPublicacionPorAreaFrascati/<int:id_area_frascati>', methods=['GET']) 
 def contarMediosPublicacionReferenciasPorAreaFrascati(id_area_frascati):
