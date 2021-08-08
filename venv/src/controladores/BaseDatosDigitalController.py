@@ -58,6 +58,16 @@ def insertarBaseDatosDigital(nuevoBaseDatosDigital):
     else:
         return make_response(jsonify({"respuesta": {"valor":"La Base de Datos Digital ya esta registrada", "error":"True"}}))
 
+def actualizarBaseDatosDigital(baseDatosDigital):
+    base_datos_digital = BaseDatosDigital.query.get_or_404(baseDatosDigital['id_base_datos_digital'])
+    base_datos_digital.nombre_base_datos_digital =  baseDatosDigital['nombre']
+    base_datos_digital.proveedor = baseDatosDigital['nombreProveedor']
+    base_datos_digital.costo_actual = baseDatosDigital['costo_actual']
+    base_datos_digital.suscripcion_descripcion = baseDatosDigital['suscripcion_descripcion']
+    base_datos_digital.area_servicio = baseDatosDigital['area_servicio']
+    BaseDatosDigital.create(base_datos_digital)
+    return make_response(jsonify({"respuesta": {"valor":"Base de Datos Digital actualizada correctamente.", "error":"False"}}))
+
 
 
 

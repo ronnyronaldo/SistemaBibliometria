@@ -1,6 +1,7 @@
 from flask import Blueprint
 from flask import request
 from controladores.BaseDatosDigitalController import listarBaseDatosDigital, buscarBaseDatosDigitalPorId, validarBaseDatosDigitalPorNombre, insertarBaseDatosDigital, eliminarBaseDatosDigital
+from controladores.BaseDatosDigitalController import actualizarBaseDatosDigital
 servicio_base_datos_digital= Blueprint('servicio_base_datos_digital', __name__)
 @servicio_base_datos_digital.route('/listar', methods=['GET']) 
 def listar():
@@ -22,4 +23,9 @@ def insertar():
 @servicio_base_datos_digital.route('/eliminar/<int:id_base_datos_digital>', methods=['GET']) 
 def eliminarBaseDatosPorId(id_base_datos_digital):
     return eliminarBaseDatosDigital(id_base_datos_digital)
+
+@servicio_base_datos_digital.route('/actualizar', methods=['POST']) 
+def actualizar():
+    baseDatosDigital = request.json #Obtengo los datos de la base de datos digital para la actualizacion
+    return actualizarBaseDatosDigital(baseDatosDigital)
 
