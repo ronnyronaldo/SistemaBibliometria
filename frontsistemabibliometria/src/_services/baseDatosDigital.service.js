@@ -6,7 +6,8 @@ export const baseDatosDigitalService = {
     listarBaseDatosDigitalPorId,
     validarBaseDatosDigitalPorNombre,
     insertar,
-    eliminar
+    eliminar,
+    actualizar
 };
 
 async function listar() {
@@ -29,6 +30,11 @@ async function insertar(params) {
 async function eliminar(id_base_datos_digital) {
     return fetchWrapper.get(`${endpoints.baseUrlBaseDatosDigital}/eliminar/` + id_base_datos_digital);
 }
+
+async function actualizar(params) {
+    return fetchWrapper.post(`${endpoints.baseUrlBaseDatosDigital}/actualizar`, params);
+}
+
 
 
 

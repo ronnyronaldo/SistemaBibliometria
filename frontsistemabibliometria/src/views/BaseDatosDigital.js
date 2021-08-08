@@ -27,12 +27,16 @@ import {
   Row,
   Col,
   Form,
+  Modal,
+  ModalBody,
+  ModalFooter
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { tablaPaginacionService } from '../utils/tablaPaginacion.service';
 function BaseDatosDigital() {
   const [showModal, setShowModal] = React.useState(false);
   const notificationAlertRef = React.useRef(null);
+  const [modalIsOpen, setModalIsOpen] = React.useState(false);
   const notify = (place, mensaje, type) => {
     //var color = Math.floor(Math.random() * 5 + 1);
     //var type = "danger";
@@ -92,6 +96,16 @@ function BaseDatosDigital() {
       data: datos
     }]
   }
+  
+  const [baseDatosDigitalObj, setBaseDatosDigitalObj] = React.useState({
+    id_base_datos_digital:0, 
+    nombre: "", 
+    proveedor: "", 
+    costo_actual: 0, 
+    suscripcion_descripcion: "", 
+    area_servicio:""
+  })
+
   const opciones = {
     maintainAspectRatio: false,
     responsive: true,
@@ -167,6 +181,55 @@ function BaseDatosDigital() {
       }
     })
   }
+  function closeModal() {
+    setModalIsOpen(false);
+  }
+
+  function openModal() {
+    setModalIsOpen(true);
+  }
+  function handleCargarDetalleBaseDatosDigital(id_base_datos_digital, nombre_base_datos_digital, proveedor, costo_actual, suscripcion_descripcion, area_servicio) {
+    setBaseDatosDigitalObj({
+      id_base_datos_digital:id_base_datos_digital, 
+      nombre: nombre_base_datos_digital, 
+      proveedor: proveedor, 
+      costo_actual: costo_actual, 
+      suscripcion_descripcion: suscripcion_descripcion, 
+      area_servicio:area_servicio
+    });
+    openModal()
+  }
+
+  function actualizarBaseDatosDigital() {
+    let id_base_datos_digital = baseDatosDigitalObj.id_base_datos_digital;
+    let nombreBaseDatosDigital =  document.getElementById("nombreBaseDatosDigitalActText").value;
+    let nombreProveedor =  document.getElementById("proveedorActText").value;
+    let costo_actual =  document.getElementById("costoActualActText").value;
+    let suscripcion_descripcion =  document.getElementById("suscripcionDescripcionActText").value;
+    let area_servicio =  document.getElementById("areaServicioActText").value;
+
+    if(validacionInputService.campoVacio(nombreBaseDatosDigital) && validacionInputService.campoVacio(nombreProveedor) && validacionInputService.campoVacio(suscripcion_descripcion) && validacionInputService.campoVacio(area_servicio) & validacionInputService.campoVacio(costo_actual) & validacionInputService.esDecimal(costo_actual)){
+      baseDatosDigitalService.actualizar({
+        "id_base_datos_digital": id_base_datos_digital,
+        "nombre": nombreBaseDatosDigital,
+        "nombreProveedor": nombreProveedor,
+        "costo_actual": costo_actual,
+        "suscripcion_descripcion": suscripcion_descripcion,
+        "area_servicio": area_servicio
+
+      }).then(value => {
+        if(value.respuesta.error== "False"){
+          notify("tr", value.respuesta.valor, "primary");
+          handleCargarBaseDatosDigitales();
+        }
+        closeModal();
+      })
+     
+    }else{
+      notify("tr", 'Existen campos sin llenar.', "danger");
+    }
+  }
+
   React.useEffect(() => {
     handleCargarBaseDatosDigitales();
   }, []);
@@ -280,7 +343,8 @@ function BaseDatosDigital() {
                         <td >{item.costo_actual}</td>
                         <td >{item.suscripcion_descripcion}</td>
                         <td >{item.area_servicio}</td>
-                        <td width="5%"><Link to="#" id="eliminarBaseDatosDigital" className="link col-sm-12 col-md-3" onClick={()=>handleEliminarBaseDatosDigital(item.id_base_datos_digital)}><i className="fas fa-trash-alt fa-2x"></i></Link></td>
+                        <td width="5%"><Link to="#" id="actualizarPublicacion" className="link col-sm-12 col-md-3" onClick={() => handleCargarDetalleBaseDatosDigital(item.id_base_datos_digital, item.nombre_base_datos_digital, item.proveedor, item.costo_actual, item.suscripcion_descripcion, item.area_servicio)} ><i className="fas fa-pen-square fa-2x"></i></Link>
+                        <Link to="#" id="eliminarBaseDatosDigital" className="link col-sm-12 col-md-3" onClick={()=>handleEliminarBaseDatosDigital(item.id_base_datos_digital)}><i className="fas fa-trash-alt fa-2x"></i></Link></td>
                       </tr>
                     ))}
                   </tbody>
@@ -290,6 +354,91 @@ function BaseDatosDigital() {
           </Col>
         </Row>
       </Container>
+      <Modal
+          className="modal modal-primary"
+          show={modalIsOpen}
+        >
+          <Modal.Header className="justify-content-center">
+            <div className="modal-profile">
+              <i className="nc-icon nc-grid-45"></i>
+            </div>
+          </Modal.Header>
+          <Modal.Body className="text-center">
+            <p>Actualizar Base Datos Digital</p>
+          </Modal.Body>
+          <div className="modal-footer">
+            <Col className="pr-1" md="12">
+              <Form.Group>
+                <label>NOMBRE</label>
+                <Form.Control
+                  id="nombreBaseDatosDigitalActText"
+                  defaultValue={baseDatosDigitalObj.nombre}
+                  type="text"
+                ></Form.Control>
+              </Form.Group>
+            </Col>
+            <Col className="pr-1" md="12">
+              <Form.Group>
+                <label>PROVEEDOR</label>
+                <Form.Control
+                  id="proveedorActText"
+                  defaultValue={baseDatosDigitalObj.proveedor}
+                  type="text"
+                ></Form.Control>
+              </Form.Group>
+            </Col>
+            <Col className="pr-1" md="12">
+              <Form.Group>
+                <label>COSTO ACTUAL</label>
+                <Form.Control
+                  id="costoActualActText"
+                  defaultValue={baseDatosDigitalObj.costo_actual}
+                  type="text"
+                ></Form.Control>
+              </Form.Group>
+            </Col>
+            <Col className="pr-1" md="12">
+              <Form.Group>
+                <label>SUSCRIPCION/DESCRIPCION</label>
+                <Form.Control
+                  id="suscripcionDescripcionActText"
+                  defaultValue={baseDatosDigitalObj.suscripcion_descripcion}
+                  cols="80"
+                  rows="4"
+                  as="textarea"
+                ></Form.Control>
+              </Form.Group>
+            </Col>
+            <Col className="pr-1" md="12">
+              <Form.Group>
+                <label>AREA/SERVICIO</label>
+                <Form.Control
+                  id="areaServicioActText"
+                  defaultValue={baseDatosDigitalObj.area_servicio}
+                  cols="80"
+                  rows="4"
+                  as="textarea"
+                ></Form.Control>
+              </Form.Group>
+            </Col>
+            <Button
+              className="btn-simple"
+              type="button"
+              variant="link"
+              onClick={() => closeModal()}
+            >
+              Regresar
+            </Button>
+            <Button
+              className="btn-simple"
+              type="button"
+              variant="link"
+              onClick={() => actualizarBaseDatosDigital()}
+            >
+              Grabar
+            </Button>
+          </div>
+        </Modal>
     </>
   );
 }
