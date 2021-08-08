@@ -339,10 +339,20 @@ function Dashboard() {
     let idAnioHasta = parseInt(document.getElementById("idAnioHasta").value);
     let idAreaUnesco = parseInt(document.getElementById("idAreaUnesco").value);
     let idAreaFrascati = parseInt(document.getElementById("idAreaFrascati").value);
+    
     if(idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati == 0 && idAreaUnesco == 0){
       setLoading(true)
       await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
       await leyBradfordService.numeroMediosPublicacionesReferencias().then(async(value) => {
+        await handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
+        await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
+        setLoading(false)
+      })
+    }
+    else if(idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati == 0 && idAreaUnesco == 0){
+      setLoading(true)
+      await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
+      await leyBradfordService.numeroMediosPublicacionesReferenciasPorAnio(idAnioDesde, idAnioHasta).then(async(value) => {
         await handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
         await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
         setLoading(false)

@@ -3,6 +3,7 @@ import endpoints from "./endpoints";
 
 export const leyBradfordService = {
     numeroMediosPublicacionesReferencias,
+    numeroMediosPublicacionesReferenciasPorAnio,
     numeroMediosPublicacionPorAreaFrascati,
     numeroMediosPublicacionPorAreaUnesco,
     numeroMediosPublicacionPorAreaUnescoPorAnio,
@@ -12,6 +13,11 @@ export const leyBradfordService = {
 async function numeroMediosPublicacionesReferencias() {
     return fetchWrapper.get(`${endpoints.baseUrlLeyBradford}/numeroMediosPublicacion`);
 }
+
+async function numeroMediosPublicacionesReferenciasPorAnio(anio_publicacion_desde, anio_publicacion_hasta) {
+    return fetchWrapper.get(`${endpoints.baseUrlLeyBradford}/numeroMediosPublicacionPorAnio/`+anio_publicacion_desde+"/"+anio_publicacion_hasta);
+}
+
 
 async function numeroMediosPublicacionPorAreaFrascati(id_area_frascati) {
     return fetchWrapper.get(`${endpoints.baseUrlLeyBradford}/numeroMediosPublicacionPorAreaFrascati/`+id_area_frascati);
