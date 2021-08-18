@@ -10,7 +10,11 @@ from flask import Flask, request, jsonify, make_response
 from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
 from scraper_api import ScraperAPIClient
-from scholarly import scholarly, ProxyGenerator 
+import pandas as pd
+#from scholarly import scholarly, ProxyGenerator 
+
+# API basadas en Scopus
+from pybliometrics.scopus import AbstractRetrieval
 
 db = SQLAlchemy()
 
@@ -187,7 +191,7 @@ def obtenerDetalleReferenciaTotal(articuloBuscar):
             pg.ScraperAPI('81ded0ad907a5555e982aa011ff2e75b')
             scholarly.use_proxy(pg)
             try:
-                search_queryAux = scholarly.search_pubs(referenciaString)
+                """search_queryAux = scholarly.search_pubs(referenciaString)
                 detalleReferencia = search_queryAux.__next__()
                 # Extraer detalle de la referencia
                 print(detalleReferencia)
@@ -222,11 +226,104 @@ def obtenerDetalleReferenciaTotal(articuloBuscar):
                 #print( pub_year in referenciaString)
                 if (tituloSinEspacios in referenciaSinEspacios) and (anioSinEspacios in referenciaSinEspacios):
                     DetalleReferencia(id_referencia, container_type, source, filled, gsrank, pub_url, author_id_string, num_citations, url_scholarbib, url_add_sclib, citedby_url, url_related_articles, title, author_string, pub_year, venue, abstract).create()
+            """
             except:
                 print('Referencia no encontrada')
     return make_response(jsonify({"respuesta": {"valor":"Proceso Búsqueda Terminado.", "error":"False"}}))
 
+def insertarReferenciaAutomaticoScopus(nuevaReferencia):
+    mensajesRespuesta = []
+    resultado = validarBaseDatosDigitalPorNombre(nuevaReferencia['nombre_base_datos_digital'])
+    if len(resultado.json['base_datos_digital']) == 1:
+        nombre_base_datos_digital = (resultado.json['base_datos_digital'][0]['nombre_base_datos_digital'])
+        if nombre_base_datos_digital == 'SCOPUS':
+            respuestaArticulo = buscarArticuloPorId(nuevaReferencia['id_articulo'])
+            if len(respuestaArticulo.json['articulo']) == 1:
+                try:
+                    print("Buscando por doi")
+                    doi = respuestaArticulo.json['articulo'][0]['doi']
+                    print(doi)
+                    ab = AbstractRetrieval(doi, view='FULL')
+                    #ab = AbstractRetrieval("10.1016/j.softx.2019.100263")
+                    refs = ab.references
+                    df = pd.DataFrame(refs)
+                    for row in df.itertuples(index=True, name='Pandas'):
+                        print(row.position)
+                        print(row.fulltext)
+                        print(row.sourcetitle)
+                    #print(refs[0])
+                    #df = pd.DataFrame(refs)
+                    #print(df.columns)
+                    #print(df.sourcetitle)
+                    #print(df.fulltext)
+                    mensaje = {
+                        "error": "False",
+                        "mensaje": 'Referencias ingresadas correctamente.'
+                        }
+                    mensajesRespuesta.append(mensaje)
+                except:
+                    try:
+                        print("Buscando por titulo alternativo..")
+                        titulo_alternativo = respuestaArticulo.json['articulo'][0]['titulo_alternativo']
+                        print(titulo_alternativo)
+                        ab = AbstractRetrieval(titulo_alternativo, view='FULL')
+                        print(ab)
+                    except:
+                        try:
+                            print("Buscando por titulo...")
+                            titulo = respuestaArticulo.json['articulo'][0]['titulo']
+                            print(titulo)
+                            ab = AbstractRetrieval(titulo, view='FULL')
+                            print(ab)
+                        except:
+                            mensaje = {
+                                "error": "True",
+                                "mensaje": 'No se han encontrado referencias para cargar.'
+                                }
+                            mensajesRespuesta.append(mensaje)
+            else:
+                mensaje = {
+                            "error": "True",
+                            "mensaje": 'No se encuentra registrado el articulo seleccionado.'
+                    }
+                mensajesRespuesta.append(mensaje)
+        else:
+            mensaje = {
+                        "error": "True",
+                        "mensaje": 'No exiten datos de la base de datos digital: '+ nombre_base_datos_digital 
+                }
+            mensajesRespuesta.append(mensaje)
+    else:
+        mensaje = {
+                "error": "True",
+                "mensaje": 'No exiten esta registrada la base de datos digital: '+ nombre_base_datos_digital 
+        }
+        mensajesRespuesta.append(mensaje)
+    return make_response(jsonify({"respuesta": {"mensajes":mensajesRespuesta, "error":"False"}}))
 
-    
+def obtenerDetalleReferenciaTotalScopus(articuloBuscar):
+    id_articulo = articuloBuscar['id_articulo']
+    referenciasNoEncontradas = listaReferenciasNoEncontradasPorIdArticulo(id_articulo)
+    referencias = referenciasNoEncontradas.json['referencias']
+    print(id_articulo)
+    for referencia in referencias:
+        id_referencia = referencia['id_referencia']
+        referenciaString = referencia['referencia']
+        respuestaDetalleReferencia = listaDetalleReferenciaPorId(id_referencia).json['detalleReferencia']
+        numeroDetalleReferencia = len(respuestaDetalleReferencia)
+        print(numeroDetalleReferencia)
+        if numeroDetalleReferencia == 0:
+            print(referenciaString)
+            try:
+                #ab = AbstractRetrieval(referenciaString)
+                ab = AbstractRetrieval("10.1016/j.softx.2019.100263")
+                print(ab)
+            except:
+                print('Detalle referencia no fue recuperada.')
+    return make_response(jsonify({"respuesta": {"valor":"Proceso Búsqueda Terminado.", "error":"False"}}))
+
+
+
+
     
    
