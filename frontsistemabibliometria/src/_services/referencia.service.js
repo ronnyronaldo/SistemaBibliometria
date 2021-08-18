@@ -6,10 +6,12 @@ export const referenciaService = {
     listarReferenciasNoEcontradasPorIdArticulo,
     insertarManual,
     insertarAutomatico,
+    insertarAutomaticoScopus,
     buscarDetalleReferenciaIndividual,
     eliminar,
     numeroReferencias,
-    buscarDetalleReferenciaTotal
+    buscarDetalleReferenciaTotal,
+    buscarDetalleReferenciaTotalScopus
 };
 
 async function numeroReferencias() {
@@ -32,13 +34,19 @@ async function insertarAutomatico(params) {
     return fetchWrapper.post(`${endpoints.baseUrlReferencia}/insertarAutomatico`, params);
 }
 
+async function insertarAutomaticoScopus(params) {
+    return fetchWrapper.post(`${endpoints.baseUrlReferencia}/insertarAutomaticoScopus`, params);
+}
+
 async function buscarDetalleReferenciaIndividual(params) {
     return fetchWrapper.post(`${endpoints.baseUrlReferencia}/obtenerDetalleReferenciaIndividual`, params);
 }
 
-
 async function buscarDetalleReferenciaTotal(params) {
     return fetchWrapper.post(`${endpoints.baseUrlReferencia}/obtenerDetalleReferenciaTotal`, params);
+}
+async function buscarDetalleReferenciaTotalScopus(params) {
+    return fetchWrapper.post(`${endpoints.baseUrlReferencia}/obtenerDetalleReferenciaTotalScopus`, params);
 }
 
 async function eliminar(id_referencia) {

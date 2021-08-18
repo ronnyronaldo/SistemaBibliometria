@@ -219,7 +219,7 @@ function Publicaciones() {
     setLoading(true)
     if(datoReferencia.idArticulo != 0){
       console.log("Cargar datos de referencias automatica....")
-      referenciaService.insertarAutomatico({
+      referenciaService.insertarAutomaticoScopus({
         "id_articulo": datoReferencia.idArticulo,
         "nombre_base_datos_digital": publicacionSeleccionada.nombre_base_datos_digital
       }).then(value =>{
