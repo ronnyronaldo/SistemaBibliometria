@@ -176,7 +176,7 @@ function Referencias() {
   async function handleBuscar() {
     if(tipoBusquedaReferencias.ingresoTotal == true){ 
       setLoading(true);
-      referenciaService.buscarDetalleReferenciaTotal({
+      referenciaService.buscarDetalleReferenciaTotalScopus({
         "id_articulo": publicacionSeleccionada.id_articulo
       }).then(value => {
         if(value.respuesta.error == "False"){
