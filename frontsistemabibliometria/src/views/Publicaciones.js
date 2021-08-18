@@ -228,6 +228,7 @@ function Publicaciones() {
           if(value.respuesta.mensajes.length > 0){
             for( var i = 0; i< value.respuesta.mensajes.length; i++){
               if(value.respuesta.mensajes[i].error== "False"){
+                handleCargarReferencias(datoReferencia.idArticulo, publicacionSeleccionada.titulo_publicacion, publicacionSeleccionada.autor, publicacionSeleccionada.anio_publicacion, publicacionSeleccionada.nombre_base_datos_digital);
                 notify("tr", value.respuesta.mensajes[i].mensaje, "primary");
               }else{
                 notify("tr", value.respuesta.mensajes[i].mensaje, "danger");
