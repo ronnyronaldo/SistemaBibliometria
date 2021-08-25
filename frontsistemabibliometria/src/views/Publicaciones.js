@@ -65,7 +65,8 @@ function Publicaciones() {
     titulo: "", 
     anio_publicacion: "", 
     tipo_publicacion: "", 
-    cuartil:""
+    cuartil:"",
+    doi:""
   })
 
   const notify = (place, mensaje, type) => {
@@ -120,7 +121,8 @@ function Publicaciones() {
     titulo_publicacion: "",
     autor: "",
     anio_publicacion: "",
-    nombre_base_datos_digital: ""
+    nombre_base_datos_digital: "",
+    doi:""
   });
 
   const [nuevasPublicaciones, setNuevasPublicaciones] = React.useState([]);
@@ -147,6 +149,8 @@ function Publicaciones() {
   }
 
   async function handleCargarDatosPublicaciones() {
+    //setReferencias([]);
+    //setDetalleReferencias([]);
     setPublicacionSeleccionada({
       ...publicacionSeleccionada,
       titulo_publicacion: "",
@@ -163,6 +167,32 @@ function Publicaciones() {
     await tablaPaginacionService.destruirTabla('#dataTablePublicaciones');
     setLoading(true)
     await publicacionService.listar().then(value => {
+      setPublicaciones(value.articulos);
+      setLoading(false)
+    });
+    await tablaPaginacionService.paginacion('#dataTablePublicaciones');
+  }
+
+  async function handleCargarDatosPublicacionesSinReferencias() {
+    //setReferencias([]);
+    //setDetalleReferencias([]);
+
+    setPublicacionSeleccionada({
+      ...publicacionSeleccionada,
+      titulo_publicacion: "",
+      autor: "",
+      anio_publicacion: "",
+      nombre_base_datos_digital: ""
+    })
+
+    setDatoReferencia({
+      ...datoReferencia,
+      idArticulo: 0
+    })
+
+    await tablaPaginacionService.destruirTabla('#dataTablePublicaciones');
+    setLoading(true)
+    await publicacionService.listarPublicacionesSinReferencias().then(value => {
       setPublicaciones(value.articulos);
       setLoading(false)
     });
@@ -218,7 +248,6 @@ function Publicaciones() {
   const handleCargarRefAutomatica = (event) => {
     setLoading(true)
     if(datoReferencia.idArticulo != 0){
-      console.log("Cargar datos de referencias automatica....")
       referenciaService.insertarAutomaticoScopus({
         "id_articulo": datoReferencia.idArticulo,
         "nombre_base_datos_digital": publicacionSeleccionada.nombre_base_datos_digital
@@ -326,14 +355,15 @@ function Publicaciones() {
     setModalIsOpen(true);
   }
 
-  function handleCargarDetallePublicacion(id_articulo, nombres, titulo, anio_publicacion, tipo_publicacion, cuartil) {
+  function handleCargarDetallePublicacion(id_articulo, nombres, titulo, anio_publicacion, tipo_publicacion, cuartil, doi) {
     setPublicacionObj({
       id_articulo:id_articulo, 
       nombres: nombres, 
       titulo: titulo, 
       anio_publicacion: anio_publicacion, 
       tipo_publicacion: tipo_publicacion, 
-      cuartil:cuartil
+      cuartil:cuartil,
+      doi:doi
     })
     openModal()
   }
@@ -345,6 +375,7 @@ function Publicaciones() {
     let anio = document.getElementById("anioText").value;
     let tipoPublicacion = document.getElementById("tipoPublicacionText").value;
     let cuartil = document.getElementById("cuartilText").value;
+    let doi = document.getElementById("doiText").value;
 
     if(validacionInputService.campoVacio(autor) && validacionInputService.campoVacio(titulo) && validacionInputService.campoVacio(anio) && validacionInputService.campoVacio(tipoPublicacion)){
       publicacionService.actualizar({
@@ -353,7 +384,8 @@ function Publicaciones() {
         "titulo": titulo,
         "anio": anio,
         "tipoPublicacion": tipoPublicacion,
-        "cuartil": cuartil
+        "cuartil": cuartil,
+        "doi": doi
 
       }).then(value => {
         if(value.respuesta.error== "False"){
@@ -367,6 +399,16 @@ function Publicaciones() {
       notify("tr", 'Existen campos sin llenar.', "danger");
     }
   }
+
+  async function handleCargarDatosPublicacionesPorFiltro() {
+    let filtroPublicaciones = document.getElementById("filtroPublicaciones").value;
+    if(filtroPublicaciones == 'T'){
+      await handleCargarDatosPublicaciones();
+    }else{
+      await handleCargarDatosPublicacionesSinReferencias();
+    }
+  }
+
 
   React.useEffect(() => {
     handleCargarDatosPublicaciones();
@@ -415,6 +457,19 @@ function Publicaciones() {
                 <p className="card-category">
                   Investigadores con filiación a la Universidad de Cuenca
                 </p>
+                <Row>
+                  <Col className="pr-1" md="6">
+                    <Form.Group>
+                      <label></label>
+                      <Form.Row>
+                        <select className="form-control" id="filtroPublicaciones" onChange={handleCargarDatosPublicacionesPorFiltro}>
+                          <option value="T">Todas</option>
+                          <option value="PF">Publicaciones que faltan referencias</option>
+                        </select>
+                      </Form.Row>
+                    </Form.Group>
+                  </Col>
+                </Row>
               </Card.Header>
               <Card.Body className="table-full-width table-responsive px-3">
                 <table className="table table-bordered table-hover" id="dataTablePublicaciones" width="100%" cellSpacing="0">
@@ -429,6 +484,7 @@ function Publicaciones() {
                       <th>AREA FRASCATI</th>
                       <th>FUENTE</th>
                       <th>CUARTIL</th>
+                      <th>DOI</th>
                       <th>ENLACE DOCUMENTO</th>
                       <th>ACCIONES</th>
                     </tr>
@@ -445,10 +501,11 @@ function Publicaciones() {
                         <td width="5%">{item.descripcion}</td>
                         <td width="5%">{item.nombre_base_datos_digital}</td>
                         <td width="5%">{item.cuartil}</td>
+                        <td width="5%">{item.doi}</td>
                         <td width="5%">
                           <a href={item.enlace_documento != null ? item.enlace_documento : item.url_dspace} target="_blank"><i className="fas fa-external-link-alt"></i>Abrir documento</a>
                         </td>
-                        <td width="5%"><Link to="#" id="actualizarPublicacion" className="link col-sm-12 col-md-3" onClick={() => handleCargarDetallePublicacion(item.id_articulo, item.nombres, item.titulo, item.anio_publicacion, item.tipo_publicacion, item.cuartil)} ><i className="fas fa-pen-square fa-2x"></i></Link>
+                        <td width="5%"><Link to="#" id="actualizarPublicacion" className="link col-sm-12 col-md-3" onClick={() => handleCargarDetallePublicacion(item.id_articulo, item.nombres, item.titulo, item.anio_publicacion, item.tipo_publicacion, item.cuartil, item.doi)} ><i className="fas fa-pen-square fa-2x"></i></Link>
                         <Link to="#" id="eliminarArticulo" className="link col-sm-12 col-md-3" onClick={()=>handleEliminarArticulo(item.id_articulo)}><i className="fas fa-trash-alt fa-2x"></i></Link></td>
                       </tr>
                     ))}
@@ -697,6 +754,16 @@ function Publicaciones() {
                 <Form.Control
                   id="cuartilText"
                   defaultValue={publicacionObj.cuartil}
+                  type="text"
+                ></Form.Control>
+              </Form.Group>
+            </Col>
+            <Col className="pr-1" md="12">
+              <Form.Group>
+                <label>DOI</label>
+                <Form.Control
+                  id="doiText"
+                  defaultValue={publicacionObj.doi}
                   type="text"
                 ></Form.Control>
               </Form.Group>

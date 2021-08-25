@@ -3,6 +3,7 @@ import endpoints from "./endpoints";
 
 export const publicacionService = {
     listar,
+    listarPublicacionesSinReferencias,
     insertar,
     eliminar,
     numeroArticulosIngresados,
@@ -13,6 +14,10 @@ export const publicacionService = {
 
 async function listar() {
     return fetchWrapper.get(`${endpoints.baseUrlPublicacion}/listar`);
+}
+
+async function listarPublicacionesSinReferencias() {
+    return fetchWrapper.get(`${endpoints.baseUrlPublicacion}/listarArticulosSinReferencias`);
 }
 
 async function numeroArticulosIngresados() {
