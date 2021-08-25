@@ -9,7 +9,9 @@ export const clusteringService = {
     ejecutarclusteringCuarFIPorAreaUnescoYAnioPublicacion,
     ejecutarClusterFactorImpactoXCuartil,
     ejecutarclusteringRedesAutoresAreasOrden,
-    ejecutarDatosChart
+    ejecutarDatosChart,
+    ejecutarDatosChartTotalAutores
+    
 };
 
 // Redes de autores por orden de autor y area unesco
@@ -42,6 +44,9 @@ async function ejecutarDatosChart() {
     return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarDatosHighChart`);
 }
 
+async function ejecutarDatosChartTotalAutores() {
+    return fetchWrapper.get(`${endpoints.baseUrlClustering}/ejecutarDatosHighChartTotalAutores`);
+}
 
 
 

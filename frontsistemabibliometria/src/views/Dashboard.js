@@ -230,6 +230,60 @@ function Dashboard() {
   
   }
 
+  function graficarGrafoT(muyBaja,baja,moderada,alta){
+    
+    Highcharts.chart('redes-autores-grafo-total', {
+      chart: {
+          type: 'packedbubble',
+          height: '100%'
+      },
+      title: {
+          text: 'Numero de publicaciones totales por Autor'
+      },
+      tooltip: {
+          useHTML: true,
+          pointFormat: '<b>{point.name}:</b> {point.value} Pub'
+      },
+      plotOptions: {
+          packedbubble: {
+              minSize: '20%',
+              maxSize: '100%',
+              zMin: 0,
+              zMax: 100,
+              layoutAlgorithm: {
+                gravitationalConstant: 0.05,
+                splitSeries: true,
+                seriesInteraction: false,
+                dragBetweenSeries: true,
+                parentNodeLimit: true
+              },
+              dataLabels: {
+                  enabled: true,
+                  format: '{point.name}',
+                  filter: {
+                      property: 'y',
+                      operator: '>',
+                      value: 9
+                  },
+                  style: {
+                      color: 'black',
+                      textOutline: 'none',
+                      fontWeight: 'normal'
+                  }
+              }
+          }
+      },
+      credits: {
+        enabled: false
+      },
+      series: [{name: 'Entre 1 y 5 Pub',data:muyBaja},
+      {name: 'Entre 6 y 10 Pub', data: baja },
+      {name: 'Entre 11 y 16 Pub', data: moderada },
+      {name: 'De 17 Pub en adelante', data: alta }]
+  });
+  
+  }
+
   async function handleCargarRedesDeAutoresAreasOrden() {
     setLoading(true)
     let orden_autor = document.getElementById("idOrdenAutor").value;
@@ -306,6 +360,47 @@ function Dashboard() {
       
       // setGrafo(listaPrimerAutor);
       graficarGrafo(listaPrimerAutor,listaSegundoAutor,listaTercerAutor,listaCuartoAutor,listaQuintoAutor);
+      setLoading(false);
+    });
+
+    await clusteringService.ejecutarDatosChartTotalAutores().then(value => {
+      let objeto = JSON.parse(value);
+      let nombres = objeto.nombre;
+      let numeros = objeto.total_pub;
+      let listaAutores = Object.values(nombres)
+      let listaTotalPub = Object.values(numeros)
+      let muyBaja = [];
+      let baja = [];
+      let moderada = [];
+      let alta = [];
+      
+      // Aqui se cambia la longitud de los autores para no tener delay en la vista
+      let longitud= (listaAutores.length);
+      for (let i = 0; i < longitud ; i++) {
+        if(listaTotalPub[i]>=2 && listaTotalPub[i]<=5 ){
+          let muyBajoAutor = { "name": listaAutores[i], "value": listaTotalPub[i]}
+          muyBaja.push(muyBajoAutor);
+        }
+        if(listaTotalPub[i]>=6 && listaTotalPub[i]<=10 ){
+          let bajoAutor = { "name": listaAutores[i], "value": listaTotalPub[i]}
+          baja.push(bajoAutor);
+        }
+        if(listaTotalPub[i]>=11 && listaTotalPub[i]<=16 ){
+          let moderadoAutor = { "name": listaAutores[i], "value": listaTotalPub[i]}
+          moderada.push(moderadoAutor);
+        }
+        if(listaTotalPub[i]>=17){
+          let altoAutor = { "name": listaAutores[i], "value": listaTotalPub[i]}
+          alta.push(altoAutor);
+        }
+      }
+    
+      // setNombreCluster(nombre_cluster);
+      // setTotalClusterCuartilFI(totales);
+      // setDetalleDatosClusterCuartilFI(value)
+      
+      // setGrafo(listaPrimerAutor);
+      graficarGrafoT(muyBaja,baja,moderada,alta);
       setLoading(false);
     });
   }
@@ -500,6 +595,10 @@ function Dashboard() {
               <Card.Header>
                 <Card.Title as="h4">Redes de Autores</Card.Title>
                 <div id="redes-autores-grafo" ></div>
+              </Card.Header>
+              <Card.Header>
+                <Card.Title as="h4">Publicaciones de Autores</Card.Title>
+                <div id="redes-autores-grafo-total" ></div>
               </Card.Header>
               <Card.Body>
               <Row>
