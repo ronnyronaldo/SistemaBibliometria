@@ -423,6 +423,20 @@ def datosHighChart():
     except:
         return make_response(jsonify("Error"))
 
+def datosHighChartTotalAutores():
+    respuesta = (listaAutoresNumPub()).json
+
+    try:
+        dataframe = pd.json_normalize(respuesta)
+        dataframe = dataframe.groupby(['nombre']).size().to_frame('total_pub').reset_index()
+        lista = dataframe.to_numpy().tolist()
+        columns_names = dataframe.columns.values
+        datos_a_enviar = dataframe.to_json()
+        #print(datos_a_enviar)
+        return make_response(jsonify(datos_a_enviar))
+    except:
+        return make_response(jsonify("Error"))
+
 
 
 
