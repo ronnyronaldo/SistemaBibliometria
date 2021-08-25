@@ -236,14 +236,64 @@ def insertarReferenciaAutomaticoScopus(nuevaReferencia):
     resultado = validarBaseDatosDigitalPorNombre(nuevaReferencia['nombre_base_datos_digital'])
     if len(resultado.json['base_datos_digital']) == 1:
         nombre_base_datos_digital = (resultado.json['base_datos_digital'][0]['nombre_base_datos_digital'])
-        if nombre_base_datos_digital == 'SCOPUS':
-            respuestaArticulo = buscarArticuloPorId(nuevaReferencia['id_articulo'])
-            if len(respuestaArticulo.json['articulo']) == 1:
+        #if nombre_base_datos_digital == 'SCOPUS':
+        respuestaArticulo = buscarArticuloPorId(nuevaReferencia['id_articulo'])
+        if len(respuestaArticulo.json['articulo']) == 1:
+            try:
+                print("Buscando por doi")
+                doi = respuestaArticulo.json['articulo'][0]['doi']
+                print(doi)
+                ab = AbstractRetrieval(doi, view='FULL')
+                refs = ab.references
+                df = pd.DataFrame(refs)
+                for row in df.itertuples(index=True, name='Pandas'):
+                    reference = row.fulltext
+                    titulo = row.title
+                    autores = row.authors
+                    medioPublicacion = row.sourcetitle
+                    año = int(row.publicationyear)
+                    numerocitaciones = 0
+                    if row.citedbycount == None:
+                        numerocitaciones = 0
+                    else:
+                        numerocitaciones = int(row.citedbycount)
+
+                    get_referencia = Referencia.query.filter((Referencia.id_articulo == nuevaReferencia['id_articulo']) & (Referencia.referencia == reference))
+                    referencia_schema = ReferenciaSchema(many=True)
+                    referencia = referencia_schema.dump(get_referencia)
+                    numeroReferencias = len(referencia)
+                    if numeroReferencias == 0:
+                        Referencia(nuevaReferencia['id_articulo'], reference).create() # Ingreso primero la referencia
+                        get_referencias = Referencia.query.filter((Referencia.id_articulo == nuevaReferencia['id_articulo']) & (Referencia.referencia == reference))
+                        referencias_schema = ReferenciaSchema(many=True)
+                        referencias = referencias_schema.dump(get_referencias)    
+                        id_referencia = referencias[0]['id_referencia'] 
+                        DetalleReferencia(id_referencia,                               # Ingreso el Detalle de la Referencia
+                        '', 
+                        '', 
+                        '', 
+                        '', 
+                        '', 
+                        '', 
+                        numerocitaciones, 
+                        '', 
+                        '', 
+                        '', 
+                        '', 
+                        titulo, 
+                        autores, 
+                        año, 
+                        medioPublicacion, 
+                        '').create()
+                    else:
+                        return make_response(jsonify({"respuesta": {"mensajes":[{"error": "True", "mensaje": "Ya existen referencias ingresadas previamente"}], "error":"False"}})) 
+                return make_response(jsonify({"respuesta": {"mensajes":[{"error": "False", "mensaje": "Referencias ingresadas correctamente"}], "error":"False"}}))
+            except:
                 try:
-                    print("Buscando por doi")
-                    doi = respuestaArticulo.json['articulo'][0]['doi']
-                    print(doi)
-                    ab = AbstractRetrieval(doi, view='FULL')
+                    print("Buscando por titulo alternativo..")
+                    titulo_alternativo = respuestaArticulo.json['articulo'][0]['titulo_alternativo']
+                    print(titulo_alternativo)
+                    ab = AbstractRetrieval(titulo_alternativo, view='FULL')
                     refs = ab.references
                     df = pd.DataFrame(refs)
                     for row in df.itertuples(index=True, name='Pandas'):
@@ -290,10 +340,10 @@ def insertarReferenciaAutomaticoScopus(nuevaReferencia):
                     return make_response(jsonify({"respuesta": {"mensajes":[{"error": "False", "mensaje": "Referencias ingresadas correctamente"}], "error":"False"}}))
                 except:
                     try:
-                        print("Buscando por titulo alternativo..")
-                        titulo_alternativo = respuestaArticulo.json['articulo'][0]['titulo_alternativo']
-                        print(titulo_alternativo)
-                        ab = AbstractRetrieval(titulo_alternativo, view='FULL')
+                        print("Buscando por titulo...")
+                        titulo = respuestaArticulo.json['articulo'][0]['titulo']
+                        print(titulo)
+                        ab = AbstractRetrieval(titulo, view='FULL')
                         refs = ab.references
                         df = pd.DataFrame(refs)
                         for row in df.itertuples(index=True, name='Pandas'):
@@ -339,73 +389,23 @@ def insertarReferenciaAutomaticoScopus(nuevaReferencia):
                                 return make_response(jsonify({"respuesta": {"mensajes":[{"error": "True", "mensaje": "Ya existen referencias ingresadas previamente"}], "error":"False"}})) 
                         return make_response(jsonify({"respuesta": {"mensajes":[{"error": "False", "mensaje": "Referencias ingresadas correctamente"}], "error":"False"}}))
                     except:
-                        try:
-                            print("Buscando por titulo...")
-                            titulo = respuestaArticulo.json['articulo'][0]['titulo']
-                            print(titulo)
-                            ab = AbstractRetrieval(titulo, view='FULL')
-                            refs = ab.references
-                            df = pd.DataFrame(refs)
-                            for row in df.itertuples(index=True, name='Pandas'):
-                                reference = row.fulltext
-                                titulo = row.title
-                                autores = row.authors
-                                medioPublicacion = row.sourcetitle
-                                año = int(row.publicationyear)
-                                numerocitaciones = 0
-                                if row.citedbycount == None:
-                                    numerocitaciones = 0
-                                else:
-                                    numerocitaciones = int(row.citedbycount)
-
-                                get_referencia = Referencia.query.filter((Referencia.id_articulo == nuevaReferencia['id_articulo']) & (Referencia.referencia == reference))
-                                referencia_schema = ReferenciaSchema(many=True)
-                                referencia = referencia_schema.dump(get_referencia)
-                                numeroReferencias = len(referencia)
-                                if numeroReferencias == 0:
-                                    Referencia(nuevaReferencia['id_articulo'], reference).create() # Ingreso primero la referencia
-                                    get_referencias = Referencia.query.filter((Referencia.id_articulo == nuevaReferencia['id_articulo']) & (Referencia.referencia == reference))
-                                    referencias_schema = ReferenciaSchema(many=True)
-                                    referencias = referencias_schema.dump(get_referencias)    
-                                    id_referencia = referencias[0]['id_referencia'] 
-                                    DetalleReferencia(id_referencia,                               # Ingreso el Detalle de la Referencia
-                                    '', 
-                                    '', 
-                                    '', 
-                                    '', 
-                                    '', 
-                                    '', 
-                                    numerocitaciones, 
-                                    '', 
-                                    '', 
-                                    '', 
-                                    '', 
-                                    titulo, 
-                                    autores, 
-                                    año, 
-                                    medioPublicacion, 
-                                    '').create()
-                                else:
-                                    return make_response(jsonify({"respuesta": {"mensajes":[{"error": "True", "mensaje": "Ya existen referencias ingresadas previamente"}], "error":"False"}})) 
-                            return make_response(jsonify({"respuesta": {"mensajes":[{"error": "False", "mensaje": "Referencias ingresadas correctamente"}], "error":"False"}}))
-                        except:
-                            mensaje = {
-                                "error": "True",
-                                "mensaje": 'No se han encontrado referencias para cargar.'
-                                }
-                            mensajesRespuesta.append(mensaje)
-            else:
-                mensaje = {
+                        mensaje = {
                             "error": "True",
-                            "mensaje": 'No se encuentra registrado el articulo seleccionado.'
-                    }
-                mensajesRespuesta.append(mensaje)
+                            "mensaje": 'No se han encontrado referencias para cargar.'
+                            }
+                        mensajesRespuesta.append(mensaje)
         else:
+            mensaje = {
+                        "error": "True",
+                        "mensaje": 'No se encuentra registrado el articulo seleccionado.'
+                }
+            mensajesRespuesta.append(mensaje)
+        """else:
             mensaje = {
                         "error": "True",
                         "mensaje": 'No exiten datos de la base de datos digital: '+ nombre_base_datos_digital 
                 }
-            mensajesRespuesta.append(mensaje)
+            mensajesRespuesta.append(mensaje)"""
     else:
         mensaje = {
                 "error": "True",

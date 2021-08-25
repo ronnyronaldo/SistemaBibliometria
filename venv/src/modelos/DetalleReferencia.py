@@ -27,7 +27,7 @@ class DetalleReferencia(db.Model):
     title = db.Column(db.String(350))
     author = db.Column(db.String(350))
     pub_year = db.Column(db.Integer)
-    venue = db.Column(db.String(100))
+    venue = db.Column(db.String(500))
     abstract = db.Column(db.String(350))
   
     def create(self):

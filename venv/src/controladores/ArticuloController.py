@@ -210,6 +210,23 @@ def listaArticulos():
         articulos.append(dict(articulo)) # Serializo cada fila
     return make_response(jsonify({"articulos": articulos}))
 
+def listaArticulosSinReferencias():
+    subquery = (db.session.query(Articulo, Referencia).with_entities(Articulo.id_articulo)
+        .join(Referencia, Articulo.id_articulo == Referencia.id_articulo))
+    articulosRespuesta = (db.session.query(Articulo, BaseDatosDigital, MedioPublicacion, AreaFrascati, AreaUnesco).filter(Articulo.id_articulo.notin_(subquery))
+        .with_entities(Articulo.id_articulo, Articulo.nombres, Articulo.orden_autor, Articulo.titulo, Articulo.anio_publicacion, Articulo.doi, BaseDatosDigital.nombre_base_datos_digital, Articulo.tipo_publicacion, Articulo.url_dspace,Articulo.enlace_documento, MedioPublicacion.nombre, AreaUnesco.descripcion_unesco, AreaFrascati.descripcion, Articulo.cuartil)
+        .join(BaseDatosDigital, Articulo.id_base_datos_digital == BaseDatosDigital.id_base_datos_digital)
+        .join(MedioPublicacion, Articulo.id_medio_publicacion == MedioPublicacion.id_medio_publicacion)
+        .join(AreaFrascati, Articulo.id_area_frascati == AreaFrascati.id_area_frascati )
+        .join(AreaUnesco, Articulo.id_area_unesco == AreaUnesco.id_area_unesco)).all()
+
+    #db.session.close()
+    #db.session.remove()
+    articulos = []
+    for articulo in articulosRespuesta:
+        articulos.append(dict(articulo)) # Serializo cada fila
+    return make_response(jsonify({"articulos": articulos}))
+
 def numeroArticulosIngresados():
     get_articulo = Articulo.query.all()
     articulo_schema = ArticuloSchema(many=True)
@@ -276,6 +293,7 @@ def actualizarArticulo(publicacion):
     articulo.anio_publicacion  = publicacion['anio']
     articulo.tipo_publicacion  = publicacion['tipoPublicacion']
     articulo.cuartil  = publicacion['cuartil']
+    articulo.doi = publicacion['doi']
     Articulo.create(articulo)
     return make_response(jsonify({"respuesta": {"valor":"Publicacion actualizada correctamente.", "error":"False"}}))
 
