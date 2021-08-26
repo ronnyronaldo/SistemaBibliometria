@@ -199,6 +199,32 @@ function Publicaciones() {
     await tablaPaginacionService.paginacion('#dataTablePublicaciones');
   }
 
+  async function handleCargarDatosPublicacionesSinCompletarReferencias() {
+    //setReferencias([]);
+    //setDetalleReferencias([]);
+
+    setPublicacionSeleccionada({
+      ...publicacionSeleccionada,
+      titulo_publicacion: "",
+      autor: "",
+      anio_publicacion: "",
+      nombre_base_datos_digital: ""
+    })
+
+    setDatoReferencia({
+      ...datoReferencia,
+      idArticulo: 0
+    })
+
+    await tablaPaginacionService.destruirTabla('#dataTablePublicaciones');
+    setLoading(true)
+    await publicacionService.listarPublicacionesSinCompletarReferencias().then(value => {
+      setPublicaciones(value.articulos);
+      setLoading(false)
+    });
+    await tablaPaginacionService.paginacion('#dataTablePublicaciones');
+  }
+
   async function handleCargarReferencias(id_articulo, titulo, autor, anio_publicacion, nombre_base_datos_digital) {
     document.getElementById("referenciaText").value = "";
 
@@ -404,8 +430,10 @@ function Publicaciones() {
     let filtroPublicaciones = document.getElementById("filtroPublicaciones").value;
     if(filtroPublicaciones == 'T'){
       await handleCargarDatosPublicaciones();
-    }else{
+    }else if(filtroPublicaciones == 'PSR'){
       await handleCargarDatosPublicacionesSinReferencias();
+    }else if(filtroPublicaciones == 'PSCR'){
+      await handleCargarDatosPublicacionesSinCompletarReferencias();
     }
   }
 
@@ -464,7 +492,8 @@ function Publicaciones() {
                       <Form.Row>
                         <select className="form-control" id="filtroPublicaciones" onChange={handleCargarDatosPublicacionesPorFiltro}>
                           <option value="T">Todas</option>
-                          <option value="PF">Publicaciones que faltan referencias</option>
+                          <option value="PSR">Publicaciones sin referencias</option>
+                          <option value="PSCR">Publicaciones sin completar detalle referencias</option>
                         </select>
                       </Form.Row>
                     </Form.Group>

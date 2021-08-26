@@ -142,7 +142,7 @@ function Referencias() {
   async function handleCargarDatosPublicaciones() {
     setLoading(true);
     await tablaPaginacionService.destruirTabla('#dataTablePublicacionesSeccionReferencias');
-    await publicacionService.listar().then(value => {
+    await publicacionService.listarPublicacionesSinCompletarReferencias().then(value => {
       setLoading(false);
       setPublicaciones(value.articulos);
     });
@@ -348,7 +348,7 @@ function Referencias() {
         <Col md="12">
           <Card className="strpied-tabled-with-hover">
             <Card.Header>
-              <Card.Title as="h4">Publicaciones</Card.Title>
+              <Card.Title as="h4">Publicaciones Pendientes Obtención Detalle Referencia</Card.Title>
               <p className="card-category">
                 Investigadores con filiación a la Universidad de Cuenca
               </p>
