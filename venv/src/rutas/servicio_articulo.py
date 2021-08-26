@@ -2,6 +2,7 @@ from flask import Blueprint
 from flask import request
 from controladores.ArticuloController import listaArticulos, asignarMedioPublicacion, insertarArticulo, eliminarArticulo, listaArticulosMineria, listaArticulosSinReferencias
 from controladores.ArticuloController import numeroArticulosIngresados, numeroArticulosNoTienenReferencias, obtenerDetalleClusterCuartilFI, actualizarArticulo
+from controladores.ArticuloController import listaArticulosSinCompletarReferencias
 servicio_articulo= Blueprint('servicio_articulo', __name__)
 @servicio_articulo.route('/insertar', methods=['POST']) 
 def insertar():
@@ -15,6 +16,10 @@ def listar():
 @servicio_articulo.route('/listarArticulosSinReferencias', methods=['GET']) 
 def listarPublicacionesSinReferencias():
     return listaArticulosSinReferencias()
+
+@servicio_articulo.route('/listarArticulosSinCompletarReferencias', methods=['GET']) 
+def listarPublicacionesSinCompletarReferencias():
+    return listaArticulosSinCompletarReferencias()
 
 @servicio_articulo.route('/asignarMedioPublicacion', methods=['GET']) 
 def asignar():

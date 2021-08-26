@@ -1,5 +1,7 @@
+from sqlalchemy import func
 from modelos.Articulo import Articulo
 from modelos.Referencia import Referencia
+from modelos.DetalleReferencia import DetalleReferencia 
 from modelos.BaseDatosDigital import BaseDatosDigital
 from modelos.MedioPublicacion import MedioPublicacion
 from modelos.AreaFrascati import AreaFrascati
@@ -203,10 +205,30 @@ def listaArticulos():
         .join(MedioPublicacion, Articulo.id_medio_publicacion == MedioPublicacion.id_medio_publicacion)
         .join(AreaFrascati, Articulo.id_area_frascati == AreaFrascati.id_area_frascati )
         .join(AreaUnesco, Articulo.id_area_unesco == AreaUnesco.id_area_unesco)).all()
-    #db.session.close()
-    #db.session.remove()
+
     articulos = []
     for articulo in articulosRespuesta:
+        articulos.append(dict(articulo)) # Serializo cada fila
+    return make_response(jsonify({"articulos": articulos}))
+
+def listaArticulosSinCompletarReferencias():
+    count_ = func.count('*')
+    referenciaRespuesta = (db.session.query(Articulo.id_articulo, count_.label('count')).filter((Articulo.id_articulo == Referencia.id_articulo))
+    .group_by(Articulo.id_articulo)).subquery()
+
+    articulosRespuesta = (db.session.query(referenciaRespuesta, Referencia, DetalleReferencia).filter((referenciaRespuesta.c.id_articulo == Referencia.id_articulo) & (Referencia.id_referencia == DetalleReferencia.id_referencia))
+    .group_by(referenciaRespuesta.c.id_articulo)
+    .having(count_ != referenciaRespuesta.c.count)).subquery()
+
+    respuesta = (db.session.query(articulosRespuesta, Articulo, BaseDatosDigital, MedioPublicacion, AreaFrascati, AreaUnesco).filter(articulosRespuesta.c.id_articulo == Articulo.id_articulo)
+        .with_entities(Articulo.id_articulo, Articulo.nombres, Articulo.orden_autor, Articulo.titulo, Articulo.anio_publicacion, Articulo.doi, BaseDatosDigital.nombre_base_datos_digital, Articulo.tipo_publicacion, Articulo.url_dspace,Articulo.enlace_documento, MedioPublicacion.nombre, AreaUnesco.descripcion_unesco, AreaFrascati.descripcion, Articulo.cuartil)
+        .join(BaseDatosDigital, Articulo.id_base_datos_digital == BaseDatosDigital.id_base_datos_digital)
+        .join(MedioPublicacion, Articulo.id_medio_publicacion == MedioPublicacion.id_medio_publicacion)
+        .join(AreaFrascati, Articulo.id_area_frascati == AreaFrascati.id_area_frascati )
+        .join(AreaUnesco, Articulo.id_area_unesco == AreaUnesco.id_area_unesco)).all()
+    
+    articulos = []
+    for articulo in respuesta:
         articulos.append(dict(articulo)) # Serializo cada fila
     return make_response(jsonify({"articulos": articulos}))
 
@@ -220,8 +242,6 @@ def listaArticulosSinReferencias():
         .join(AreaFrascati, Articulo.id_area_frascati == AreaFrascati.id_area_frascati )
         .join(AreaUnesco, Articulo.id_area_unesco == AreaUnesco.id_area_unesco)).all()
 
-    #db.session.close()
-    #db.session.remove()
     articulos = []
     for articulo in articulosRespuesta:
         articulos.append(dict(articulo)) # Serializo cada fila
