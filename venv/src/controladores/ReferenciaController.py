@@ -246,23 +246,29 @@ def insertarReferenciaAutomaticoScopus(nuevaReferencia):
                 ab = AbstractRetrieval(doi, view='FULL')
                 refs = ab.references
                 df = pd.DataFrame(refs)
-                for row in df.itertuples(index=True, name='Pandas'):
-                    reference = row.fulltext
-                    titulo = row.title
-                    autores = row.authors
-                    medioPublicacion = row.sourcetitle
-                    año = int(row.publicationyear)
-                    numerocitaciones = 0
-                    if row.citedbycount == None:
-                        numerocitaciones = 0
-                    else:
-                        numerocitaciones = int(row.citedbycount)
-
-                    get_referencia = Referencia.query.filter((Referencia.id_articulo == nuevaReferencia['id_articulo']) & (Referencia.referencia == reference))
+                numeroReferenciasAPI = len(df.itertuples(index=True, name='Pandas'))
+                if(numeroReferenciasAPI > 0):
+                    get_referencia = Referencia.query.filter((Referencia.id_articulo == nuevaReferencia['id_articulo']))
                     referencia_schema = ReferenciaSchema(many=True)
                     referencia = referencia_schema.dump(get_referencia)
                     numeroReferencias = len(referencia)
-                    if numeroReferencias == 0:
+
+                    if numeroReferencias > 0:
+                        print('Eliminar Referencias por Id del Articulo...')
+
+                    for row in df.itertuples(index=True, name='Pandas'):
+                        reference = row.fulltext
+                        titulo = row.title
+                        autores = row.authors
+                        medioPublicacion = row.sourcetitle
+                        año = int(row.publicationyear)
+                        numerocitaciones = 0
+                        if row.citedbycount == None:
+                            numerocitaciones = 0
+                        else:
+                            numerocitaciones = int(row.citedbycount)
+
+                      
                         Referencia(nuevaReferencia['id_articulo'], reference).create() # Ingreso primero la referencia
                         get_referencias = Referencia.query.filter((Referencia.id_articulo == nuevaReferencia['id_articulo']) & (Referencia.referencia == reference))
                         referencias_schema = ReferenciaSchema(many=True)
@@ -285,9 +291,7 @@ def insertarReferenciaAutomaticoScopus(nuevaReferencia):
                         año, 
                         medioPublicacion, 
                         '').create()
-                    else:
-                        return make_response(jsonify({"respuesta": {"mensajes":[{"error": "True", "mensaje": "Ya existen referencias ingresadas previamente"}], "error":"False"}})) 
-                return make_response(jsonify({"respuesta": {"mensajes":[{"error": "False", "mensaje": "Referencias ingresadas correctamente"}], "error":"False"}}))
+                    return make_response(jsonify({"respuesta": {"mensajes":[{"error": "False", "mensaje": "Referencias ingresadas correctamente"}], "error":"False"}}))
             except:
                 try:
                     print("Buscando por titulo alternativo..")
@@ -296,23 +300,29 @@ def insertarReferenciaAutomaticoScopus(nuevaReferencia):
                     ab = AbstractRetrieval(titulo_alternativo, view='FULL')
                     refs = ab.references
                     df = pd.DataFrame(refs)
-                    for row in df.itertuples(index=True, name='Pandas'):
-                        reference = row.fulltext
-                        titulo = row.title
-                        autores = row.authors
-                        medioPublicacion = row.sourcetitle
-                        año = int(row.publicationyear)
-                        numerocitaciones = 0
-                        if row.citedbycount == None:
-                            numerocitaciones = 0
-                        else:
-                            numerocitaciones = int(row.citedbycount)
-
-                        get_referencia = Referencia.query.filter((Referencia.id_articulo == nuevaReferencia['id_articulo']) & (Referencia.referencia == reference))
+                    numeroReferenciasAPI = len(df.itertuples(index=True, name='Pandas'))
+                    if(numeroReferenciasAPI > 0):
+                        get_referencia = Referencia.query.filter((Referencia.id_articulo == nuevaReferencia['id_articulo']))
                         referencia_schema = ReferenciaSchema(many=True)
                         referencia = referencia_schema.dump(get_referencia)
                         numeroReferencias = len(referencia)
-                        if numeroReferencias == 0:
+
+                        if numeroReferencias > 0:
+                            print('Eliminar Referencias por Id del Articulo...')
+
+                        for row in df.itertuples(index=True, name='Pandas'):
+                            reference = row.fulltext
+                            titulo = row.title
+                            autores = row.authors
+                            medioPublicacion = row.sourcetitle
+                            año = int(row.publicationyear)
+                            numerocitaciones = 0
+                            if row.citedbycount == None:
+                                numerocitaciones = 0
+                            else:
+                                numerocitaciones = int(row.citedbycount)
+
+                        
                             Referencia(nuevaReferencia['id_articulo'], reference).create() # Ingreso primero la referencia
                             get_referencias = Referencia.query.filter((Referencia.id_articulo == nuevaReferencia['id_articulo']) & (Referencia.referencia == reference))
                             referencias_schema = ReferenciaSchema(many=True)
@@ -335,9 +345,7 @@ def insertarReferenciaAutomaticoScopus(nuevaReferencia):
                             año, 
                             medioPublicacion, 
                             '').create()
-                        else:
-                            return make_response(jsonify({"respuesta": {"mensajes":[{"error": "True", "mensaje": "Ya existen referencias ingresadas previamente"}], "error":"False"}})) 
-                    return make_response(jsonify({"respuesta": {"mensajes":[{"error": "False", "mensaje": "Referencias ingresadas correctamente"}], "error":"False"}}))
+                        return make_response(jsonify({"respuesta": {"mensajes":[{"error": "False", "mensaje": "Referencias ingresadas correctamente"}], "error":"False"}}))
                 except:
                     try:
                         print("Buscando por titulo...")
@@ -346,23 +354,29 @@ def insertarReferenciaAutomaticoScopus(nuevaReferencia):
                         ab = AbstractRetrieval(titulo, view='FULL')
                         refs = ab.references
                         df = pd.DataFrame(refs)
-                        for row in df.itertuples(index=True, name='Pandas'):
-                            reference = row.fulltext
-                            titulo = row.title
-                            autores = row.authors
-                            medioPublicacion = row.sourcetitle
-                            año = int(row.publicationyear)
-                            numerocitaciones = 0
-                            if row.citedbycount == None:
-                                numerocitaciones = 0
-                            else:
-                                numerocitaciones = int(row.citedbycount)
-
-                            get_referencia = Referencia.query.filter((Referencia.id_articulo == nuevaReferencia['id_articulo']) & (Referencia.referencia == reference))
+                        numeroReferenciasAPI = len(df.itertuples(index=True, name='Pandas'))
+                        if(numeroReferenciasAPI > 0):
+                            get_referencia = Referencia.query.filter((Referencia.id_articulo == nuevaReferencia['id_articulo']))
                             referencia_schema = ReferenciaSchema(many=True)
                             referencia = referencia_schema.dump(get_referencia)
                             numeroReferencias = len(referencia)
-                            if numeroReferencias == 0:
+
+                            if numeroReferencias > 0:
+                                print('Eliminar Referencias por Id del Articulo...')
+
+                            for row in df.itertuples(index=True, name='Pandas'):
+                                reference = row.fulltext
+                                titulo = row.title
+                                autores = row.authors
+                                medioPublicacion = row.sourcetitle
+                                año = int(row.publicationyear)
+                                numerocitaciones = 0
+                                if row.citedbycount == None:
+                                    numerocitaciones = 0
+                                else:
+                                    numerocitaciones = int(row.citedbycount)
+
+                            
                                 Referencia(nuevaReferencia['id_articulo'], reference).create() # Ingreso primero la referencia
                                 get_referencias = Referencia.query.filter((Referencia.id_articulo == nuevaReferencia['id_articulo']) & (Referencia.referencia == reference))
                                 referencias_schema = ReferenciaSchema(many=True)
@@ -385,9 +399,7 @@ def insertarReferenciaAutomaticoScopus(nuevaReferencia):
                                 año, 
                                 medioPublicacion, 
                                 '').create()
-                            else:
-                                return make_response(jsonify({"respuesta": {"mensajes":[{"error": "True", "mensaje": "Ya existen referencias ingresadas previamente"}], "error":"False"}})) 
-                        return make_response(jsonify({"respuesta": {"mensajes":[{"error": "False", "mensaje": "Referencias ingresadas correctamente"}], "error":"False"}}))
+                            return make_response(jsonify({"respuesta": {"mensajes":[{"error": "False", "mensaje": "Referencias ingresadas correctamente"}], "error":"False"}}))
                     except:
                         mensaje = {
                             "error": "True",
