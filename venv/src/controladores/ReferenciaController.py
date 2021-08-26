@@ -119,6 +119,16 @@ def eliminarReferencia(id_referencia):
     Referencia.delete(referencia)
     return make_response(jsonify({"respuesta": {"valor":"Referencia eliminada correctamente.", "error":"False"}}))
 
+def eliminarReferenciaPorIdArticulo(id_articulo):
+    referencias = listaReferenciasPorIdArticulo(id_articulo)
+    listaReferencias = referencias.json['referencias']
+
+    for referencia in listaReferencias:
+        referenciaEliminar = Referencia.query.get(referencia['id_referencia'])
+        Referencia.delete(referenciaEliminar)
+
+    return make_response(jsonify({"respuesta": {"valor":"Referencias eliminadas correctamente.", "error":"False"}}))
+
 def obtenerDetalleReferenciaIndividual(referenciaBuscar):
     """id_referencia = referenciaBuscar['id_referencia']
     referenciaString = referenciaBuscar['referencia']
@@ -254,7 +264,7 @@ def insertarReferenciaAutomaticoScopus(nuevaReferencia):
                     numeroReferencias = len(referencia)
 
                     if numeroReferencias > 0:
-                        print('Eliminar Referencias por Id del Articulo...')
+                        eliminarReferenciaPorIdArticulo(nuevaReferencia['id_articulo'])
 
                     for row in df.itertuples(index=True, name='Pandas'):
                         reference = row.fulltext
@@ -308,7 +318,7 @@ def insertarReferenciaAutomaticoScopus(nuevaReferencia):
                         numeroReferencias = len(referencia)
 
                         if numeroReferencias > 0:
-                            print('Eliminar Referencias por Id del Articulo...')
+                            eliminarReferenciaPorIdArticulo(nuevaReferencia['id_articulo'])
 
                         for row in df.itertuples(index=True, name='Pandas'):
                             reference = row.fulltext
@@ -362,7 +372,7 @@ def insertarReferenciaAutomaticoScopus(nuevaReferencia):
                             numeroReferencias = len(referencia)
 
                             if numeroReferencias > 0:
-                                print('Eliminar Referencias por Id del Articulo...')
+                                eliminarReferenciaPorIdArticulo(nuevaReferencia['id_articulo'])
 
                             for row in df.itertuples(index=True, name='Pandas'):
                                 reference = row.fulltext
