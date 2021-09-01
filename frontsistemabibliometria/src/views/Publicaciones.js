@@ -31,6 +31,7 @@ import { Link } from "react-router-dom";
 import { tablaPaginacionService } from '../utils/tablaPaginacion.service';
 import { FormGroup } from "reactstrap";
 import *as XLSX from 'xlsx';
+import * as FileSaver from "file-saver";
 import { baseDatosDigitalService } from "_services/baseDatosDigital.service";
 import { areaFrascatiService } from "_services/areaFrascati.service";
 import { areaUnescoService } from "_services/areaUnesco.service";
@@ -46,6 +47,8 @@ const override = css`
 
 function Publicaciones() {
   const [modalIsOpen, setModalIsOpen] = React.useState(false);
+  const [modalIsOpenEliminar, setModalIsOpenEliminar] = React.useState(false);
+  const [idArticuloEliminar, setIdArticuloEliminar] = React.useState('');
 
   /**Spinner */
   let [loading, setLoading] = React.useState(false);
@@ -339,6 +342,7 @@ function Publicaciones() {
   const handleEliminarArticulo = (id_articulo) => {
     setLoading(true);
     publicacionService.eliminar(id_articulo).then(value => {
+      closeModalEliminar();
       setLoading(false);
       if(value.respuesta.error == "False"){
         handleCargarDatosPublicaciones();
@@ -356,13 +360,15 @@ function Publicaciones() {
         setLoading(false);
         if (value.respuesta.error == "False") {
           if(value.respuesta.mensajes.length > 0){
-            for( var i = 0; i< value.respuesta.mensajes.length; i++){
+            exportToCSV(value.respuesta.mensajes, "observacionesIngresoPublicaciones");
+            /*for( var i = 0; i< value.respuesta.mensajes.length; i++){
               if(value.respuesta.mensajes[i].error== "False"){
                 notify("tr", value.respuesta.mensajes[i].mensaje, "primary");
               }else{
                 notify("tr", value.respuesta.mensajes[i].mensaje, "danger");
               }
-            }
+            }*/
+            notify("tc", "Revise las observaciones colocadas en el archivo de excel del ingreso de las publicaciones.", "primary");
           }
         } 
         handleCargarDatosPublicaciones();
@@ -379,6 +385,15 @@ function Publicaciones() {
 
   function openModal() {
     setModalIsOpen(true);
+  }
+
+  function closeModalEliminar() {
+    setModalIsOpenEliminar(false);
+  }
+
+  function openModalEliminar(id_articulo) {
+    setIdArticuloEliminar(id_articulo);
+    setModalIsOpenEliminar(true);
   }
 
   function handleCargarDetallePublicacion(id_articulo, nombres, titulo, anio_publicacion, tipo_publicacion, cuartil, doi) {
@@ -436,7 +451,17 @@ function Publicaciones() {
       await handleCargarDatosPublicacionesSinCompletarReferencias();
     }
   }
+  const fileType =
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+  const fileExtension = ".xlsx";
 
+  const exportToCSV = (apiData, fileName) => {
+    const ws = XLSX.utils.json_to_sheet(apiData);
+    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const data = new Blob([excelBuffer], { type: fileType });
+    FileSaver.saveAs(data, fileName + fileExtension);
+  };
 
   React.useEffect(() => {
     handleCargarDatosPublicaciones();
@@ -535,7 +560,7 @@ function Publicaciones() {
                           <a href={item.enlace_documento != null ? item.enlace_documento : item.url_dspace} target="_blank"><i className="fas fa-external-link-alt"></i>Abrir documento</a>
                         </td>
                         <td width="5%"><Link to="#" id="actualizarPublicacion" className="link col-sm-12 col-md-3" onClick={() => handleCargarDetallePublicacion(item.id_articulo, item.nombres, item.titulo, item.anio_publicacion, item.tipo_publicacion, item.cuartil, item.doi)} ><i className="fas fa-pen-square fa-2x"></i></Link>
-                        <Link to="#" id="eliminarArticulo" className="link col-sm-12 col-md-3" onClick={()=>handleEliminarArticulo(item.id_articulo)}><i className="fas fa-trash-alt fa-2x"></i></Link></td>
+                        <Link to="#" id="eliminarArticulo" className="link col-sm-12 col-md-3" onClick={()=>openModalEliminar(item.id_articulo)}><i className="fas fa-trash-alt fa-2x"></i></Link></td>
                       </tr>
                     ))}
                   </tbody>
@@ -812,6 +837,38 @@ function Publicaciones() {
               onClick={() => actualizarPublicacion()}
             >
               Grabar
+            </Button>
+          </div>
+        </Modal>
+
+        <Modal
+          className="modal modal-primary"
+          show={modalIsOpenEliminar}
+        >
+          <Modal.Header className="justify-content-center">
+            <div className="modal-profile">
+              <i className="nc-icon nc-single-copy-04"></i>
+            </div>
+          </Modal.Header>
+          <Modal.Body className="text-center">
+            <p>¿ Esta seguro de eliminar la publicación ?</p>
+          </Modal.Body>
+          <div className="modal-footer">
+            <Button
+              className="btn-simple"
+              type="button"
+              variant="link"
+              onClick={() => closeModalEliminar()}
+            >
+              Regresar
+            </Button>
+            <Button
+              className="btn-simple"
+              type="button"
+              variant="link"
+              onClick={() => handleEliminarArticulo(idArticuloEliminar)}
+            >
+              SI
             </Button>
           </div>
         </Modal>
