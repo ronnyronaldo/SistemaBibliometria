@@ -68,26 +68,53 @@ def insertarArticulo(nuevosArticulos):
     for articulo in articulos:
         try: 
             baseDatos = articulo['nombre']
-            areaFrascati = articulo['nombre_area_frascati_especifico']
-            areaUnesco =  articulo['nombre_area_unesco_especifico']
-            medioPublicacion =  articulo['nombre_medio_publicacion']
-            titulo = articulo['titulo']
+            try:
+                areaFrascati = articulo['nombre_area_frascati_especifico']
+                try:
+                    areaUnesco =  articulo['nombre_area_unesco_especifico']
+                    try:
+                        medioPublicacion =  articulo['nombre_medio_publicacion']
+                        try:
+                            titulo = articulo['titulo']
+                        except:
+                            mensaje = {
+                                "error": "True",
+                                "mensaje": 'Titulo de la Publicación(titulo) campo requerido.'
+                            }
+                            mensajesRespuesta.append(mensaje)
+                    except:
+                        mensaje = {
+                            "error": "True",
+                            "mensaje": 'Medio de Publicación(nombre_medio_publicacion) campo requerido.'
+                        }
+                        mensajesRespuesta.append(mensaje)
+                except: 
+                    mensaje = {
+                        "error": "True",
+                        "mensaje": 'Área Unesco Específico(nombre_area_unesco_especifico) campo requerido.'
+                    }
+                    mensajesRespuesta.append(mensaje)
+            except:
+                mensaje = {
+                        "error": "True",
+                        "mensaje": 'Área Frascati Específico(nombre_area_frascati_especifico) campo requerido.'
+                    }
+                mensajesRespuesta.append(mensaje)
         except:
             mensaje = {
                         "error": "True",
-                        "mensaje": 'Los campos del archivo no se encuentran correctos.'
+                        "mensaje": 'Base de Datos(nombre) campo requerido.'
                     }
             mensajesRespuesta.append(mensaje)
-            return make_response(jsonify({"respuesta": {"mensajes":mensajesRespuesta, "error":"False"}}))
             
         resultado_base_datos_digital = validarBaseDatosDigitalPorNombre(baseDatos).json['base_datos_digital']
-        print(resultado_base_datos_digital)
+        #print(resultado_base_datos_digital)
         resultado_area_frascati = validarAreaFrascatiPorNombre(areaFrascati).json['area_frascati']
-        print(resultado_area_frascati)
+        #print(resultado_area_frascati)
         resultado_area_unesco = validarAreaUnescoPorNombre(areaUnesco).json['area_unesco']
-        print(resultado_area_unesco)
+        #print(resultado_area_unesco)
         resultado_medio_publicacion = verificaMedioPublicacionPorNombre(medioPublicacion).json['mediosPublicacion']
-        print(resultado_medio_publicacion)
+        #print(resultado_medio_publicacion)
 
         if len(resultado_base_datos_digital) == 1:
             id_base_datos_digital = resultado_base_datos_digital[0]['id_base_datos_digital']
@@ -154,42 +181,38 @@ def insertarArticulo(nuevosArticulos):
                             nombre_area_frascati_especifico,
                             nombre_area_unesco_especifico
                             ).create()
-                            
-                            mensaje = {
-                                "error": "False",
-                                "mensaje": 'Artículo ingresado correctamente: '+titulo
-                            }
-                            mensajesRespuesta.append(mensaje)
-                        else:
-                            mensaje = {
-                                "error": "True",
-                                "mensaje": 'La publicacion ya esta registrada: '+ titulo
-                            }
-                            mensajesRespuesta.append(mensaje)
                     else:
                         mensaje = {
+                            "titulo": titulo,
                             "error": "True",
                             "mensaje": 'No se ha registrado el medio de publicación: '+ medioPublicacion
                         }
                         mensajesRespuesta.append(mensaje)
+                        #return make_response(jsonify({"respuesta": {"mensajes":mensajesRespuesta, "error":"False"}}))
                 else:
                     mensaje = {
+                            "titulo": titulo,
                             "error": "True",
                             "mensaje": 'No se ha registrado el área unesco: ' + areaUnesco
                         }
                     mensajesRespuesta.append(mensaje)
+                    #return make_response(jsonify({"respuesta": {"mensajes":mensajesRespuesta, "error":"False"}}))
             else:
                 mensaje = {
+                        "titulo": titulo,
                         "error": "True",
                         "mensaje": 'No se ha registrado el área frascati: ' + areaFrascati
                     }
                 mensajesRespuesta.append(mensaje)
+                #return make_response(jsonify({"respuesta": {"mensajes":mensajesRespuesta, "error":"False"}}))
         else:
             mensaje = {
+                    "titulo": titulo,
                     "error": "True",
-                    "mensaje": 'No se encuentra registrado la base de datos digital: ' + baseDatos
+                    "mensaje": 'No se ha considerado para el estudio la base de datos digital: ' + baseDatos
                 }
             mensajesRespuesta.append(mensaje)
+            #return make_response(jsonify({"respuesta": {"mensajes":mensajesRespuesta, "error":"False"}}))
     return make_response(jsonify({"respuesta": {"mensajes":mensajesRespuesta, "error":"False"}}))
 
 def extraerDatos(articulo, campo):
@@ -301,10 +324,12 @@ def asignarMedioPublicacion():
     return make_response(jsonify({"articulos": ""}))
 
 def eliminarArticulo(id_articulo):
-    articulo = Articulo.query.get(id_articulo)
-    Articulo.delete(articulo)
-    return make_response(jsonify({"respuesta": {"valor":"Publicación eliminada correctamente.", "error":"False"}}))
-
+    try:
+        articulo = Articulo.query.get(id_articulo)
+        Articulo.delete(articulo)
+        return make_response(jsonify({"respuesta": {"valor":"Publicación eliminada correctamente.", "error":"False"}}))
+    except:
+        return make_response(jsonify({"respuesta": {"valor":"No se puede eliminar la publicación ya que hay datos relacionados con la misma.", "error":"True"}}))
 
 def actualizarArticulo(publicacion):
     articulo = Articulo.query.get_or_404(publicacion['id_articulo'])
