@@ -431,7 +431,8 @@ function Publicaciones() {
       }).then(value => {
         if(value.respuesta.error== "False"){
           notify("tr", value.respuesta.valor, "primary");
-          handleCargarDatosPublicaciones();
+          //handleCargarDatosPublicaciones();
+          handleCargarDatosPublicacionesPorFiltro();
         }
         closeModal();
       })
