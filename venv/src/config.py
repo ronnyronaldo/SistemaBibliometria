@@ -1,9 +1,11 @@
+from sqlalchemy.pool import QueuePool
 import os
 SECRET_KEY = os.urandom(32)
 # Grabs the folder where the script runs.
 basedir = os.path.abspath(os.path.dirname(__file__))
 # Enable debug mode.
 DEBUG = True
+"""
 # Connect to the database
 SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://admintl@servidormysqltl:tania123.@servidormysqltl.mysql.database.azure.com:3306/bd_bibliometria'
 
@@ -27,4 +29,4 @@ MYSQL_DATABASE_DB= 'bd_bibliometria'
 MYSQL_DATABASE_HOST = 'localhost'
 #SQLALCHEMY_POOL_SIZE = 10
 #SQLALCHEMY_POOL_TIMEOUT = 300
-SQLALCHEMY_MAX_OVERFLOW = -1"""
+SQLALCHEMY_MAX_OVERFLOW = -1

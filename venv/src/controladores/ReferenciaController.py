@@ -256,7 +256,7 @@ def insertarReferenciaAutomaticoScopus(nuevaReferencia):
                 ab = AbstractRetrieval(doi, view='FULL')
                 refs = ab.references
                 df = pd.DataFrame(refs)
-                numeroReferenciasAPI = len(df.itertuples(index=True, name='Pandas'))
+                numeroReferenciasAPI = len(df.index)
                 if(numeroReferenciasAPI > 0):
                     get_referencia = Referencia.query.filter((Referencia.id_articulo == nuevaReferencia['id_articulo']))
                     referencia_schema = ReferenciaSchema(many=True)
@@ -271,7 +271,12 @@ def insertarReferenciaAutomaticoScopus(nuevaReferencia):
                         titulo = row.title
                         autores = row.authors
                         medioPublicacion = row.sourcetitle
-                        año = int(row.publicationyear)
+                        año = 0
+                        if row.publicationyear == None:
+                            año = 0
+                        else:
+                            año = int(row.publicationyear)
+
                         numerocitaciones = 0
                         if row.citedbycount == None:
                             numerocitaciones = 0
@@ -302,7 +307,8 @@ def insertarReferenciaAutomaticoScopus(nuevaReferencia):
                         medioPublicacion, 
                         '').create()
                     return make_response(jsonify({"respuesta": {"mensajes":[{"error": "False", "mensaje": "Referencias ingresadas correctamente"}], "error":"False"}}))
-            except:
+            except Exception as e:
+                print(e)
                 try:
                     print("Buscando por titulo alternativo..")
                     titulo_alternativo = respuestaArticulo.json['articulo'][0]['titulo_alternativo']
