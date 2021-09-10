@@ -251,7 +251,7 @@ function Dashboard() {
               zMin: 0,
               zMax: 30,
               layoutAlgorithm: {
-                gravitationalConstant: 0.02,
+                gravitationalConstant: 0.05,
                 splitSeries: false/*,
                 seriesInteraction: false,
                 dragBetweenSeries: true,
