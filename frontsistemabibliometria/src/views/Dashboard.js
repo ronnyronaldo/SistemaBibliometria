@@ -81,7 +81,7 @@ function Dashboard() {
     idArticulo: 0,
     referencia: ""
   });
-
+  const [opcionGrafico, setOpcionGrafico] = React.useState('OA');
   const notify = (place, mensaje, type) => {
     //var color = Math.floor(Math.random() * 5 + 1);
     //var type = "danger";
@@ -184,7 +184,7 @@ function Dashboard() {
           height: '100%'
       },
       title: {
-          text: 'Numero de publicaciones por Autor según se orden de autor'
+          text: 'Número de publicaciones por autor distribuidos por orden de autor'
       },
       tooltip: {
           useHTML: true,
@@ -238,7 +238,7 @@ function Dashboard() {
           height: '100%'
       },
       title: {
-          text: 'Numero de publicaciones totales por Autor'
+          text: 'Número de publicaciones totales por autor'
       },
       tooltip: {
           useHTML: true,
@@ -246,16 +246,16 @@ function Dashboard() {
       },
       plotOptions: {
           packedbubble: {
-              minSize: '20%',
-              maxSize: '100%',
+              minSize: '1%',
+              maxSize: '70%',
               zMin: 0,
-              zMax: 100,
+              zMax: 30,
               layoutAlgorithm: {
-                gravitationalConstant: 0.05,
-                splitSeries: true,
+                gravitationalConstant: 0.02,
+                splitSeries: false/*,
                 seriesInteraction: false,
                 dragBetweenSeries: true,
-                parentNodeLimit: true
+                parentNodeLimit: true*/
               },
               dataLabels: {
                   enabled: true,
@@ -263,7 +263,7 @@ function Dashboard() {
                   filter: {
                       property: 'y',
                       operator: '>',
-                      value: 9
+                      value: 3
                   },
                   style: {
                       color: 'black',
@@ -279,7 +279,7 @@ function Dashboard() {
       series: [{name: 'Entre 1 y 5 Pub',data:muyBaja},
       {name: 'Entre 6 y 10 Pub', data: baja },
       {name: 'Entre 11 y 16 Pub', data: moderada },
-      {name: 'De 17 Pub en adelante', data: alta }]
+    {name: 'De 17 Pub en adelante', data: alta }]
   });
   
   }
@@ -312,7 +312,7 @@ function Dashboard() {
     });
   }
   /**Carga los datos para la red de autores */
-  async function handleGrafo() {
+  async function handleGrafoOrdenAutor() {
     setLoading(true);
     
     await clusteringService.ejecutarDatosChart().then(value => {
@@ -362,7 +362,11 @@ function Dashboard() {
       graficarGrafo(listaPrimerAutor,listaSegundoAutor,listaTercerAutor,listaCuartoAutor,listaQuintoAutor);
       setLoading(false);
     });
+  }
 
+  /**Carga los datos para la red de autores */
+  async function handleGrafoTotalPublicaciones() {
+    setLoading(true);
     await clusteringService.ejecutarDatosChartTotalAutores().then(value => {
       let objeto = JSON.parse(value);
       let nombres = objeto.nombre;
@@ -404,6 +408,7 @@ function Dashboard() {
       setLoading(false);
     });
   }
+
   async function handleCalcularPrcentajesLeyBradford(datos){
     let datosYPorcentajes = [];
     let suma = 0;
@@ -493,6 +498,18 @@ function Dashboard() {
       notify("tr", 'Solo puede seleccionar un filtro de área (Frascati o Unesco).', "danger");
     }
   }
+  async function handleCargarDatosGraficosBurbujas(){
+    let opcionGraficoBurbujas = document.getElementById("OpcionesGarficoBurbujas").value;
+    if(opcionGraficoBurbujas == 'OA'){
+      setOpcionGrafico('OA');
+      handleGrafoOrdenAutor();
+    }
+
+    if(opcionGraficoBurbujas == 'NP'){
+      setOpcionGrafico('NP');
+      handleGrafoTotalPublicaciones();
+    }
+  }
   React.useEffect(() => {
     // document.getElementById("idOrdenAutor").value=1;
     // document.getElementById("idAreaUnescoGrafo").value=1;
@@ -500,7 +517,7 @@ function Dashboard() {
     // handleCargarRedesDeAutores();
     handleAreasUnesco();
     handleAreasFrascati();
-    handleGrafo();
+    handleGrafoOrdenAutor();
     // handleCargarRedesDeAutoresAreas();
     // handleCargarRedesDeAutoresAreasOrden();
   }, []);
@@ -592,14 +609,27 @@ function Dashboard() {
         <Row>
           <Col md="12">
             <Card>
-              <Card.Header>
-                <Card.Title as="h4">Redes de Autores</Card.Title>
-                <div id="redes-autores-grafo" ></div>
-              </Card.Header>
-              <Card.Header>
-                <Card.Title as="h4">Publicaciones de Autores</Card.Title>
-                <div id="redes-autores-grafo-total" ></div>
-              </Card.Header>
+                  <Col className="pr-1" md="6">
+                    <Form.Group>
+                      <label>Opciones de Gráfico de Burbujas</label>
+                      <Form.Row>
+                        <select className="form-control" id="OpcionesGarficoBurbujas" onChange={handleCargarDatosGraficosBurbujas}>
+                          <option value="OA">Gráfico de Búrbujas por Orden de Autor</option>
+                          <option value="NP">Gráfico por Número de Publicaciones por Autor</option>
+                        </select>
+                      </Form.Row>
+                    </Form.Group>
+                  </Col>
+              {opcionGrafico == 'OA' && (
+                <Card.Header>
+                  <div id="redes-autores-grafo" ></div>
+                </Card.Header>
+              )}
+              {opcionGrafico == 'NP' && (
+                <Card.Header>
+                  <div id="redes-autores-grafo-total" ></div>
+                </Card.Header>
+              )}
               <Card.Body>
               <Row>
                 <Col className="pr-1" md="4">
