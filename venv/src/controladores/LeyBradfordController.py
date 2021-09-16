@@ -4,11 +4,91 @@ from sqlalchemy import func
 from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
 from modelos.DetalleReferencia import DetalleReferencia 
+from modelos.MedioPublicacion import MedioPublicacion 
 from modelos.Articulo import Articulo 
 from modelos.Referencia import Referencia 
 
 db = SQLAlchemy()
+# Medios de Publicacion de los autores de la Universidad de Cuenca
+def numeroMediosPublicacionPropiasPorAnio(anio_publicacion_desde, anio_publicacion_hasta):
+    count_ = func.count('*')
+    referenciaRespuesta = (db.session.query(Articulo.id_medio_publicacion, count_, Articulo.id_articulo, MedioPublicacion.nombre)
+    .join(MedioPublicacion, Articulo.id_medio_publicacion == MedioPublicacion.id_medio_publicacion)
+    .filter((Articulo.anio_publicacion >= anio_publicacion_desde) & (Articulo.anio_publicacion <= anio_publicacion_hasta))
+    .group_by(Articulo.id_medio_publicacion)
+    .order_by(count_.desc())).all()
+    detalleReferencias = []
+    for detalleReferencia in referenciaRespuesta:
+        referencia = {"medioPublicacion": detalleReferencia[3], "contador": detalleReferencia[1], "id_articulo": detalleReferencia[2]}
+        detalleReferencias.append(dict(referencia)) # Serializo cada fila
+    return make_response(jsonify({"numeroMediosPublicacion": detalleReferencias}))
 
+def numeroMediosPublicacionPropias():
+    count_ = func.count('*')
+    referenciaRespuesta = (db.session.query(Articulo.id_medio_publicacion, count_, Articulo.id_articulo, MedioPublicacion.nombre)
+    .join(MedioPublicacion, Articulo.id_medio_publicacion == MedioPublicacion.id_medio_publicacion)
+    .group_by(Articulo.id_medio_publicacion)
+    .order_by(count_.desc())).all()
+    detalleReferencias = []
+    for detalleReferencia in referenciaRespuesta:
+        referencia = {"medioPublicacion": detalleReferencia[3], "contador": detalleReferencia[1], "id_articulo": detalleReferencia[2]}
+        detalleReferencias.append(dict(referencia)) # Serializo cada fila
+    return make_response(jsonify({"numeroMediosPublicacion": detalleReferencias}))
+
+def numeroMediosPublicacionPropiasAreaFrascati(id_area_frascati):
+    count_ = func.count('*')
+    referenciaRespuesta = (db.session.query(Articulo.id_medio_publicacion, count_, Articulo.id_articulo, MedioPublicacion.nombre)
+    .join(MedioPublicacion, Articulo.id_medio_publicacion == MedioPublicacion.id_medio_publicacion)
+    .filter(Articulo.id_area_frascati == id_area_frascati)
+    .group_by(Articulo.id_medio_publicacion)
+    .order_by(count_.desc())).all()
+    detalleReferencias = []
+    for detalleReferencia in referenciaRespuesta:
+        referencia = {"medioPublicacion": detalleReferencia[3], "contador": detalleReferencia[1], "id_articulo": detalleReferencia[2]}
+        detalleReferencias.append(dict(referencia)) # Serializo cada fila
+    return make_response(jsonify({"numeroMediosPublicacion": detalleReferencias}))
+
+def numeroMediosPublicacionPropiasAreaUnesco(id_area_unesco):
+    count_ = func.count('*')
+    referenciaRespuesta = (db.session.query(Articulo.id_medio_publicacion, count_, Articulo.id_articulo, MedioPublicacion.nombre)
+    .join(MedioPublicacion, Articulo.id_medio_publicacion == MedioPublicacion.id_medio_publicacion)
+    .filter(Articulo.id_area_unesco == id_area_unesco)
+    .group_by(Articulo.id_medio_publicacion)
+    .order_by(count_.desc())).all()
+    detalleReferencias = []
+    for detalleReferencia in referenciaRespuesta:
+        referencia = {"medioPublicacion": detalleReferencia[3], "contador": detalleReferencia[1], "id_articulo": detalleReferencia[2]}
+        detalleReferencias.append(dict(referencia)) # Serializo cada fila
+    return make_response(jsonify({"numeroMediosPublicacion": detalleReferencias}))
+
+def numeroMediosPublicacionPropiasAreaFrascatiPorAnio(anio_publicacion_desde, anio_publicacion_hasta, id_area_frascati):
+    count_ = func.count('*')
+    referenciaRespuesta = (db.session.query(Articulo.id_medio_publicacion, count_, Articulo.id_articulo, MedioPublicacion.nombre)
+    .join(MedioPublicacion, Articulo.id_medio_publicacion == MedioPublicacion.id_medio_publicacion)
+    .filter((Articulo.anio_publicacion >= anio_publicacion_desde) & (Articulo.anio_publicacion <= anio_publicacion_hasta) & (Articulo.id_area_frascati == id_area_frascati))
+    .group_by(Articulo.id_medio_publicacion)
+    .order_by(count_.desc())).all()
+    detalleReferencias = []
+    for detalleReferencia in referenciaRespuesta:
+        referencia = {"medioPublicacion": detalleReferencia[3], "contador": detalleReferencia[1], "id_articulo": detalleReferencia[2]}
+        detalleReferencias.append(dict(referencia)) # Serializo cada fila
+    return make_response(jsonify({"numeroMediosPublicacion": detalleReferencias}))
+
+
+def numeroMediosPublicacionPropiasAreaUnescoPorAnio(anio_publicacion_desde, anio_publicacion_hasta, id_area_unesco):
+    count_ = func.count('*')
+    referenciaRespuesta = (db.session.query(Articulo.id_medio_publicacion, count_, Articulo.id_articulo, MedioPublicacion.nombre)
+    .join(MedioPublicacion, Articulo.id_medio_publicacion == MedioPublicacion.id_medio_publicacion)
+    .filter((Articulo.anio_publicacion >= anio_publicacion_desde) & (Articulo.anio_publicacion <= anio_publicacion_hasta) & (Articulo.id_area_unesco == id_area_unesco))
+    .group_by(Articulo.id_medio_publicacion)
+    .order_by(count_.desc())).all()
+    detalleReferencias = []
+    for detalleReferencia in referenciaRespuesta:
+        referencia = {"medioPublicacion": detalleReferencia[3], "contador": detalleReferencia[1], "id_articulo": detalleReferencia[2]}
+        detalleReferencias.append(dict(referencia)) # Serializo cada fila
+    return make_response(jsonify({"numeroMediosPublicacion": detalleReferencias}))
+
+# Medios de Publicacion de las Referencias
 def numeroMediosPublicacionReferenicasPorAnio(anio_publicacion_desde, anio_publicacion_hasta):
     count_ = func.count('*')
     referenciaRespuesta = (db.session.query(DetalleReferencia.venue, count_, DetalleReferencia.id_referencia).filter((Articulo.anio_publicacion >= anio_publicacion_desde) & (Articulo.anio_publicacion <= anio_publicacion_hasta) & (Articulo.id_articulo == Referencia.id_articulo) & (Referencia.id_referencia == DetalleReferencia.id_referencia))
