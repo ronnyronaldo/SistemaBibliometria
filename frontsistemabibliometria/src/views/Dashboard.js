@@ -134,25 +134,25 @@ function Dashboard() {
   const [datosLeyBradford, setDatosLeyBradford] = React.useState([]);
   const handleCargarTotalesArticulosReferencias = () => {
     setLoading(true)
-    publicacionService.numeroArticulosIngresados().then(value =>{
+    publicacionService.numeroArticulosIngresados().then(value => {
       setNumeroPublicaciones(value.totalArticulos);
       setLoading(false)
     })
 
     setLoading(true)
-    publicacionService.numeroArticulosNoTienenReferencias().then(value =>{
+    publicacionService.numeroArticulosNoTienenReferencias().then(value => {
       setNumeroPublicacionesSinReferencias(value.numeroArticulosNoTienenReferencias);
       setLoading(false)
     })
 
     setLoading(true)
-    referenciaService.numeroReferencias().then(value =>{
+    referenciaService.numeroReferencias().then(value => {
       setNumeroReferencias(value.numeroReferenciasIngresadas);
       setLoading(false)
     })
 
     setLoading(true)
-    detalleReferenciaService.numeroDetalleReferencia().then(value =>{
+    detalleReferenciaService.numeroDetalleReferencia().then(value => {
       setNumeroDetalleReferencias(value.numeroDetalleReferenciaIngresadas);
       setLoading(false)
     })
@@ -176,127 +176,127 @@ function Dashboard() {
     });
   }
 
-  function graficarGrafo(primerAutor, segundoAutor,tercerAutor,cuartoAutor,quintoAutor){
-    
+  function graficarGrafo(primerAutor, segundoAutor, tercerAutor, cuartoAutor, quintoAutor) {
+
     Highcharts.chart('redes-autores-grafo', {
       chart: {
-          type: 'packedbubble',
-          height: '100%'
+        type: 'packedbubble',
+        height: '100%'
       },
       title: {
-          text: 'Número de publicaciones por autor distribuidos por orden de autor'
+        text: 'Número de publicaciones por autor distribuidos por orden de autor'
       },
       tooltip: {
-          useHTML: true,
-          pointFormat: '<b>{point.name}:</b> {point.value} Pub'
+        useHTML: true,
+        pointFormat: '<b>{point.name}:</b> {point.value} Pub'
       },
       plotOptions: {
-          packedbubble: {
-              minSize: '30%',
-              maxSize: '120%',
-              zMin: 0,
-              zMax: 10,
-              layoutAlgorithm: {
-                  splitSeries: false,
-                  gravitationalConstant: 0.02
-              },
-              dataLabels: {
-                  enabled: true,
-                  format: '{point.name}',
-                  filter: {
-                      property: 'y',
-                      operator: '>',
-                      value: 3
-                  },
-                  style: {
-                      color: 'black',
-                      textOutline: 'none',
-                      fontWeight: 'normal'
-                  }
-              }
+        packedbubble: {
+          minSize: '30%',
+          maxSize: '120%',
+          zMin: 0,
+          zMax: 10,
+          layoutAlgorithm: {
+            splitSeries: false,
+            gravitationalConstant: 0.02
+          },
+          dataLabels: {
+            enabled: true,
+            format: '{point.name}',
+            filter: {
+              property: 'y',
+              operator: '>',
+              value: 3
+            },
+            style: {
+              color: 'black',
+              textOutline: 'none',
+              fontWeight: 'normal'
+            }
           }
+        }
       },
       credits: {
         enabled: false
       },
-      series: [{name: 'Pimer Autor',data:primerAutor},
-      {name: 'Segundo Autor', data: segundoAutor },
-      {name: 'Tercer Autor', data: tercerAutor },
-      {name: 'Cuarto Autor', data: cuartoAutor },
-      {name: 'Quinto Autor', data: quintoAutor }
-    
-    ]
-  });
-  
+      series: [{ name: 'Pimer Autor', data: primerAutor },
+      { name: 'Segundo Autor', data: segundoAutor },
+      { name: 'Tercer Autor', data: tercerAutor },
+      { name: 'Cuarto Autor', data: cuartoAutor },
+      { name: 'Quinto Autor', data: quintoAutor }
+
+      ]
+    });
+
   }
 
-  function graficarGrafoT(muyBaja,baja,moderada,alta){
-    
+  function graficarGrafoT(muyBaja, baja, moderada, alta) {
+
     Highcharts.chart('redes-autores-grafo-total', {
       chart: {
-          type: 'packedbubble',
-          height: '100%'
+        type: 'packedbubble',
+        height: '100%'
       },
       title: {
-          text: 'Número de publicaciones totales por autor'
+        text: 'Número de publicaciones totales por autor'
       },
       tooltip: {
-          useHTML: true,
-          pointFormat: '<b>{point.name}:</b> {point.value} Pub'
+        useHTML: true,
+        pointFormat: '<b>{point.name}:</b> {point.value} Pub'
       },
       plotOptions: {
-          packedbubble: {
-              minSize: '1%',
-              maxSize: '70%',
-              zMin: 0,
-              zMax: 30,
-              layoutAlgorithm: {
-                gravitationalConstant: 0.05,
-                splitSeries: false/*,
+        packedbubble: {
+          minSize: '1%',
+          maxSize: '70%',
+          zMin: 0,
+          zMax: 30,
+          layoutAlgorithm: {
+            gravitationalConstant: 0.05,
+            splitSeries: false/*,
                 seriesInteraction: false,
                 dragBetweenSeries: true,
                 parentNodeLimit: true*/
-              },
-              dataLabels: {
-                  enabled: true,
-                  format: '{point.name}',
-                  filter: {
-                      property: 'y',
-                      operator: '>',
-                      value: 3
-                  },
-                  style: {
-                      color: 'black',
-                      textOutline: 'none',
-                      fontWeight: 'normal'
-                  }
-              }
+          },
+          dataLabels: {
+            enabled: true,
+            format: '{point.name}',
+            filter: {
+              property: 'y',
+              operator: '>',
+              value: 7
+            },
+            style: {
+              color: 'black',
+              textOutline: 'none',
+              fontWeight: 'normal'
+            }
           }
+        }
       },
       credits: {
         enabled: false
       },
-      series: [{name: 'Entre 1 y 5 Pub',data:muyBaja},
-      {name: 'Entre 6 y 10 Pub', data: baja },
-      {name: 'Entre 11 y 16 Pub', data: moderada },
-    {name: 'De 17 Pub en adelante', data: alta }]
-  });
-  
+      series: [{ name: 'Entre 1 y 5 Pub', data: muyBaja },
+      { name: 'Entre 6 y 10 Pub', data: baja },
+      { name: 'Entre 11 y 16 Pub', data: moderada },
+      { name: 'De 17 Pub en adelante', data: alta }]
+    });
+
   }
 
   async function handleCargarRedesDeAutoresAreasOrden() {
     setLoading(true)
     let orden_autor = document.getElementById("idOrdenAutor").value;
     let idAreaUnesco = parseInt(document.getElementById("idAreaUnescoGrafo").value);
-    await clusteringService.ejecutarclusteringRedesAutoresAreasOrden(orden_autor,idAreaUnesco).then(value => {
+    await clusteringService.ejecutarclusteringRedesAutoresAreasOrden(orden_autor, idAreaUnesco).then(value => {
       setRedesAreasOrden(value.valorimagenarea);
       setLoading(false)
     });
 
   }
 
-   /** Carga las areas frascati para el filtro*/
-   async function handleAreasFrascati() {
+  /** Carga las areas frascati para el filtro*/
+  async function handleAreasFrascati() {
     setLoading(true);
     await areaFrascatiService.listaAreasFrascati().then(value => {
       setAreasFrascati(value.area_frascati);
@@ -314,7 +314,7 @@ function Dashboard() {
   /**Carga los datos para la red de autores */
   async function handleGrafoOrdenAutor() {
     setLoading(true);
-    
+
     await clusteringService.ejecutarDatosChart().then(value => {
       let objeto = JSON.parse(value);
       let nombres = objeto.nombre;
@@ -329,37 +329,37 @@ function Dashboard() {
       let listaCuartoAutor = [];
       let listaQuintoAutor = [];
       // Aqui se cambia la longitud de los autores para no tener delay en la vista
-      let longitud= (listaAutores.length)/4;
-      for (let i = 0; i < longitud ; i++) {
-        if(listaOrdenAutores[i]==1){
-          let primerAutor = { "name": listaAutores[i], "value": listaNumPub[i]}
+      let longitud = (listaAutores.length) / 4;
+      for (let i = 0; i < longitud; i++) {
+        if (listaOrdenAutores[i] == 1) {
+          let primerAutor = { "name": listaAutores[i], "value": listaNumPub[i] }
           listaPrimerAutor.push(primerAutor);
         }
-        if(listaOrdenAutores[i]==2){
-          let segundoAutor = { "name": listaAutores[i], "value": listaNumPub[i]}
+        if (listaOrdenAutores[i] == 2) {
+          let segundoAutor = { "name": listaAutores[i], "value": listaNumPub[i] }
           listaSegundoAutor.push(segundoAutor);
         }
-        if(listaOrdenAutores[i]==3){
-          let tercerAutor = { "name": listaAutores[i], "value": listaNumPub[i]}
+        if (listaOrdenAutores[i] == 3) {
+          let tercerAutor = { "name": listaAutores[i], "value": listaNumPub[i] }
           listaTercerAutor.push(tercerAutor);
         }
-        if(listaOrdenAutores[i]==4){
-          let cuartoAutor = { "name": listaAutores[i], "value": listaNumPub[i]}
+        if (listaOrdenAutores[i] == 4) {
+          let cuartoAutor = { "name": listaAutores[i], "value": listaNumPub[i] }
           listaCuartoAutor.push(cuartoAutor);
         }
-        if(listaOrdenAutores[i]==5){
-          let quintoAutor = { "name": listaAutores[i], "value": listaNumPub[i]}
+        if (listaOrdenAutores[i] == 5) {
+          let quintoAutor = { "name": listaAutores[i], "value": listaNumPub[i] }
           listaQuintoAutor.push(quintoAutor);
         }
-        
+
       }
-    
+
       // setNombreCluster(nombre_cluster);
       // setTotalClusterCuartilFI(totales);
       // setDetalleDatosClusterCuartilFI(value)
-      
+
       // setGrafo(listaPrimerAutor);
-      graficarGrafo(listaPrimerAutor,listaSegundoAutor,listaTercerAutor,listaCuartoAutor,listaQuintoAutor);
+      graficarGrafo(listaPrimerAutor, listaSegundoAutor, listaTercerAutor, listaCuartoAutor, listaQuintoAutor);
       setLoading(false);
     });
   }
@@ -377,54 +377,54 @@ function Dashboard() {
       let baja = [];
       let moderada = [];
       let alta = [];
-      
+
       // Aqui se cambia la longitud de los autores para no tener delay en la vista
-      let longitud= (listaAutores.length);
-      for (let i = 0; i < longitud ; i++) {
-        if(listaTotalPub[i]>=2 && listaTotalPub[i]<=5 ){
-          let muyBajoAutor = { "name": listaAutores[i], "value": listaTotalPub[i]}
+      let longitud = (listaAutores.length);
+      for (let i = 0; i < longitud; i++) {
+        if (listaTotalPub[i] >= 2 && listaTotalPub[i] <= 5) {
+          let muyBajoAutor = { "name": listaAutores[i], "value": listaTotalPub[i] }
           muyBaja.push(muyBajoAutor);
         }
-        if(listaTotalPub[i]>=6 && listaTotalPub[i]<=10 ){
-          let bajoAutor = { "name": listaAutores[i], "value": listaTotalPub[i]}
+        if (listaTotalPub[i] >= 6 && listaTotalPub[i] <= 10) {
+          let bajoAutor = { "name": listaAutores[i], "value": listaTotalPub[i] }
           baja.push(bajoAutor);
         }
-        if(listaTotalPub[i]>=11 && listaTotalPub[i]<=16 ){
-          let moderadoAutor = { "name": listaAutores[i], "value": listaTotalPub[i]}
+        if (listaTotalPub[i] >= 11 && listaTotalPub[i] <= 16) {
+          let moderadoAutor = { "name": listaAutores[i], "value": listaTotalPub[i] }
           moderada.push(moderadoAutor);
         }
-        if(listaTotalPub[i]>=17){
-          let altoAutor = { "name": listaAutores[i], "value": listaTotalPub[i]}
+        if (listaTotalPub[i] >= 17) {
+          let altoAutor = { "name": listaAutores[i], "value": listaTotalPub[i] }
           alta.push(altoAutor);
         }
       }
-    
+
       // setNombreCluster(nombre_cluster);
       // setTotalClusterCuartilFI(totales);
       // setDetalleDatosClusterCuartilFI(value)
-      
+
       // setGrafo(listaPrimerAutor);
-      graficarGrafoT(muyBaja,baja,moderada,alta);
+      graficarGrafoT(muyBaja, baja, moderada, alta);
       setLoading(false);
     });
   }
 
-  async function handleCalcularPrcentajesLeyBradford(datos){
+  async function handleCalcularPrcentajesLeyBradford(datos) {
     let datosYPorcentajes = [];
     let suma = 0;
     let totalCitas = 0;
-    for(var i = 0; i< datos.length; i++){
+    for (var i = 0; i < datos.length; i++) {
       totalCitas = totalCitas + datos[i].contador;
     }
 
-    for(var i = 0; i< datos.length; i++){
+    for (var i = 0; i < datos.length; i++) {
       suma = suma + datos[i].contador;
       let dato = {
         "id_referencia": datos[i].id_referencia,
         "venue": datos[i].venue,
         "contador": datos[i].contador,
         "numeroAcumuladoCitas": suma,
-        "procentajeAcumuladoCitas": (suma/totalCitas*100).toFixed(2)
+        "procentajeAcumuladoCitas": (suma / totalCitas * 100).toFixed(2)
       }
       datosYPorcentajes.push(dato);
     }
@@ -433,83 +433,173 @@ function Dashboard() {
     return datosYPorcentajes;
   }
 
-  async function handleCargarDatosLeyBradford(){
+  async function handleCalcularPrcentajesLeyBradfordInternas(datos) {
+    let datosYPorcentajes = [];
+    let suma = 0;
+    let totalCitas = 0;
+    for (var i = 0; i < datos.length; i++) {
+      totalCitas = totalCitas + datos[i].contador;
+    }
+
+    for (var i = 0; i < datos.length; i++) {
+      suma = suma + datos[i].contador;
+      let dato = {
+        "id_referencia": datos[i].id_articulo,
+        "venue": datos[i].medioPublicacion,
+        "contador": datos[i].contador,
+        "numeroAcumuladoCitas": suma,
+        "procentajeAcumuladoCitas": (suma / totalCitas * 100).toFixed(2)
+      }
+      datosYPorcentajes.push(dato);
+    }
+    //console.log(datosYPorcentajes)
+    await setDatosLeyBradford(datosYPorcentajes);
+    return datosYPorcentajes;
+  }
+
+
+  async function handleCargarDatosLeyBradford() {
     setDatosLeyBradford([]);
     let idAnioDesde = parseInt(document.getElementById("idAnioDesde").value);
     let idAnioHasta = parseInt(document.getElementById("idAnioHasta").value);
     let idAreaUnesco = parseInt(document.getElementById("idAreaUnesco").value);
     let idAreaFrascati = parseInt(document.getElementById("idAreaFrascati").value);
+    let idPublicacionCorrespondiente = document.getElementById("idPublicacionCorrespondiente").value;
     
-    if(idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati == 0 && idAreaUnesco == 0){
-      setLoading(true)
-      await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
-      await leyBradfordService.numeroMediosPublicacionesReferencias().then(async(value) => {
-        await handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
-        await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
-        setLoading(false)
-      })
+    if (idPublicacionCorrespondiente == 'E') {
+      if (idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati == 0 && idAreaUnesco == 0) {
+        setLoading(true)
+        await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
+        await leyBradfordService.numeroMediosPublicacionesReferencias().then(async (value) => {
+          await handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
+          await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
+          setLoading(false)
+        })
+      }
+      else if (idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati == 0 && idAreaUnesco == 0) {
+        setLoading(true)
+        await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
+        await leyBradfordService.numeroMediosPublicacionesReferenciasPorAnio(idAnioDesde, idAnioHasta).then(async (value) => {
+          await handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
+          await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
+          setLoading(false)
+        })
+      }
+      else if (idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati != 0 && idAreaUnesco == 0) {
+        setLoading(true)
+        await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
+        await leyBradfordService.numeroMediosPublicacionPorAreaFrascati(idAreaFrascati).then(async (value) => {
+          await handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
+          await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
+          setLoading(false)
+        })
+      }
+      else if (idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati == 0 && idAreaUnesco != 0) {
+        setLoading(true)
+        await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
+        await leyBradfordService.numeroMediosPublicacionPorAreaUnesco(idAreaUnesco).then(async (value) => {
+          handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
+          await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
+          setLoading(false)
+        })
+      }
+      else if (idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati != 0 && idAreaUnesco == 0) {
+        setLoading(true)
+        await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
+        await leyBradfordService.numeroMediosPublicacionPorAreaFrascatiPorAnio(idAnioDesde, idAnioHasta, idAreaFrascati).then(async (value) => {
+          handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
+          await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
+          setLoading(false)
+        })
+      }
+      else if (idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati == 0 && idAreaUnesco != 0) {
+        setLoading(true)
+        await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
+        await leyBradfordService.numeroMediosPublicacionPorAreaUnescoPorAnio(idAnioDesde, idAnioHasta, idAreaUnesco).then(async (value) => {
+          handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
+          await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
+          setLoading(false)
+        })
+      }
+      else if (idAreaUnesco != 0 && idAreaFrascati != 0) {
+        notify("tr", 'Solo puede seleccionar un filtro de área (Frascati o Unesco).', "danger");
+      }
+    } else if (idPublicacionCorrespondiente == 'I') {
+      if (idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati == 0 && idAreaUnesco == 0) {
+        setLoading(true)
+        await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
+        await leyBradfordService.numeroMediosPublicacionesPropios().then(async (value) => {
+          await handleCalcularPrcentajesLeyBradfordInternas(value.numeroMediosPublicacion)
+          await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
+          setLoading(false)
+        })
+      }
+      else if (idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati == 0 && idAreaUnesco == 0) {
+        setLoading(true)
+        await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
+        await leyBradfordService.numeroMediosPublicacionesPropiosPorAnio(idAnioDesde, idAnioHasta).then(async (value) => {
+          await handleCalcularPrcentajesLeyBradfordInternas(value.numeroMediosPublicacion)
+          await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
+          setLoading(false)
+        })
+      }
+      else if (idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati != 0 && idAreaUnesco == 0) {
+        setLoading(true)
+        await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
+        await leyBradfordService.numeroMediosPublicacionPropiosPorAreaFrascati(idAreaFrascati).then(async (value) => {
+          await handleCalcularPrcentajesLeyBradfordInternas(value.numeroMediosPublicacion)
+          await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
+          setLoading(false)
+        })
+      }
+      else if (idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati == 0 && idAreaUnesco != 0) {
+        setLoading(true)
+        await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
+        await leyBradfordService.numeroMediosPublicacionPropiosPorAreaUnesco(idAreaUnesco).then(async (value) => {
+          handleCalcularPrcentajesLeyBradfordInternas(value.numeroMediosPublicacion)
+          await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
+          setLoading(false)
+        })
+      }
+      else if (idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati != 0 && idAreaUnesco == 0) {
+        setLoading(true)
+        await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
+        await leyBradfordService.numeroMediosPublicacionPropiosPorAreaFrascatiPorAnio(idAnioDesde, idAnioHasta, idAreaFrascati).then(async (value) => {
+          handleCalcularPrcentajesLeyBradfordInternas(value.numeroMediosPublicacion)
+          await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
+          setLoading(false)
+        })
+      }
+      else if (idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati == 0 && idAreaUnesco != 0) {
+        setLoading(true)
+        await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
+        await leyBradfordService.numeroMediosPublicacionPropiosPorAreaUnescoPorAnio(idAnioDesde, idAnioHasta, idAreaUnesco).then(async (value) => {
+          handleCalcularPrcentajesLeyBradfordInternas(value.numeroMediosPublicacion)
+          await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
+          setLoading(false)
+        })
+      }else if(idAreaUnesco != 0 && idAreaFrascati != 0) {
+        notify("tr", 'Solo puede seleccionar un filtro de área (Frascati o Unesco).', "danger");
+      }
+    } else {
+      notify("tr", 'Seleccione a que Publicaciones aplicar la Ley de Bradford', "danger");
     }
-    else if(idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati == 0 && idAreaUnesco == 0){
-      setLoading(true)
-      await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
-      await leyBradfordService.numeroMediosPublicacionesReferenciasPorAnio(idAnioDesde, idAnioHasta).then(async(value) => {
-        await handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
-        await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
-        setLoading(false)
-      })
-    }
-    else if(idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati != 0 && idAreaUnesco == 0){
-      setLoading(true)
-      await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
-      await leyBradfordService.numeroMediosPublicacionPorAreaFrascati(idAreaFrascati).then(async(value) => {
-        await handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
-        await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
-        setLoading(false)
-      })
-    }
-    else if(idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati == 0 && idAreaUnesco != 0){
-      setLoading(true)
-      await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
-      await leyBradfordService.numeroMediosPublicacionPorAreaUnesco(idAreaUnesco).then(async(value) => {
-        handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
-        await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
-        setLoading(false)
-      })
-    }
-    else if(idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati != 0 && idAreaUnesco == 0){
-      setLoading(true)
-      await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
-      await leyBradfordService.numeroMediosPublicacionPorAreaFrascatiPorAnio(idAnioDesde, idAnioHasta, idAreaFrascati).then(async(value) => {
-        handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
-        await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
-        setLoading(false)
-      }) 
-    }
-    else if(idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati == 0 && idAreaUnesco != 0){
-      setLoading(true)
-      await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
-      await leyBradfordService.numeroMediosPublicacionPorAreaUnescoPorAnio(idAnioDesde, idAnioHasta, idAreaUnesco).then(async(value) => {
-        handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
-        await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
-        setLoading(false)
-      })
-    }
-    else if(idAreaUnesco != 0 && idAreaFrascati !=0){
-      notify("tr", 'Solo puede seleccionar un filtro de área (Frascati o Unesco).', "danger");
-    }
+    
   }
-  async function handleCargarDatosGraficosBurbujas(){
+
+  async function handleCargarDatosGraficosBurbujas() {
     let opcionGraficoBurbujas = document.getElementById("OpcionesGarficoBurbujas").value;
-    if(opcionGraficoBurbujas == 'OA'){
+    if (opcionGraficoBurbujas == 'OA') {
       setOpcionGrafico('OA');
       handleGrafoOrdenAutor();
     }
 
-    if(opcionGraficoBurbujas == 'NP'){
+    if (opcionGraficoBurbujas == 'NP') {
       setOpcionGrafico('NP');
       handleGrafoTotalPublicaciones();
     }
   }
+
   React.useEffect(() => {
     // document.getElementById("idOrdenAutor").value=1;
     // document.getElementById("idAreaUnescoGrafo").value=1;
@@ -560,7 +650,7 @@ function Dashboard() {
                   <Col xs="7">
                     <div className="numbers">
                       <p className="card-category">TOTAL PUBLICACIONES SIN REFERENCIAS</p>
-                      <Card.Title as="h4">{numeroPublicacionesSinReferencias +" (" + parseFloat(numeroPublicacionesSinReferencias * 100 / numeroPublicaciones).toFixed(2) +"%)"}</Card.Title>
+                      <Card.Title as="h4">{numeroPublicacionesSinReferencias + " (" + parseFloat(numeroPublicacionesSinReferencias * 100 / numeroPublicaciones).toFixed(2) + "%)"}</Card.Title>
                     </div>
                   </Col>
                 </Row>
@@ -598,7 +688,7 @@ function Dashboard() {
                   <Col xs="7">
                     <div className="numbers">
                       <p className="card-category">TOTAL DETALLE REFERENCIAS</p>
-                      <Card.Title as="h4">{numeroDetalleReferencias +"  ("+ parseFloat(numeroDetalleReferencias*100/numeroReferencias).toFixed(2)+"%)"}</Card.Title>
+                      <Card.Title as="h4">{numeroDetalleReferencias + "  (" + parseFloat(numeroDetalleReferencias * 100 / numeroReferencias).toFixed(2) + "%)"}</Card.Title>
                     </div>
                   </Col>
                 </Row>
@@ -609,17 +699,17 @@ function Dashboard() {
         <Row>
           <Col md="12">
             <Card>
-                  <Col className="pr-1" md="6">
-                    <Form.Group>
-                      <label>Opciones de Gráfico de Burbujas</label>
-                      <Form.Row>
-                        <select className="form-control" id="OpcionesGarficoBurbujas" onChange={handleCargarDatosGraficosBurbujas}>
-                          <option value="OA">Gráfico de Búrbujas por Orden de Autor</option>
-                          <option value="NP">Gráfico por Número de Publicaciones por Autor</option>
-                        </select>
-                      </Form.Row>
-                    </Form.Group>
-                  </Col>
+              <Col className="pr-1" md="6">
+                <Form.Group>
+                  <label>Opciones de Gráfico de Burbujas</label>
+                  <Form.Row>
+                    <select className="form-control" id="OpcionesGarficoBurbujas" onChange={handleCargarDatosGraficosBurbujas}>
+                      <option value="OA">Gráfico de Búrbujas por Orden de Autor</option>
+                      <option value="NP">Gráfico por Número de Publicaciones por Autor</option>
+                    </select>
+                  </Form.Row>
+                </Form.Group>
+              </Col>
               {opcionGrafico == 'OA' && (
                 <Card.Header>
                   <div id="redes-autores-grafo" ></div>
@@ -631,9 +721,9 @@ function Dashboard() {
                 </Card.Header>
               )}
               <Card.Body>
-              <Row>
-                <Col className="pr-1" md="4">
-                  {/* <Form.Group>
+                <Row>
+                  <Col className="pr-1" md="4">
+                    {/* <Form.Group>
                     <label>Orden de Autores</label>
                     <Form.Row>
                       <select className="form-control" id="idOrdenAutor" onChange={handleCargarRedesDeAutoresAreasOrden}>
@@ -655,7 +745,7 @@ function Dashboard() {
                       </select>
                     </Form.Row>
                   </Form.Group> */}
-                </Col>
+                  </Col>
                   <Col className="pr-1" md="3">
                     {/* <Form.Group>
                       <label>Area Unesco</label>
@@ -669,12 +759,12 @@ function Dashboard() {
                       </Form.Row>
                     </Form.Group> */}
                   </Col>
-                  
-              </Row>
-              {/* <div>
+
+                </Row>
+                {/* <div>
                 <img src={"data:image/png;base64,"+ redesAreasOrden} width="100%" height="100%" alt="Grafo Autores" />
               </div> */}
-              {/* <div>
+                {/* <div>
                 <img src={"data:image/png;base64,"+ redesAreas} width="100%" height="100%" alt="Red dot" />
               </div> */}
               </Card.Body>
@@ -688,6 +778,18 @@ function Dashboard() {
                   Medios de Publicación núcleo de cada Área
                 </p>
                 <Row>
+                  <Col className="pr-1" md="1">
+                    <Form.Group>
+                      <label>PUBLICACIONES</label>
+                      <Form.Row>
+                        <select className="form-control" id="idPublicacionCorrespondiente">
+                          <option value="0">Seleccione</option>
+                          <option value="I">Internas (Investigadores U Cuenca)</option>
+                          <option value="E">Externas (Referencias)</option>
+                        </select>
+                      </Form.Row>
+                    </Form.Group>
+                  </Col>
                   <Col className="pr-1" md="1">
                     <Form.Group>
                       <label>AÑO DESDE</label>
@@ -770,7 +872,7 @@ function Dashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                  {datosLeyBradford.map((item, index, elements) => (
+                    {datosLeyBradford.map((item, index, elements) => (
                       <tr className="small" key={item.id_referencia}>
                         <td>{item.venue}</td>
                         <td>{item.contador}</td>
