@@ -15,10 +15,12 @@ class MedioPublicacionPublicacionSchema(ModelSchema):
         sqla_session = db.session
     id_medio_publicacion = fields.Number(dump_only=True)
     nombre = fields.String(required=True)
-    numero_citas = fields.Number(required=True)
+    numero_publicaciones = fields.Number(required=True)
 
 
 def listaMedioPublicacionPublicacion():
+    #conteoMediosPublicacionPublicacion()
+
     get_medio_publicacion_publicacion = MedioPublicacionPublicacion.query.all()
     medio_publicacion_publicacion_schema = MedioPublicacionPublicacionSchema(many=True)
     medios_publicacion_publicacion = medio_publicacion_publicacion_schema.dump(get_medio_publicacion_publicacion)

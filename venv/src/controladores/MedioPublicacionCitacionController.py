@@ -20,6 +20,8 @@ class MedioPublicacionCitacionSchema(ModelSchema):
 
 
 def listaMedioPublicacionCitacion():
+    #conteoMediosPublicacionCitacion()
+
     get_medio_publicacion_citacion = MedioPublicacionCitacion.query.all()
     medio_publicacion_citacion_schema = MedioPublicacionCitacionSchema(many=True)
     medios_publicacion_citacion = medio_publicacion_citacion_schema.dump(get_medio_publicacion_citacion)
