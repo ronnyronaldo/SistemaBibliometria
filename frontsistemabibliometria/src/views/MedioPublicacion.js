@@ -78,6 +78,9 @@ function MedioPublicacion() {
   /**Spinner */
 
   const [mediosPublicacion, setMediosPublicacion] = React.useState([]);
+  const [mediosPublicacionPublicacion, setMediosPublicacionPublicacion] = React.useState([]);
+  const [mediosPublicacionCitacion, setMediosPublicacionCitacion] = React.useState([]);
+
   async function handleCargarMediosPublicacion() {
     setLoading(true);
     await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacion');
@@ -86,7 +89,31 @@ function MedioPublicacion() {
       setLoading(false);
     });
     await tablaPaginacionService.paginacion('#dataTableMediosPublicacion');
+    await handleCargarMediosPublicacionPublicacion();
   }
+
+  async function handleCargarMediosPublicacionPublicacion() {
+    setLoading(true);
+    await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionPublicacion');
+    await medioPublicacionService.listarMediosPublicacionPublicacion().then(value => {
+      setMediosPublicacionPublicacion(value.mediosPublicacionPublicacion);
+      setLoading(false);
+    });
+    await tablaPaginacionService.paginacion('#dataTableMediosPublicacionPublicacion');
+    await handleCargarMediosPublicacionCitacion();
+  }
+
+  async function handleCargarMediosPublicacionCitacion() {
+    setLoading(true);
+    await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionCitacion');
+    await medioPublicacionService.listarMediosPublicacionCitacion().then(value => {
+      console.log(value);
+      setMediosPublicacionCitacion(value.mediosPublicacionCitacion);
+      setLoading(false);
+    });
+    await tablaPaginacionService.paginacion('#dataTableMediosPublicacionCitacion');
+  }
+
   const handleEliminarMedioPublicacion = (id_medio_publicacion) => {
     setLoading(true);
     medioPublicacionService.eliminar(id_medio_publicacion).then(value => {
@@ -186,6 +213,62 @@ function MedioPublicacion() {
                         <td>{item.id_medio_publicacion}</td>
                         <td>{item.nombre}</td>
                         <td width="5%"><Link to="#" id="eliminarMedioPublicacion" className="link col-sm-12 col-md-3" onClick={()=>handleEliminarMedioPublicacion(item.id_medio_publicacion)}><i className="fas fa-trash-alt fa-2x"></i></Link></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col md="12">
+            <Card className="strpied-tabled-with-hover">
+              <Card.Header>
+                <Card.Title as="h4">Ranking Medios de Publicación | Publicaciones</Card.Title>
+                <p className="card-category">
+                  Medios de Publicación más atractivas donde publican los investigadores con filiacion a la Universidad de Cuenca
+                </p>
+              </Card.Header>
+              <Card.Body className="table-full-width table-responsive px-3">
+                <table className="table table-bordered table-hover" id="dataTableMediosPublicacionPublicacion" width="100%" cellSpacing="0">
+                  <thead className="thead-dark">
+                    <tr>
+                      <th>NOMBRE</th>
+                      <th>NUMERO PUBLICACIONES</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {mediosPublicacionPublicacion.map(item => (
+                      <tr className="small" key={item.id_medio_publicacion}>
+                        <td>{item.nombre}</td>
+                        <td>{item.numero_publicaciones}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col md="12">
+            <Card className="strpied-tabled-with-hover">
+              <Card.Header>
+                <Card.Title as="h4">Ranking Medios de Publicación | Citaciones</Card.Title>
+                <p className="card-category">
+                  Medios de Publicación más atractivas de donde citan los investigadores con filiacion a la Universidad de Cuenca
+                </p>
+              </Card.Header>
+              <Card.Body className="table-full-width table-responsive px-3">
+                <table className="table table-bordered table-hover" id="dataTableMediosPublicacionCitacion" width="100%" cellSpacing="0">
+                  <thead className="thead-dark">
+                    <tr>
+                      <th>NOMBRE</th>
+                      <th>NUMERO CITAS</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {mediosPublicacionCitacion.map(item => (
+                      <tr className="small" key={item.id_medio_publicacion}>
+                        <td>{item.nombre}</td>
+                        <td>{item.numero_citas}</td>
                       </tr>
                     ))}
                   </tbody>
