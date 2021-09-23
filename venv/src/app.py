@@ -50,6 +50,14 @@ from rutas.servicio_ley_bradford import servicio_ley_bradford
 #Objeto analisis estadistico
 from rutas.servicio_analisis_estadistico import servicio_analisis_estadistico
 #Objeto analisis esdistico
+#Objeto Medio Publicacion Citacion
+from modelos.MedioPublicacionCitacion import db
+from rutas.servicio_medio_publicacion_citacion import servicio_medio_publicacion_citacion
+#Objeto Medio Publicacion Citacion
+#Objeto Medio Publicacion Publicacion
+from modelos.MedioPublicacionPublicacion import db
+from rutas.servicio_medio_publicacion_publicacion import servicio_medio_publicacion_publicacion
+#Objeto Medio Publicacion Publicacion
 #Configuracion de la aplicacion y de la base de datos
 app = Flask(__name__)
 CORS(app, allow_headers=["Content-Type", "Authorization", "Access-Control-Allow-Credentials"], supports_credentials=True)
@@ -72,6 +80,8 @@ app.register_blueprint(servicio_clustering, url_prefix='/cluster')
 app.register_blueprint(servicio_detalle_referencia, url_prefix='/detalleReferencia')
 app.register_blueprint(servicio_ley_bradford, url_prefix='/leyBradford')
 app.register_blueprint(servicio_analisis_estadistico, url_prefix='/analisisEstadistico')
+app.register_blueprint(servicio_medio_publicacion_citacion, url_prefix='/medioPublicacionCitacion')
+app.register_blueprint(servicio_medio_publicacion_publicacion, url_prefix='/medioPublicacionPublicacion')
 
 # Correr la aplicacion
 app.run()
