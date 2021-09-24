@@ -198,7 +198,7 @@ def obtenerDetalleReferenciaTotal(articuloBuscar):
         print(numeroDetalleReferencia)
         if numeroDetalleReferencia == 0:
             pg = ProxyGenerator()
-            pg.ScraperAPI('81ded0ad907a5555e982aa011ff2e75b')
+            pg.ScraperAPI('6606597945c6648f8cfcbac933c9ee54')
             scholarly.use_proxy(pg)
             try:
                 search_queryAux = scholarly.search_pubs(referenciaString)
