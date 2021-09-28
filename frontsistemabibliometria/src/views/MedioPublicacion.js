@@ -1,5 +1,6 @@
 import React from "react";
-import {medioPublicacionService} from '../_services/medio_publicacion.service';
+import { medioPublicacionService } from '../_services/medio_publicacion.service';
+import { SJRService } from '../_services/sjr_service.service';
 import { tablaPaginacionService } from '../utils/tablaPaginacion.service';
 import { validacionInputService } from '../_services/validacionInput.service';
 
@@ -10,6 +11,7 @@ import NotificationAlert from "react-notification-alert";
 import { css } from "@emotion/react";
 import FadeLoader from "react-spinners/FadeLoader";
 import { Link } from "react-router-dom";
+import *as XLSX from 'xlsx';
 const override = css`
   display: block;
   margin: 0 auto;
@@ -30,6 +32,8 @@ import {
   Col,
   Form,
 } from "react-bootstrap";
+
+import { FormGroup } from "reactstrap";
 function MedioPublicacion() {
 
   const [showModal, setShowModal] = React.useState(false);
@@ -80,6 +84,7 @@ function MedioPublicacion() {
   const [mediosPublicacion, setMediosPublicacion] = React.useState([]);
   const [mediosPublicacionPublicacion, setMediosPublicacionPublicacion] = React.useState([]);
   const [mediosPublicacionCitacion, setMediosPublicacionCitacion] = React.useState([]);
+  const [mediosPublicacionSJR, setMediosPublicacionSJR] = React.useState([]);
 
   async function handleCargarMediosPublicacion() {
     setLoading(true);
@@ -107,21 +112,31 @@ function MedioPublicacion() {
     setLoading(true);
     await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionCitacion');
     await medioPublicacionService.listarMediosPublicacionCitacion().then(value => {
-      console.log(value);
       setMediosPublicacionCitacion(value.mediosPublicacionCitacion);
       setLoading(false);
     });
     await tablaPaginacionService.paginacion('#dataTableMediosPublicacionCitacion');
+    await handleCargarSJR();
+  }
+
+  async function handleCargarSJR() {
+    setLoading(true);
+    await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionSJR');
+    await SJRService.listar().then(value => {
+      setMediosPublicacionSJR(value.sjr);
+      setLoading(false);
+    });
+    await tablaPaginacionService.paginacion('#dataTableMediosPublicacionSJR');
   }
 
   const handleEliminarMedioPublicacion = (id_medio_publicacion) => {
     setLoading(true);
     medioPublicacionService.eliminar(id_medio_publicacion).then(value => {
       setLoading(false);
-      if(value.respuesta.error == "False"){
+      if (value.respuesta.error == "False") {
         handleCargarMediosPublicacion();
         notify("tr", value.respuesta.valor, "primary");
-      }else{
+      } else {
         notify("tr", value.respuesta.valor, "danger");
       }
     })
@@ -130,23 +145,63 @@ function MedioPublicacion() {
   const handleAgregarMedioPublicacion = (event) => {
     let nombreMedioPublicacion = document.getElementById("medioPublicacionText").value;
     let estado = validacionInputService.campoVacio(nombreMedioPublicacion);
-    if(estado == true){
+    if (estado == true) {
       setLoading(true);
       medioPublicacionService.insertar({
-        "nombre": nombreMedioPublicacion 
-      }).then(value =>{
+        "nombre": nombreMedioPublicacion
+      }).then(value => {
         setLoading(false);
-        if(value.respuesta.error == "False"){
+        if (value.respuesta.error == "False") {
           handleCargarMediosPublicacion();
           notify("tr", value.respuesta.valor, "primary");
-        }else{
+        } else {
           notify("tr", value.respuesta.valor, "danger");
         }
       })
-    } 
+    }
     else {
       notify("tr", 'No ha ingresado el nombre del Medio de Publicación.', "danger");
     }
+  }
+
+  async function handleIngresarSJR() {
+    if (nuevasSJR.length != 0) {
+      setLoading(true);
+      SJRService.insertar({ nuevasSJR }).then(value => {
+        setLoading(false);
+        if (value.error == "False") {
+          notify("tc", "Registros SJR ingresadas correctamente.", "primary");
+          handleCargarSJR();
+        }else{
+          notify("tc", "No se pudo ingresar los registros SJR.", "danger");
+        }
+      })
+    } else {
+      notify("tr", 'No ha ingresado el archivo o no existen datos para cargar.', "danger");
+    }
+  }
+
+  const [nuevasSJR, setNuevasSJR] = React.useState([]);
+  async function handleReadExcel(file) {
+    const promise = new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsArrayBuffer(file);
+      fileReader.onload = (e) => {
+        const bufferArray = e.target.result;
+        const wb = XLSX.read(bufferArray, { type: "buffer" });
+        const wsname = wb.SheetNames[0];
+        const ws = wb.Sheets[wsname];
+        const data = XLSX.utils.sheet_to_json(ws);
+        setNuevasSJR(data);
+        resolve(data);
+      };
+      fileReader.onerror = (error) => {
+        reject(error)
+      };
+    })
+    promise.then(value => {
+      console.log(value)
+    })
   }
 
   React.useEffect(() => {
@@ -160,7 +215,7 @@ function MedioPublicacion() {
       </div>
       <Container fluid>
         <Row>
-        <Col md="12">
+          <Col md="12">
             <Card className="strpied-tabled-with-hover">
               <Card.Header>
                 <Card.Title as="h4">Ingreso Medio Publicación</Card.Title>
@@ -212,7 +267,7 @@ function MedioPublicacion() {
                       <tr className="small" key={item.id_medio_publicacion}>
                         <td>{item.id_medio_publicacion}</td>
                         <td>{item.nombre}</td>
-                        <td width="5%"><Link to="#" id="eliminarMedioPublicacion" className="link col-sm-12 col-md-3" onClick={()=>handleEliminarMedioPublicacion(item.id_medio_publicacion)}><i className="fas fa-trash-alt fa-2x"></i></Link></td>
+                        <td width="5%"><Link to="#" id="eliminarMedioPublicacion" className="link col-sm-12 col-md-3" onClick={() => handleEliminarMedioPublicacion(item.id_medio_publicacion)}><i className="fas fa-trash-alt fa-2x"></i></Link></td>
                       </tr>
                     ))}
                   </tbody>
@@ -269,6 +324,60 @@ function MedioPublicacion() {
                       <tr className="small" key={item.id_medio_publicacion}>
                         <td>{item.nombre}</td>
                         <td>{item.numero_citas}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col md="12">
+            <Card className="strpied-tabled-with-hover">
+              <Card.Header>
+                <Card.Title as="h4">Ranking | Scimago Journal And Country Rank</Card.Title>
+                <p className="card-category">
+                  SCImago Journal Rank proporciona datos acerca de la influencia científica de las revistas académicas según el número de citas en otros medios y periódicos o revistas de importancia.
+                </p>
+
+                <Row>
+                  <Col className="pr-1" md="5">
+                    <Form.Group>
+                      <label>INGRESE EL ARCHIVO .XLSX CON LOS DATOS DEL SJR </label>
+                      <FormGroup>
+                        <input type='file' onChange={(e) => {
+                          const file = e.target.files[0];
+                          handleReadExcel(file)
+                        }} className="col-sm-12 col-md-8"></input>
+                        <Link to="#" id="ingresarSJR" className="link col-sm-12 col-md-3"><Button variant="primary" onClick={handleIngresarSJR}>Ingresar <i className="fas fa-file-upload fa-2x" /></Button></Link>
+                      </FormGroup>
+                    </Form.Group>
+                  </Col>
+                </Row>
+
+              </Card.Header>
+              <Card.Body className="table-full-width table-responsive px-3">
+                <table className="table table-bordered table-hover" id="dataTableMediosPublicacionSJR" width="100%" cellSpacing="0">
+                  <thead className="thead-dark">
+                    <tr>
+                      <th>RANK</th>
+                      <th>ID RECURSO</th>
+                      <th>TITULO</th>
+                      <th>TIPO</th>
+                      <th>ISNN</th>
+                      <th>SJR</th>
+                      <th>SJR BEST QUARTILE</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {mediosPublicacionSJR.map(item => (
+                      <tr className="small" key={item.id_sjr}>
+                        <td width="10%">{item.rank}</td>
+                        <td width="10%">{item.id_recurso}</td>
+                        <td width="30%">{item.titulo}</td>
+                        <td width="10%">{item.tipo}</td>
+                        <td width="10%">{item.isnn}</td>
+                        <td width="10%">{item.sjr}</td>
+                        <td width="10%">{item.quartil}</td>
                       </tr>
                     ))}
                   </tbody>
