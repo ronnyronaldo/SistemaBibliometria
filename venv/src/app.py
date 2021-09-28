@@ -57,6 +57,9 @@ from rutas.servicio_medio_publicacion_citacion import servicio_medio_publicacion
 #Objeto Medio Publicacion Publicacion
 from modelos.MedioPublicacionPublicacion import db
 from rutas.servicio_medio_publicacion_publicacion import servicio_medio_publicacion_publicacion
+
+from modelos.Parametro import db
+from rutas.servicio_parametro import servicio_parametro
 #Objeto Medio Publicacion Publicacion
 #Configuracion de la aplicacion y de la base de datos
 app = Flask(__name__)
@@ -82,6 +85,7 @@ app.register_blueprint(servicio_ley_bradford, url_prefix='/leyBradford')
 app.register_blueprint(servicio_analisis_estadistico, url_prefix='/analisisEstadistico')
 app.register_blueprint(servicio_medio_publicacion_citacion, url_prefix='/medioPublicacionCitacion')
 app.register_blueprint(servicio_medio_publicacion_publicacion, url_prefix='/medioPublicacionPublicacion')
+app.register_blueprint(servicio_parametro, url_prefix='/parametro')
 
 # Correr la aplicacion
 app.run()
