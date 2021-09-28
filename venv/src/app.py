@@ -61,6 +61,10 @@ from rutas.servicio_medio_publicacion_publicacion import servicio_medio_publicac
 from modelos.Parametro import db
 from rutas.servicio_parametro import servicio_parametro
 #Objeto Medio Publicacion Publicacion
+#Objeto SJR
+from modelos.SJR import db
+from rutas.servicio_sjr import servicio_sjr
+#Objeto SJR
 #Configuracion de la aplicacion y de la base de datos
 app = Flask(__name__)
 CORS(app, allow_headers=["Content-Type", "Authorization", "Access-Control-Allow-Credentials"], supports_credentials=True)
@@ -85,7 +89,11 @@ app.register_blueprint(servicio_ley_bradford, url_prefix='/leyBradford')
 app.register_blueprint(servicio_analisis_estadistico, url_prefix='/analisisEstadistico')
 app.register_blueprint(servicio_medio_publicacion_citacion, url_prefix='/medioPublicacionCitacion')
 app.register_blueprint(servicio_medio_publicacion_publicacion, url_prefix='/medioPublicacionPublicacion')
+<<<<<<< HEAD
 app.register_blueprint(servicio_parametro, url_prefix='/parametro')
+=======
+app.register_blueprint(servicio_sjr, url_prefix='/sjr')
+>>>>>>> 980939e3c66c5094ed00f8c93540621f4cb15a16
 
 # Correr la aplicacion
 app.run()
