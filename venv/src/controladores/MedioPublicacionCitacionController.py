@@ -49,6 +49,77 @@ def eliminarMediosPublicacionCitacion():
         db.session.rollback()
     return make_response(jsonify({"error": "False"}))
 
+def conteoMediosPublicacionCitacionPorAnio(anio_publicacion_desde, anio_publicacion_hasta):
+    # Eliminamos todos los medios de publicación publicación para cargar de nuevo en el caso de que haya habido cambios
+    eliminarMediosPublicacionCitacion()
+
+    # Cargo los datos de los medios de publicación publicación
+    count_ = func.count('*')
+    referenciaRespuesta = (db.session.query(DetalleReferencia.venue, count_, DetalleReferencia.id_referencia).filter((Articulo.anio_publicacion >= anio_publicacion_desde) & (Articulo.anio_publicacion <= anio_publicacion_hasta) & (Articulo.id_articulo == Referencia.id_articulo) & (Referencia.id_referencia == DetalleReferencia.id_referencia))
+    .group_by(DetalleReferencia.venue)
+    .order_by(count_.desc())).all()
+
+    for detalleReferencia in referenciaRespuesta:
+        MedioPublicacionCitacion(detalleReferencia[0], detalleReferencia[1]).create()
+    return make_response(jsonify({"error": "False"}))
+
+def conteoMediosPublicacionCitacionPorAreaFrascati(id_area_frascati):
+    # Eliminamos todos los medios de publicación publicación para cargar de nuevo en el caso de que haya habido cambios
+    eliminarMediosPublicacionCitacion()
+
+    # Cargo los datos de los medios de publicación publicación
+    count_ = func.count('*')
+    referenciaRespuesta = (db.session.query(DetalleReferencia.venue, count_, DetalleReferencia.id_referencia).filter((Articulo.id_area_frascati == id_area_frascati) & (Articulo.id_articulo == Referencia.id_articulo) & (Referencia.id_referencia == DetalleReferencia.id_referencia))
+    .group_by(DetalleReferencia.venue)
+    .order_by(count_.desc())).all()
+
+    for detalleReferencia in referenciaRespuesta:
+        MedioPublicacionCitacion(detalleReferencia[0], detalleReferencia[1]).create()
+    return make_response(jsonify({"error": "False"}))
+
+def conteoMediosPublicacionCitacionPorAreaUnesco(id_area_unesco):
+    # Eliminamos todos los medios de publicación publicación para cargar de nuevo en el caso de que haya habido cambios
+    eliminarMediosPublicacionCitacion()
+
+    # Cargo los datos de los medios de publicación publicación
+    count_ = func.count('*')
+    referenciaRespuesta = (db.session.query(DetalleReferencia.venue, count_, DetalleReferencia.id_referencia).filter((Articulo.id_area_unesco == id_area_unesco) & (Articulo.id_articulo == Referencia.id_articulo) & (Referencia.id_referencia == DetalleReferencia.id_referencia))
+    .group_by(DetalleReferencia.venue)
+    .order_by(count_.desc())).all()
+
+    for detalleReferencia in referenciaRespuesta:
+        MedioPublicacionCitacion(detalleReferencia[0], detalleReferencia[1]).create()
+    return make_response(jsonify({"error": "False"}))
+
+def conteoMediosPublicacionCitacionPorAreaFrascatiPorAnio(anio_publicacion_desde, anio_publicacion_hasta, id_area_frascati):
+    # Eliminamos todos los medios de publicación publicación para cargar de nuevo en el caso de que haya habido cambios
+    eliminarMediosPublicacionCitacion()
+
+    # Cargo los datos de los medios de publicación publicación
+    count_ = func.count('*')
+    referenciaRespuesta = (db.session.query(DetalleReferencia.venue, count_ ,DetalleReferencia.id_referencia).filter((Articulo.anio_publicacion >= anio_publicacion_desde) & (Articulo.anio_publicacion <= anio_publicacion_hasta) & (Articulo.id_area_frascati == id_area_frascati) & (Articulo.id_articulo == Referencia.id_articulo) & (Referencia.id_referencia == DetalleReferencia.id_referencia))
+    .group_by(DetalleReferencia.venue)
+    .order_by(count_.desc())).all()
+
+    for detalleReferencia in referenciaRespuesta:
+        MedioPublicacionCitacion(detalleReferencia[0], detalleReferencia[1]).create()
+    return make_response(jsonify({"error": "False"}))
+
+def conteoMediosPublicacionCitacionPorAreaUnescoPorAnio(anio_publicacion_desde, anio_publicacion_hasta, id_area_unesco):
+    # Eliminamos todos los medios de publicación publicación para cargar de nuevo en el caso de que haya habido cambios
+    eliminarMediosPublicacionCitacion()
+
+    # Cargo los datos de los medios de publicación publicación
+    count_ = func.count('*')
+    referenciaRespuesta = (db.session.query(DetalleReferencia.venue, count_,DetalleReferencia.id_referencia).filter((Articulo.anio_publicacion >= anio_publicacion_desde) & (Articulo.anio_publicacion <= anio_publicacion_hasta) & (Articulo.id_area_unesco == id_area_unesco) & (Articulo.id_articulo == Referencia.id_articulo) & (Referencia.id_referencia == DetalleReferencia.id_referencia))
+    .group_by(DetalleReferencia.venue)
+    .order_by(count_.desc())).all()
+
+    for detalleReferencia in referenciaRespuesta:
+        MedioPublicacionCitacion(detalleReferencia[0], detalleReferencia[1]).create()
+    return make_response(jsonify({"error": "False"}))
+
+
 
 
 

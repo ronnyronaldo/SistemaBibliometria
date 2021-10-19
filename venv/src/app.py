@@ -89,11 +89,8 @@ app.register_blueprint(servicio_ley_bradford, url_prefix='/leyBradford')
 app.register_blueprint(servicio_analisis_estadistico, url_prefix='/analisisEstadistico')
 app.register_blueprint(servicio_medio_publicacion_citacion, url_prefix='/medioPublicacionCitacion')
 app.register_blueprint(servicio_medio_publicacion_publicacion, url_prefix='/medioPublicacionPublicacion')
-<<<<<<< HEAD
 app.register_blueprint(servicio_parametro, url_prefix='/parametro')
-=======
 app.register_blueprint(servicio_sjr, url_prefix='/sjr')
->>>>>>> 980939e3c66c5094ed00f8c93540621f4cb15a16
 
 # Correr la aplicacion
 app.run()
