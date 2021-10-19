@@ -13,7 +13,8 @@ const endpoints = {
     baseUrlAnalisisEstadistico: `http://localhost:5000/analisisEstadistico`,
     baseUrlMedioPublicacionPublicacion: `http://localhost:5000/medioPublicacionPublicacion`,
     baseUrlMedioPublicacionCitacion: `http://localhost:5000/medioPublicacionCitacion`,
-    baseUrlSJR: `http://localhost:5000/sjr`
+    baseUrlSJR: `http://localhost:5000/sjr`,
+    baseUrlParametro: `http://localhost:5000/parametro`
 }
 export default endpoints;
 

@@ -14,6 +14,7 @@ import Maps from "views/Maps.js";
 import Notifications from "views/Notifications.js";
 import Upgrade from "views/Upgrade.js";
 import EstadisticasProveedores from "views/EstadisticasProveedores";
+import Parametro from "views/Parametro";
 
 const dashboardRoutes = [
   {
@@ -84,6 +85,13 @@ const dashboardRoutes = [
     name: "Análisis de Datos",
     icon: "nc-icon nc-button-play",
     component: AnalisisDataMining,
+    layout: "/admin",
+  },
+  {
+    path: "/parametro",
+    name: "Parámetro",
+    icon: "nc-icon nc-settings-gear-64",
+    component: Parametro,
     layout: "/admin",
   },
   /*
