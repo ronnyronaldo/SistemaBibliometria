@@ -8,6 +8,7 @@ import { clusteringService } from '../_services/clustering.service';
 import { tablaPaginacionService } from '../utils/tablaPaginacion.service';
 import { areaFrascatiService } from "_services/areaFrascati.service";
 import { areaUnescoService } from "_services/areaUnesco.service";
+import { medioPublicacionService } from '../_services/medio_publicacion.service';
 // react plugin for creating notifications over the dashboard
 import NotificationAlert from "react-notification-alert";
 /**Spinner */
@@ -465,66 +466,121 @@ function Dashboard() {
     let idAreaUnesco = parseInt(document.getElementById("idAreaUnesco").value);
     let idAreaFrascati = parseInt(document.getElementById("idAreaFrascati").value);
     let idPublicacionCorrespondiente = document.getElementById("idPublicacionCorrespondiente").value;
-    
-    if (idPublicacionCorrespondiente == 'E') {
-      if (idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati == 0 && idAreaUnesco == 0) {
-        setLoading(true)
-        await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
-        await leyBradfordService.numeroMediosPublicacionesReferencias().then(async (value) => {
-          await handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
-          await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
-          setLoading(false)
-        })
-      }
-      else if (idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati == 0 && idAreaUnesco == 0) {
-        setLoading(true)
-        await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
-        await leyBradfordService.numeroMediosPublicacionesReferenciasPorAnio(idAnioDesde, idAnioHasta).then(async (value) => {
-          await handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
-          await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
-          setLoading(false)
-        })
-      }
-      else if (idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati != 0 && idAreaUnesco == 0) {
-        setLoading(true)
-        await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
-        await leyBradfordService.numeroMediosPublicacionPorAreaFrascati(idAreaFrascati).then(async (value) => {
-          await handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
-          await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
-          setLoading(false)
-        })
-      }
-      else if (idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati == 0 && idAreaUnesco != 0) {
-        setLoading(true)
-        await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
-        await leyBradfordService.numeroMediosPublicacionPorAreaUnesco(idAreaUnesco).then(async (value) => {
-          handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
-          await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
-          setLoading(false)
-        })
-      }
-      else if (idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati != 0 && idAreaUnesco == 0) {
-        setLoading(true)
-        await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
-        await leyBradfordService.numeroMediosPublicacionPorAreaFrascatiPorAnio(idAnioDesde, idAnioHasta, idAreaFrascati).then(async (value) => {
-          handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
-          await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
-          setLoading(false)
-        })
-      }
-      else if (idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati == 0 && idAreaUnesco != 0) {
-        setLoading(true)
-        await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
-        await leyBradfordService.numeroMediosPublicacionPorAreaUnescoPorAnio(idAnioDesde, idAnioHasta, idAreaUnesco).then(async (value) => {
-          handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
-          await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
-          setLoading(false)
-        })
-      }
-      else if (idAreaUnesco != 0 && idAreaFrascati != 0) {
-        notify("tr", 'Solo puede seleccionar un filtro de área (Frascati o Unesco).', "danger");
-      }
-    } else if (idPublicacionCorrespondiente == 'I') {
+
+  
+    if (idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati == 0 && idAreaUnesco == 0) {
+      setLoading(true)
+      await medioPublicacionService.actualizarMediosPublicacionCitacion().then(async(value) => { 
+        console.log(value);
+        await medioPublicacionService.actualizarMediosPublicacionPublicacion().then(value => {
+          console.log(value);
+          setLoading(false);
+        });
+      });
+      
+      /*
+      setLoading(true)
+      await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
+      await leyBradfordService.numeroMediosPublicacionesReferencias().then(async (value) => {
+        await handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
+        await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
+        setLoading(false)
+      })*/
+    }
+    else if (idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati == 0 && idAreaUnesco == 0) {
+      setLoading(true)
+      await medioPublicacionService.actualizarMediosPublicacionCitacionPorAnio(idAnioDesde, idAnioHasta).then(async(value) => { 
+        console.log(value);
+        await medioPublicacionService.actualizarMediosPublicacionPublicacionPorAnio(idAnioDesde, idAnioHasta).then(value => {
+          console.log(value);
+          setLoading(false);
+        });
+      });
+
+      /*setLoading(true)
+      await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
+      await leyBradfordService.numeroMediosPublicacionesReferenciasPorAnio(idAnioDesde, idAnioHasta).then(async (value) => {
+        await handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
+        await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
+        setLoading(false)
+      })*/
+    }
+    else if (idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati != 0 && idAreaUnesco == 0) {
+      setLoading(true)
+      await medioPublicacionService.actualizarMediosPublicacionCitacionPorAreaFrascati(idAreaFrascati).then(async(value) => { 
+        console.log(value);
+        await medioPublicacionService.actualizarMediosPublicacionPublicacionPorAreaFrascati(idAreaFrascati).then(value => {
+          console.log(value);
+          setLoading(false);
+        });
+      });
+
+      /*setLoading(true)
+      await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
+      await leyBradfordService.numeroMediosPublicacionPorAreaFrascati(idAreaFrascati).then(async (value) => {
+        await handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
+        await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
+        setLoading(false)
+      })*/
+    }
+    else if (idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati == 0 && idAreaUnesco != 0) {
+      setLoading(true)
+      await medioPublicacionService.actualizarMediosPublicacionCitacionPorAreaUnesco(idAreaUnesco).then(async(value) => { 
+        console.log(value);
+        await medioPublicacionService.actualizarMediosPublicacionPublicacionPorAreaUnesco(idAreaUnesco).then(value => {
+          console.log(value);
+          setLoading(false);
+        });
+      });
+
+      /*setLoading(true)
+      await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
+      await leyBradfordService.numeroMediosPublicacionPorAreaUnesco(idAreaUnesco).then(async (value) => {
+        handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
+        await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
+        setLoading(false)
+      })*/
+    }
+    else if (idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati != 0 && idAreaUnesco == 0) {
+      setLoading(true)
+      await medioPublicacionService.actualizarMediosPublicacionCitacionPorAreaFrascatiPorAnio(idAnioDesde, idAnioHasta, idAreaFrascati).then(async(value) => { 
+        console.log(value);
+        await medioPublicacionService.actualizarMediosPublicacionPublicacionPorAreaFrascatiPorAnio(idAnioDesde, idAnioHasta, idAreaFrascati).then(value => {
+          console.log(value);
+          setLoading(false);
+        });
+      });
+
+      /*setLoading(true)
+      await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
+      await leyBradfordService.numeroMediosPublicacionPorAreaFrascatiPorAnio(idAnioDesde, idAnioHasta, idAreaFrascati).then(async (value) => {
+        handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
+        await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
+        setLoading(false)
+      })*/
+    }
+    else if (idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati == 0 && idAreaUnesco != 0) {
+      setLoading(true)
+      await medioPublicacionService.actualizarMediosPublicacionCitacionPorAreaUnescoPorAnio(idAnioDesde, idAnioHasta, idAreaUnesco).then(async(value) => { 
+        console.log(value);
+        await medioPublicacionService.actualizarMediosPublicacionPublicacionPorAreaUnescoPorAnio(idAnioDesde, idAnioHasta, idAreaUnesco).then(value => {
+          console.log(value);
+          setLoading(false);
+        });
+      });
+
+      /*setLoading(true)
+      await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
+      await leyBradfordService.numeroMediosPublicacionPorAreaUnescoPorAnio(idAnioDesde, idAnioHasta, idAreaUnesco).then(async (value) => {
+        handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
+        await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
+        setLoading(false)
+      })*/
+    }
+    else if (idAreaUnesco != 0 && idAreaFrascati != 0) {
+      notify("tr", 'Solo puede seleccionar un filtro de área (Frascati o Unesco).', "danger");
+    }
+    /*
       if (idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati == 0 && idAreaUnesco == 0) {
         setLoading(true)
         await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
@@ -578,13 +634,13 @@ function Dashboard() {
           await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
           setLoading(false)
         })
-      }else if(idAreaUnesco != 0 && idAreaFrascati != 0) {
+      } else if (idAreaUnesco != 0 && idAreaFrascati != 0) {
         notify("tr", 'Solo puede seleccionar un filtro de área (Frascati o Unesco).', "danger");
       }
     } else {
       notify("tr", 'Seleccione a que Publicaciones aplicar la Ley de Bradford', "danger");
-    }
-    
+    }*/
+
   }
 
   async function handleCargarDatosGraficosBurbujas() {
