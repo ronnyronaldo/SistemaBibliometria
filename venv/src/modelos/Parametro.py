@@ -13,7 +13,8 @@ class Parametro(db.Model):
     __tablename__ = "parametro"
     id_parametro = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(500))
-    valor = db.Column(db.Integer)
+    valor = db.Column(db.String(50))
+    codigo_parametro = db.Column(db.Integer)
 
     def create(self):
       db.session.add(self)
@@ -25,10 +26,10 @@ class Parametro(db.Model):
       db.session.commit()
       return parametro
    
-    def __init__(self, id_parametro, nombre, valor):
-        self.id_parametro = id_parametro
+    def __init__(self, nombre, valor, codigo_parametro):
         self.nombre = nombre 
         self.valor = valor
+        self.codigo_parametro = codigo_parametro
 
     def __repr__(self):
         return '' % self.id_parametro

@@ -57,10 +57,11 @@ from rutas.servicio_medio_publicacion_citacion import servicio_medio_publicacion
 #Objeto Medio Publicacion Publicacion
 from modelos.MedioPublicacionPublicacion import db
 from rutas.servicio_medio_publicacion_publicacion import servicio_medio_publicacion_publicacion
-
+#Objeto Medio Publicacion Publicacion
+#Objeto Parametro
 from modelos.Parametro import db
 from rutas.servicio_parametro import servicio_parametro
-#Objeto Medio Publicacion Publicacion
+#Objeto Parametro
 #Objeto SJR
 from modelos.SJR import db
 from rutas.servicio_sjr import servicio_sjr
