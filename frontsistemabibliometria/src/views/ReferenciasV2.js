@@ -42,6 +42,8 @@ function Referencias() {
   const [areasUnesco, setAreasUnesco] = React.useState([]);
   const [datosDetalleReferencia, setDatosDetalleReferencia] = React.useState([]);
   const [modalIsOpen, setModalIsOpen] = React.useState(false);
+  const [modalIsOpenReferencias, setModalIsOpenReferencias] = React.useState(false);
+  const [filtroPublicaciones, setFiltroPublicaciones] = React.useState('PSR');
 
   /**Spinner */
   let [loading, setLoading] = React.useState(false);
@@ -109,31 +111,14 @@ function Referencias() {
       autor: autor,
       anio_publicacion: anio_publicacion
     })
-
-    await tablaPaginacionService.destruirTabla('#dataTableReferenciasNoEncontradas');
+    await tablaPaginacionService.destruirTabla('#dataTableReferencias');
     await referenciaService.listarReferenciasNoEcontradasPorIdArticulo(id_articulo).then(value => {
       setReferencias(value.referencias);
       setLoading(false);
     });
-    await tablaPaginacionService.paginacion('#dataTableReferenciasNoEncontradas');
+    await tablaPaginacionService.paginacion('#dataTableReferencias');
   }
-
-  const handleOnChangeIngresoIndividual = (event) => {
-    setTipoBusquedaReferencias({
-      ...tipoBusquedaReferencias,
-      ingresoIndividual: true,
-      ingresoTotal: false
-    })
-  }
-
-  const handleOnChangeIngresoTotal = (event) => {
-    setTipoBusquedaReferencias({
-      ...tipoBusquedaReferencias,
-      ingresoIndividual: false,
-      ingresoTotal: true
-    })
-  }
-
+  
   async function handleBuscar() {
     if (tipoBusquedaReferencias.ingresoTotal == true) {
       setLoading(true);
@@ -213,6 +198,15 @@ function Referencias() {
     setModalIsOpen(true);
   }
 
+  function closeModalReferencias() {
+    setModalIsOpenReferencias(false);
+  }
+
+  function openModalReferencias(id_articulo, titulo, autor, anio_publicacion) {
+    handleCargarReferencias(id_articulo, titulo, autor, anio_publicacion);
+    setModalIsOpenReferencias(true);
+  }
+
   function handleCargarDatosDetalleReferencia(id_detalle_referencia, title, author, pub_year, venue) {
     setDatoDetalleReferencia({
       id_detalle_referencia: id_detalle_referencia,
@@ -276,9 +270,10 @@ function Referencias() {
 
   async function handleCargarDatosPublicacionesPorFiltro() {
     let filtroPublicaciones = document.getElementById("filtroPublicaciones").value;
-    if(filtroPublicaciones == 'PSR'){
+    setFiltroPublicaciones(filtroPublicaciones);
+    if (filtroPublicaciones == 'PSR') {
       await handleCargarDatosPublicacionesSinReferencias();
-    }else if(filtroPublicaciones == 'PSCR'){
+    } else if (filtroPublicaciones == 'PSCR') {
       await handleCargarDatosPublicacionesSinCompletarReferencias();
     }
   }
@@ -350,11 +345,12 @@ function Referencias() {
                       <th>AREA UNESCO</th>
                       <th>AREA FRASCATI</th>
                       <th>FUENTE</th>
+                      <th>ACCIONES</th>
                     </tr>
                   </thead>
                   <tbody>
                     {publicaciones.map(item => (
-                      <tr className="small" key={item.id_articulo} onClick={() => handleCargarReferencias(item.id_articulo, item.titulo, item.nombres, item.anio_publicacion)}>
+                      <tr className="small" key={item.id_articulo} >
                         <td width="15%">{item.nombres}</td>
                         <td width="20%">{item.titulo}</td>
                         <td width="5%">{item.anio_publicacion}</td>
@@ -363,94 +359,25 @@ function Referencias() {
                         <td width="5%">{item.descripcion_unesco}</td>
                         <td width="5%">{item.descripcion}</td>
                         <td width="5%">{item.nombre_base_datos_digital}</td>
+                        {filtroPublicaciones === 'PSCR' && (
+                          <td width="5%">
+                            <div class="btn-group-vertical" role="group" aria-label="Basic example">
+                              <Button id="obtenerReferencias" className="btn-sm active" type="button" variant="info" onClick={() => openModalReferencias(item.id_articulo, item.titulo, item.nombres, item.anio_publicacion)}>Obtener Detalle Referencias</Button>
+                            </div>
+                          </td>
+                        )}
+                        {filtroPublicaciones === 'PSR' && (
+                          <td width="5%">
+                            <div class="btn-group-vertical" role="group" aria-label="Basic example">
+                              <Button id="obtenerReferencias" className="btn-sm active" type="button" variant="success" onClick={() => handleBuscar()}>Ingresar Referencias</Button>
+                            </div>
+                          </td>
+                        )}
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </Card.Body>
-            </Card>
-          </Col>
-          <Col md="12">
-            <Card className="card-plain table-plain-bg">
-              <Card.Header>
-                <Card.Title as="h4">Referencias Pendiente Obtención Detalle</Card.Title>
-                <p className="card-category">
-                  {publicacionSeleccionada.titulo}
-                </p>
-              </Card.Header>
-              <Card.Body className="table-full-width table-responsive px-3">
-                <table className="table table-bordered" id="dataTableReferenciasNoEncontradas" width="100%" cellSpacing="0">
-                  <thead className="thead-dark">
-                    <tr>
-                      <th>ID REFERENCIA</th>
-                      <th>REFERENCIA</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {referencias.map(item => (
-                      <tr className="small" key={item.id_referencia} onClick={() => handleCargarReferenciaBuscar(item.id_referencia, item.referencia)}>
-                        <td width="10%">{item.id_referencia}</td>
-                        <td>{item.referencia}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </Card.Body>
-            </Card>
-          </Col>
-          <Col md="12">
-            <Card className="strpied-tabled-with-hover">
-              <Card.Header>
-                <Card.Title as="h4">Búsqueda del detalle de las referencias</Card.Title>
-                <Row>
-                  <Col className="pr-1" md="10" hidden>
-                    <Form.Group>
-                      <label>REFERENCIA</label>
-                      <Form.Control
-                        defaultValue={referenciaSeleccionada.referencia}
-                        cols="80"
-                        rows="4"
-                        as="textarea"
-                        disabled
-                      ></Form.Control>
-                    </Form.Group>
-                  </Col>
-                  <Col className="px-1" md="1" hidden>
-                    <Form.Group>
-                      <label>INDIVIDUAL</label>
-                      <Form.Control
-                        id="busquedaIndividual"
-                        type="radio"
-                        checked={tipoBusquedaReferencias.ingresoIndividual}
-                        onChange={handleOnChangeIngresoIndividual}
-                      ></Form.Control>
-                    </Form.Group>
-                  </Col>
-                  <Col className="px-1" md="3"></Col>
-                  <Col className="px-1" md="1">
-                    <Form.Group>
-                      <label>TODO REGISTROS</label>
-                      <Form.Control
-                        id="busquedaTotal"
-                        type="radio"
-                        checked={tipoBusquedaReferencias.ingresoTotal}
-                        onChange={handleOnChangeIngresoTotal}
-                      ></Form.Control>
-                    </Form.Group>
-                  </Col>
-                  <Col className="pr-1" md="3">
-                    <Form.Group>
-                      <label></label>
-                      <Form.Control
-                        defaultValue="BUSCAR"
-                        type="button"
-                        className="btn-outline-success"
-                        onClick={handleBuscar}
-                      ></Form.Control>
-                    </Form.Group>
-                  </Col>
-                </Row>
-              </Card.Header>
             </Card>
           </Col>
           <Col md="12">
@@ -550,6 +477,77 @@ function Referencias() {
           </Col>
         </Row>
       </Container>
+      <Modal
+        size="xl"
+        className="modal modal-primary"
+        show={modalIsOpenReferencias}
+      >
+        <Modal.Header className="justify-content-center">
+          <div className="modal-profile">
+            <i className="nc-icon nc-single-copy-04"></i>
+          </div>
+        </Modal.Header>
+        <Modal.Body className="text-center">
+          <p>Detalle Referencias</p>
+        </Modal.Body>
+        <Modal.Body className="text-left">
+          <Col className="pr-1" md="12">
+            <Form.Group>
+              <label>PUBLICACION</label>
+              <Form.Control
+                defaultValue={publicacionSeleccionada.titulo + " (" + publicacionSeleccionada.autor + ", " + publicacionSeleccionada.anio_publicacion + " )"}
+                disabled
+                type="text"
+              ></Form.Control>
+            </Form.Group>
+          </Col>
+
+          <Col md="12">
+            <Card className="strpied-tabled-with-hover">
+              <Card.Body className="table-full-width table-responsive px-3">
+                <table className="table table-bordered" id="dataTableReferencias" width="100%" cellSpacing="0">
+                  <thead className="thead-dark">
+                    <tr>
+                      <th>ID REFERENCIA</th>
+                      <th>REFERENCIA</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {referencias.map(item => (
+                      <tr className="small" key={item.id_referencia}>
+                        <td width="10%">{item.id_referencia}</td>
+                        <td>{item.referencia}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Modal.Body>
+
+        <div className="modal-footer">
+          <Button
+            id="regresar"
+            className="btn active"
+            type="button"
+            variant="secondary"
+            onClick={() => closeModalReferencias()}
+          >
+            Regresar
+          </Button>
+          <Button
+            id="buscar"
+            className="btn active"
+            type="button"
+            variant="success"
+            onClick={() => handleBuscar()}
+          >
+            Buscar Google Scholar
+          </Button>
+        </div>
+      </Modal>
+
       <Modal
         className="modal modal-primary"
         show={modalIsOpen}
