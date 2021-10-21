@@ -34,7 +34,8 @@ import {
   Modal,
   ModalTitle,
   ModalBody,
-  ModalFooter
+  ModalFooter,
+  FormGroup
 } from "react-bootstrap";
 function Referencias() {
 
@@ -43,6 +44,7 @@ function Referencias() {
   const [datosDetalleReferencia, setDatosDetalleReferencia] = React.useState([]);
   const [modalIsOpen, setModalIsOpen] = React.useState(false);
   const [modalIsOpenReferencias, setModalIsOpenReferencias] = React.useState(false);
+  const [modalIsOpenExtraccionReferencias, setModalIsOpenExtraccionReferencias] = React.useState(false);
   const [filtroPublicaciones, setFiltroPublicaciones] = React.useState('PSR');
 
   /**Spinner */
@@ -85,11 +87,16 @@ function Referencias() {
   /**Fin  de las variables y funciones para mostrar alertas al usuario */
   const [publicaciones, setPublicaciones] = React.useState([]);
   const [referencias, setReferencias] = React.useState([]);
+  const [tipoIngresoReferencias, setTipoIngresoReferencias] = React.useState({
+    ingresoManual: true,
+    ingresoAutomatico: false
+  });
   const [publicacionSeleccionada, setPublicacionSeleccionada] = React.useState({
     id_articulo: 0,
     titulo: "",
     autor: "",
-    anio_publicacion: 0
+    anio_publicacion: 0,
+    enlace: ""
   });
 
   const [referenciaSeleccionada, setReferenciaSeleccionada] = React.useState({
@@ -101,8 +108,75 @@ function Referencias() {
     ingresoTotal: true,
     ingresoIndividual: false
   });
+  const handleOnChangeIngresoManual = (event) => {
+    setTipoIngresoReferencias({
+      ...tipoIngresoReferencias,
+      ingresoManual: true,
+      ingresoAutomatico: false
+    })
+  }
 
-  async function handleCargarReferencias(id_articulo, titulo, autor, anio_publicacion) {
+  const handleOnChangeIngresoAutomatico = (event) => {
+    setTipoIngresoReferencias({
+      ...tipoIngresoReferencias,
+      ingresoManual: false,
+      ingresoAutomatico: true
+    })
+  }
+
+  const handleCargarRefManual = (event) => {
+    let referencia = document.getElementById("referenciaText").value;
+    let estado = validacionInputService.campoVacio(referencia)
+    //console.log(datoReferencia.idArticulo)
+    if (datoReferencia.idArticulo != 0) {
+      if (estado == true) {
+        referenciaService.insertarManual({
+          "id_articulo": datoReferencia.idArticulo,
+          "referencia": referencia
+        }).then(value => {
+          if (value.respuesta.error == "False") {
+            handleCargarReferenciasPorIdArticulo(datoReferencia.idArticulo, publicacionSeleccionada.titulo_publicacion, publicacionSeleccionada.autor, publicacionSeleccionada.anio_publicacion, publicacionSeleccionada.nombre_base_datos_digital, publicacionSeleccionada.enlace);
+            notify("tr", value.respuesta.valor, "primary");
+          } else {
+            notify("tr", value.respuesta.valor, "danger");
+          }
+        })
+      } else {
+        notify("tr", 'No ha ingresado la referencia.', "danger");
+      }
+    } else {
+      notify("tr", 'No ha seleccionado ninguna publicación.', "danger");
+    }
+  }
+
+  const handleCargarRefAutomatica = (event) => {
+    setLoading(true)
+    if (datoReferencia.idArticulo != 0) {
+      referenciaService.insertarAutomaticoScopus({
+        "id_articulo": datoReferencia.idArticulo,
+        "nombre_base_datos_digital": publicacionSeleccionada.nombre_base_datos_digital
+      }).then(value => {
+        setLoading(false);
+        if (value.respuesta.error == "False") {
+          if (value.respuesta.mensajes.length > 0) {
+            for (var i = 0; i < value.respuesta.mensajes.length; i++) {
+              if (value.respuesta.mensajes[i].error == "False") {
+                handleCargarReferenciasPorIdArticulo(datoReferencia.idArticulo, publicacionSeleccionada.titulo_publicacion, publicacionSeleccionada.autor, publicacionSeleccionada.anio_publicacion, publicacionSeleccionada.nombre_base_datos_digital, publicacionSeleccionada.enlace);
+                notify("tr", value.respuesta.mensajes[i].mensaje, "primary");
+              } else {
+                notify("tr", value.respuesta.mensajes[i].mensaje, "danger");
+              }
+            }
+          }
+        }
+      })
+    } else {
+      notify("tr", 'No ha seleccionado ninguna publicación.', "danger");
+    }
+    setLoading(false)
+  }
+
+  async function handleCargarReferenciasNoEncontradas(id_articulo, titulo, autor, anio_publicacion) {
     setLoading(true);
     setPublicacionSeleccionada({
       ...publicacionSeleccionada,
@@ -111,14 +185,14 @@ function Referencias() {
       autor: autor,
       anio_publicacion: anio_publicacion
     })
-    await tablaPaginacionService.destruirTabla('#dataTableReferencias');
+    await tablaPaginacionService.destruirTabla('#dataTableDetalleReferencias');
     await referenciaService.listarReferenciasNoEcontradasPorIdArticulo(id_articulo).then(value => {
       setReferencias(value.referencias);
       setLoading(false);
     });
-    await tablaPaginacionService.paginacion('#dataTableReferencias');
+    await tablaPaginacionService.paginacion('#dataTableDetalleReferencias');
   }
-  
+
   async function handleBuscar() {
     if (tipoBusquedaReferencias.ingresoTotal == true) {
       setLoading(true);
@@ -127,7 +201,7 @@ function Referencias() {
       }).then(value => {
         if (value.respuesta.error == "False") {
           if (value.respuesta.error == "False") {
-            handleCargarReferencias(publicacionSeleccionada.id_articulo, publicacionSeleccionada.titulo, publicacionSeleccionada.autor, publicacionSeleccionada.anio_publicacion);
+            handleCargarReferenciasNoEncontradas(publicacionSeleccionada.id_articulo, publicacionSeleccionada.titulo, publicacionSeleccionada.autor, publicacionSeleccionada.anio_publicacion);
             setLoading(false);
             notify("tr", value.respuesta.valor, "primary");
           } else {
@@ -203,8 +277,41 @@ function Referencias() {
   }
 
   function openModalReferencias(id_articulo, titulo, autor, anio_publicacion) {
-    handleCargarReferencias(id_articulo, titulo, autor, anio_publicacion);
+    handleCargarReferenciasNoEncontradas(id_articulo, titulo, autor, anio_publicacion);
     setModalIsOpenReferencias(true);
+  }
+
+  function closeModalExtraccionReferencias() {
+    setModalIsOpenExtraccionReferencias(false);
+  }
+
+  async function openModalExtraccionReferencias(id_articulo, titulo, autor, anio_publicacion, nombre_base_datos_digital, enlace) {
+    handleCargarReferenciasPorIdArticulo(id_articulo, titulo, autor, anio_publicacion, nombre_base_datos_digital, enlace);
+    setModalIsOpenExtraccionReferencias(true);
+  }
+
+  async function handleCargarReferenciasPorIdArticulo(id_articulo, titulo, autor, anio_publicacion, nombre_base_datos_digital, enlace) {
+    setPublicacionSeleccionada({
+      ...publicacionSeleccionada,
+      titulo_publicacion: titulo,
+      autor: autor,
+      anio_publicacion: anio_publicacion,
+      nombre_base_datos_digital: nombre_base_datos_digital,
+      enlace: enlace
+    })
+
+    setDatoReferencia({
+      ...datoReferencia,
+      idArticulo: id_articulo
+    })
+
+    setLoading(true);
+    await tablaPaginacionService.destruirTabla('#dataTableReferencias');
+    await referenciaService.listarReferenciasPorIdArticulo(id_articulo).then(async (value) => {
+      setLoading(false);
+      setReferencias(value.referencias);
+    });
+    await tablaPaginacionService.paginacion('#dataTableReferencias');
   }
 
   function handleCargarDatosDetalleReferencia(id_detalle_referencia, title, author, pub_year, venue) {
@@ -298,6 +405,19 @@ function Referencias() {
     await tablaPaginacionService.paginacion('#dataTablePublicacionesSeccionReferencias');
   }
 
+  const handleEliminarReferencia = (id_referencia) => {
+    setLoading(true);
+    referenciaService.eliminar(id_referencia).then(value => {
+      setLoading(false);
+      if (value.respuesta.error == "False") {
+        handleCargarReferenciasPorIdArticulo(datoReferencia.idArticulo, publicacionSeleccionada.titulo_publicacion, publicacionSeleccionada.autor, publicacionSeleccionada.anio_publicacion, publicacionSeleccionada.nombre_base_datos_digital, publicacionSeleccionada.enlace);
+        notify("tr", value.respuesta.valor, "primary");
+      } else {
+        notify("tr", value.respuesta.valor, "danger");
+      }
+    })
+  }
+
   React.useEffect(() => {
     handleCargarDatosPublicacionesSinReferencias();
     handleAreasFrascati();
@@ -363,13 +483,14 @@ function Referencias() {
                           <td width="5%">
                             <div class="btn-group-vertical" role="group" aria-label="Basic example">
                               <Button id="obtenerReferencias" className="btn-sm active" type="button" variant="info" onClick={() => openModalReferencias(item.id_articulo, item.titulo, item.nombres, item.anio_publicacion)}>Obtener Detalle Referencias</Button>
+                              <Button id="extraerReferencias" className="btn-sm active" type="button" variant="success" onClick={() => openModalExtraccionReferencias(item.id_articulo, item.titulo, item.nombres, item.anio_publicacion, item.nombre_base_datos_digital, item.enlace_documento != null ? item.enlace_documento : item.url_dspace)}>Ingresar Referencias</Button>
                             </div>
                           </td>
                         )}
                         {filtroPublicaciones === 'PSR' && (
                           <td width="5%">
                             <div class="btn-group-vertical" role="group" aria-label="Basic example">
-                              <Button id="obtenerReferencias" className="btn-sm active" type="button" variant="success" onClick={() => handleBuscar()}>Ingresar Referencias</Button>
+                              <Button id="extraerReferencias" className="btn-sm active" type="button" variant="success" onClick={() => openModalExtraccionReferencias(item.id_articulo, item.titulo, item.nombres, item.anio_publicacion, item.nombre_base_datos_digital, item.enlace_documento != null ? item.enlace_documento : item.url_dspace)}>Ingresar Referencias</Button>
                             </div>
                           </td>
                         )}
@@ -505,7 +626,7 @@ function Referencias() {
           <Col md="12">
             <Card className="strpied-tabled-with-hover">
               <Card.Body className="table-full-width table-responsive px-3">
-                <table className="table table-bordered" id="dataTableReferencias" width="100%" cellSpacing="0">
+                <table className="table table-bordered" id="dataTableDetalleReferencias" width="100%" cellSpacing="0">
                   <thead className="thead-dark">
                     <tr>
                       <th>ID REFERENCIA</th>
@@ -621,6 +742,134 @@ function Referencias() {
             onClick={() => actualizarDetalleReferencia()}
           >
             Grabar
+          </Button>
+        </div>
+      </Modal>
+      <Modal
+        size="xl"
+        className="modal modal-primary"
+        show={modalIsOpenExtraccionReferencias}
+      >
+        <Modal.Header className="justify-content-center">
+          <div className="modal-profile">
+            <i className="nc-icon nc-single-copy-04"></i>
+          </div>
+        </Modal.Header>
+        <Modal.Body className="text-center">
+          <p>Referencias</p>
+        </Modal.Body>
+        <div className="modal-footer">
+          <Col md="12">
+            <Card className="strpied-tabled-with-hover">
+              <Card.Header>
+                <Row>
+                  <Col className="pr-1" md="10">
+                    <Form.Group>
+                      <label>PUBLICACION</label>
+                      <Form.Control
+                        id="tituloText"
+                        defaultValue={publicacionSeleccionada.titulo_publicacion + " (" + publicacionSeleccionada.autor + "," + publicacionSeleccionada.anio_publicacion + ")"}
+                        cols="80"
+                        rows="2"
+                        as="textarea"
+                        disabled
+                      ></Form.Control>
+                      <a href={publicacionSeleccionada.enlace} target="_blank"><i className="fas fa-external-link-alt"></i>Abrir</a>
+                    </Form.Group>
+                  </Col>
+                  <Col className="px-1" md="1">
+                    <Form.Group>
+                      <label>MANUAL</label>
+                      <Form.Control
+                        id="ingresoManual"
+                        type="radio"
+                        onChange={handleOnChangeIngresoManual}
+                        checked={tipoIngresoReferencias.ingresoManual}
+                      ></Form.Control>
+                    </Form.Group>
+                  </Col>
+                  <Col className="px-1" md="1">
+                    <Form.Group>
+                      <label>AUTOMÁTICO</label>
+                      <Form.Control
+                        id="ingresoAutomatico"
+                        type="radio"
+                        onChange={handleOnChangeIngresoAutomatico}
+                        checked={tipoIngresoReferencias.ingresoAutomatico}
+                      ></Form.Control>
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col className="pr-1" md="5">
+                    <Form.Group>
+                      <label>INGRESE LA REFERENCIA</label>
+                      <Form.Control
+                        id="referenciaText"
+                        defaultValue=""
+                        type="text"
+                        disabled={tipoIngresoReferencias.ingresoAutomatico}
+                      ></Form.Control>
+                    </Form.Group>
+                  </Col>
+                  <Col className="pr-1" md="3">
+                    <Form.Group>
+                      <label></label>
+                      <Form.Control
+                        defaultValue="AGREGAR"
+                        type="button"
+                        className="btn-outline-success"
+                        onClick={handleCargarRefManual}
+                        disabled={tipoIngresoReferencias.ingresoAutomatico}
+                      ></Form.Control>
+                    </Form.Group>
+                  </Col>
+                  <Col className="pr-1" md="3">
+                    <Form.Group>
+                      <label></label>
+                      <Form.Control
+                        value="CARGAR"
+                        type="button"
+                        className="btn-outline-success"
+                        onClick={handleCargarRefAutomatica}
+                        disabled={tipoIngresoReferencias.ingresoManual}
+                      ></Form.Control>
+                    </Form.Group>
+                  </Col>
+                </Row>
+              </Card.Header>
+            </Card>
+          </Col>
+          <Col md="12">
+            <Card className="card-plain table-plain-bg">
+              <Card.Body className="table-full-width table-responsive px-3">
+                <table className="table table-bordered" id="dataTableReferencias" width="100%" cellSpacing="0">
+                  <thead className="thead-dark">
+                    <tr>
+                      <th>REFERENCIA</th>
+                      <th>ACCIONES</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {referencias.map(item => (
+                      <tr className="small" key={item.id_referencia}>
+                        <td>{item.referencia}</td>
+                        <td width="5%"><Link to="#" id="eliminarReferencia" className="link col-sm-12 col-md-3" onClick={() => handleEliminarReferencia(item.id_referencia)}><i className="fas fa-trash-alt fa-2x"></i></Link></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Button
+            id="regresar"
+            className="btn active"
+            type="button"
+            variant="secondary"
+            onClick={() => closeModalExtraccionReferencias()}
+          >
+            Regresar
           </Button>
         </div>
       </Modal>
