@@ -96,13 +96,8 @@ function Publicaciones() {
   };
   /**Fin  de las variables y funciones para mostrar alertas al usuario */
   const [publicaciones, setPublicaciones] = React.useState([]);
-  const [publicacion, setPublicacion] = React.useState({});
   const [referencias, setReferencias] = React.useState([]);
   const [detalleReferencias, setDetalleReferencias] = React.useState([]);
-  const [tipoIngresoReferencias, setTipoIngresoReferencias] = React.useState({
-    ingresoManual: true,
-    ingresoAutomatico: false
-  });
 
   const [publicacionSeleccionada, setPublicacionSeleccionada] = React.useState({
     titulo_publicacion: "",
@@ -158,58 +153,6 @@ function Publicaciones() {
     await tablaPaginacionService.paginacion('#dataTablePublicaciones');
   }
 
-  async function handleCargarDatosPublicacionesSinReferencias() {
-    //setReferencias([]);
-    //setDetalleReferencias([]);
-
-    setPublicacionSeleccionada({
-      ...publicacionSeleccionada,
-      titulo_publicacion: "",
-      autor: "",
-      anio_publicacion: "",
-      nombre_base_datos_digital: ""
-    })
-
-    setDatoReferencia({
-      ...datoReferencia,
-      idArticulo: 0
-    })
-
-    await tablaPaginacionService.destruirTabla('#dataTablePublicaciones');
-    setLoading(true)
-    await publicacionService.listarPublicacionesSinReferencias().then(value => {
-      setPublicaciones(value.articulos);
-      setLoading(false)
-    });
-    await tablaPaginacionService.paginacion('#dataTablePublicaciones');
-  }
-
-  async function handleCargarDatosPublicacionesSinCompletarReferencias() {
-    //setReferencias([]);
-    //setDetalleReferencias([]);
-
-    setPublicacionSeleccionada({
-      ...publicacionSeleccionada,
-      titulo_publicacion: "",
-      autor: "",
-      anio_publicacion: "",
-      nombre_base_datos_digital: ""
-    })
-
-    setDatoReferencia({
-      ...datoReferencia,
-      idArticulo: 0
-    })
-
-    await tablaPaginacionService.destruirTabla('#dataTablePublicaciones');
-    setLoading(true)
-    await publicacionService.listarPublicacionesSinCompletarReferencias().then(value => {
-      setPublicaciones(value.articulos);
-      setLoading(false)
-    });
-    await tablaPaginacionService.paginacion('#dataTablePublicaciones');
-  }
-
   async function handleCargarReferencias(id_articulo, titulo, autor, anio_publicacion, nombre_base_datos_digital) {
 
     setPublicacionSeleccionada({
@@ -256,87 +199,6 @@ function Publicaciones() {
     await tablaPaginacionService.paginacion('#dataTableDetalleReferencias');
   }
 
-  const handleOnChangeIngresoManual = (event) => {
-    setTipoIngresoReferencias({
-      ...tipoIngresoReferencias,
-      ingresoManual: true,
-      ingresoAutomatico: false
-    })
-  }
-
-  const handleOnChangeIngresoAutomatico = (event) => {
-    setTipoIngresoReferencias({
-      ...tipoIngresoReferencias,
-      ingresoManual: false,
-      ingresoAutomatico: true
-    })
-  }
-
-  const handleCargarRefAutomatica = (event) => {
-    setLoading(true)
-    if (datoReferencia.idArticulo != 0) {
-      referenciaService.insertarAutomaticoScopus({
-        "id_articulo": datoReferencia.idArticulo,
-        "nombre_base_datos_digital": publicacionSeleccionada.nombre_base_datos_digital
-      }).then(value => {
-        setLoading(false);
-        if (value.respuesta.error == "False") {
-          if (value.respuesta.mensajes.length > 0) {
-            for (var i = 0; i < value.respuesta.mensajes.length; i++) {
-              if (value.respuesta.mensajes[i].error == "False") {
-                handleCargarReferencias(datoReferencia.idArticulo, publicacionSeleccionada.titulo_publicacion, publicacionSeleccionada.autor, publicacionSeleccionada.anio_publicacion, publicacionSeleccionada.nombre_base_datos_digital);
-                notify("tr", value.respuesta.mensajes[i].mensaje, "primary");
-              } else {
-                notify("tr", value.respuesta.mensajes[i].mensaje, "danger");
-              }
-            }
-          }
-        }
-      })
-    } else {
-      notify("tr", 'No ha seleccionado ninguna publicación.', "danger");
-    }
-    setLoading(false)
-  }
-
-  const handleCargarRefManual = (event) => {
-    let referencia = document.getElementById("referenciaText").value;
-    let estado = validacionInputService.campoVacio(referencia)
-    //console.log(datoReferencia.idArticulo)
-    if (datoReferencia.idArticulo != 0) {
-      if (estado == true) {
-        referenciaService.insertarManual({
-          "id_articulo": datoReferencia.idArticulo,
-          "referencia": referencia
-        }).then(value => {
-          if (value.respuesta.error == "False") {
-            handleCargarReferencias(datoReferencia.idArticulo, publicacionSeleccionada.titulo_publicacion, publicacionSeleccionada.autor, publicacionSeleccionada.anio_publicacion, publicacionSeleccionada.nombre_base_datos_digital);
-            notify("tr", value.respuesta.valor, "primary");
-          } else {
-            notify("tr", value.respuesta.valor, "danger");
-          }
-        })
-      } else {
-        notify("tr", 'No ha ingresado la referencia.', "danger");
-      }
-    } else {
-      notify("tr", 'No ha seleccionado ninguna publicación.', "danger");
-    }
-  }
-
-  const handleEliminarReferencia = (id_referencia) => {
-    setLoading(true);
-    referenciaService.eliminar(id_referencia).then(value => {
-      setLoading(false);
-      if (value.respuesta.error == "False") {
-        handleCargarReferencias(datoReferencia.idArticulo, publicacionSeleccionada.titulo_publicacion, publicacionSeleccionada.autor, publicacionSeleccionada.anio_publicacion, publicacionSeleccionada.nombre_base_datos_digital);
-        notify("tr", value.respuesta.valor, "primary");
-      } else {
-        notify("tr", value.respuesta.valor, "danger");
-      }
-    })
-  }
-
   const handleEliminarArticulo = (id_articulo) => {
     setLoading(true);
     publicacionService.eliminar(id_articulo).then(value => {
@@ -359,13 +221,6 @@ function Publicaciones() {
         if (value.respuesta.error == "False") {
           if (value.respuesta.mensajes.length > 0) {
             exportToCSV(value.respuesta.mensajes, "observacionesIngresoPublicaciones");
-            /*for( var i = 0; i< value.respuesta.mensajes.length; i++){
-              if(value.respuesta.mensajes[i].error== "False"){
-                notify("tr", value.respuesta.mensajes[i].mensaje, "primary");
-              }else{
-                notify("tr", value.respuesta.mensajes[i].mensaje, "danger");
-              }
-            }*/
             notify("tc", "Revise las observaciones colocadas en el archivo de excel del ingreso de las publicaciones.", "primary");
           }
         }
@@ -456,17 +311,7 @@ function Publicaciones() {
       notify("tr", 'Existen campos sin llenar.', "danger");
     }
   }
-
-  async function handleCargarDatosPublicacionesPorFiltro() {
-    let filtroPublicaciones = document.getElementById("filtroPublicaciones").value;
-    if (filtroPublicaciones == 'T') {
-      await handleCargarDatosPublicaciones();
-    } else if (filtroPublicaciones == 'PSR') {
-      await handleCargarDatosPublicacionesSinReferencias();
-    } else if (filtroPublicaciones == 'PSCR') {
-      await handleCargarDatosPublicacionesSinCompletarReferencias();
-    }
-  }
+  
   const fileType =
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
   const fileExtension = ".xlsx";
