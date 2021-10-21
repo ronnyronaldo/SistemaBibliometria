@@ -85,7 +85,7 @@ function MedioPublicacion() {
   const [mediosPublicacionPublicacion, setMediosPublicacionPublicacion] = React.useState([]);
   const [mediosPublicacionCitacion, setMediosPublicacionCitacion] = React.useState([]);
   const [mediosPublicacionSJR, setMediosPublicacionSJR] = React.useState([]);
-
+  const [filtroPublicaciones, setFiltroPublicaciones] = React.useState('P');
   async function handleCargarMediosPublicacion() {
     setLoading(true);
     await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacion');
@@ -94,7 +94,6 @@ function MedioPublicacion() {
       setLoading(false);
     });
     await tablaPaginacionService.paginacion('#dataTableMediosPublicacion');
-    await handleCargarMediosPublicacionPublicacion();
   }
 
   async function handleCargarMediosPublicacionPublicacion() {
@@ -105,7 +104,6 @@ function MedioPublicacion() {
       setLoading(false);
     });
     await tablaPaginacionService.paginacion('#dataTableMediosPublicacionPublicacion');
-    await handleCargarMediosPublicacionCitacion();
   }
 
   async function handleCargarMediosPublicacionCitacion() {
@@ -116,7 +114,6 @@ function MedioPublicacion() {
       setLoading(false);
     });
     await tablaPaginacionService.paginacion('#dataTableMediosPublicacionCitacion');
-    await handleCargarSJR();
   }
 
   async function handleCargarSJR() {
@@ -172,7 +169,7 @@ function MedioPublicacion() {
         if (value.error == "False") {
           notify("tc", "Registros SJR ingresadas correctamente.", "primary");
           handleCargarSJR();
-        }else{
+        } else {
           notify("tc", "No se pudo ingresar los registros SJR.", "danger");
         }
       })
@@ -203,9 +200,21 @@ function MedioPublicacion() {
       console.log(value)
     })
   }
+  async function handleCargarDatosPublicacionesPorFiltro() {
+    let filtroPublicaciones = document.getElementById("filtroPublicaciones").value;
+    setFiltroPublicaciones(filtroPublicaciones);
+    if (filtroPublicaciones == 'P') {
+      await handleCargarMediosPublicacionPublicacion();
+    } else if (filtroPublicaciones == 'C') {
+      await handleCargarMediosPublicacionCitacion();
+    } else if (filtroPublicaciones == 'SJR') {
+      await handleCargarSJR();
+    }
+  }
 
   React.useEffect(() => {
     handleCargarMediosPublicacion();
+    handleCargarMediosPublicacionPublicacion();
   }, []);
   return (
     <>
@@ -277,114 +286,140 @@ function MedioPublicacion() {
           </Col>
           <Col md="12">
             <Card className="strpied-tabled-with-hover">
-              <Card.Header>
-                <Card.Title as="h4">Ranking Medios de Publicación | Publicaciones</Card.Title>
-                <p className="card-category">
-                  Medios de Publicación más atractivas donde publican los investigadores con filiacion a la Universidad de Cuenca
-                </p>
-              </Card.Header>
               <Card.Body className="table-full-width table-responsive px-3">
-                <table className="table table-bordered table-hover" id="dataTableMediosPublicacionPublicacion" width="100%" cellSpacing="0">
-                  <thead className="thead-dark">
-                    <tr>
-                      <th>NOMBRE</th>
-                      <th>NUMERO PUBLICACIONES</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {mediosPublicacionPublicacion.map(item => (
-                      <tr className="small" key={item.id_medio_publicacion}>
-                        <td>{item.nombre}</td>
-                        <td>{item.numero_publicaciones}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </Card.Body>
-            </Card>
-          </Col>
-          <Col md="12">
-            <Card className="strpied-tabled-with-hover">
-              <Card.Header>
-                <Card.Title as="h4">Ranking Medios de Publicación | Citaciones</Card.Title>
-                <p className="card-category">
-                  Medios de Publicación más atractivas de donde citan los investigadores con filiacion a la Universidad de Cuenca
-                </p>
-              </Card.Header>
-              <Card.Body className="table-full-width table-responsive px-3">
-                <table className="table table-bordered table-hover" id="dataTableMediosPublicacionCitacion" width="100%" cellSpacing="0">
-                  <thead className="thead-dark">
-                    <tr>
-                      <th>NOMBRE</th>
-                      <th>NUMERO CITAS</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {mediosPublicacionCitacion.map(item => (
-                      <tr className="small" key={item.id_medio_publicacion}>
-                        <td>{item.nombre}</td>
-                        <td>{item.numero_citas}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </Card.Body>
-            </Card>
-          </Col>
-          <Col md="12">
-            <Card className="strpied-tabled-with-hover">
-              <Card.Header>
-                <Card.Title as="h4">Ranking | Scimago Journal And Country Rank</Card.Title>
-                <p className="card-category">
-                  SCImago Journal Rank proporciona datos acerca de la influencia científica de las revistas académicas según el número de citas en otros medios y periódicos o revistas de importancia.
-                </p>
-
                 <Row>
-                  <Col className="pr-1" md="5">
+                  <Col className="pr-1" md="6">
                     <Form.Group>
-                      <label>INGRESE EL ARCHIVO .XLSX CON LOS DATOS DEL SJR </label>
-                      <FormGroup>
-                        <input type='file' onChange={(e) => {
-                          const file = e.target.files[0];
-                          handleReadExcel(file)
-                        }} className="col-sm-12 col-md-8"></input>
-                        <Link to="#" id="ingresarSJR" className="link col-sm-12 col-md-3"><Button variant="primary" onClick={handleIngresarSJR}>Ingresar <i className="fas fa-file-upload fa-2x" /></Button></Link>
-                      </FormGroup>
+                      <label>Ranking Medio de Publicación</label>
+                      <Form.Row>
+                        <select className="form-control" id="filtroPublicaciones" onChange={handleCargarDatosPublicacionesPorFiltro}>
+                          <option value="P">Publicación</option>
+                          <option value="C">Citación</option>
+                          <option value="SJR">SJR</option>
+                        </select>
+                      </Form.Row>
                     </Form.Group>
                   </Col>
                 </Row>
-
-              </Card.Header>
-              <Card.Body className="table-full-width table-responsive px-3">
-                <table className="table table-bordered table-hover" id="dataTableMediosPublicacionSJR" width="100%" cellSpacing="0">
-                  <thead className="thead-dark">
-                    <tr>
-                      <th>RANK</th>
-                      <th>ID RECURSO</th>
-                      <th>TITULO</th>
-                      <th>TIPO</th>
-                      <th>ISNN</th>
-                      <th>SJR</th>
-                      <th>SJR BEST QUARTILE</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {mediosPublicacionSJR.map(item => (
-                      <tr className="small" key={item.id_sjr}>
-                        <td width="10%">{item.rank}</td>
-                        <td width="10%">{item.id_recurso}</td>
-                        <td width="30%">{item.titulo}</td>
-                        <td width="10%">{item.tipo}</td>
-                        <td width="10%">{item.isnn}</td>
-                        <td width="10%">{item.sjr}</td>
-                        <td width="10%">{item.quartil}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
               </Card.Body>
             </Card>
           </Col>
+          {filtroPublicaciones === 'P' && (
+            <Col md="12">
+              <Card className="strpied-tabled-with-hover">
+                <Card.Header>
+                  <Card.Title as="h4">Ranking Medios de Publicación | Publicaciones</Card.Title>
+                  <p className="card-category">
+                    Medios de Publicación más atractivas donde publican los investigadores con filiacion a la Universidad de Cuenca
+                  </p>
+                </Card.Header>
+                <Card.Body className="table-full-width table-responsive px-3">
+                  <table className="table table-bordered table-hover" id="dataTableMediosPublicacionPublicacion" width="100%" cellSpacing="0">
+                    <thead className="thead-dark">
+                      <tr>
+                        <th>NOMBRE</th>
+                        <th>NUMERO PUBLICACIONES</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {mediosPublicacionPublicacion.map(item => (
+                        <tr className="small" key={item.id_medio_publicacion}>
+                          <td>{item.nombre}</td>
+                          <td>{item.numero_publicaciones}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </Card.Body>
+              </Card>
+            </Col>
+          )}
+          {filtroPublicaciones === 'C' && (
+            <Col md="12">
+              <Card className="strpied-tabled-with-hover">
+                <Card.Header>
+                  <Card.Title as="h4">Ranking Medios de Publicación | Citaciones</Card.Title>
+                  <p className="card-category">
+                    Medios de Publicación más atractivas de donde citan los investigadores con filiacion a la Universidad de Cuenca
+                  </p>
+                </Card.Header>
+                <Card.Body className="table-full-width table-responsive px-3">
+                  <table className="table table-bordered table-hover" id="dataTableMediosPublicacionCitacion" width="100%" cellSpacing="0">
+                    <thead className="thead-dark">
+                      <tr>
+                        <th>NOMBRE</th>
+                        <th>NUMERO CITAS</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {mediosPublicacionCitacion.map(item => (
+                        <tr className="small" key={item.id_medio_publicacion}>
+                          <td>{item.nombre}</td>
+                          <td>{item.numero_citas}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </Card.Body>
+              </Card>
+            </Col>
+          )}
+          {filtroPublicaciones === 'SJR' && (
+            <Col md="12">
+              <Card className="strpied-tabled-with-hover">
+                <Card.Header>
+                  <Card.Title as="h4">Ranking | Scimago Journal And Country Rank</Card.Title>
+                  <p className="card-category">
+                    SCImago Journal Rank proporciona datos acerca de la influencia científica de las revistas académicas según el número de citas en otros medios y periódicos o revistas de importancia.
+                  </p>
+
+                  <Row>
+                    <Col className="pr-1" md="5">
+                      <Form.Group>
+                        <label>INGRESE EL ARCHIVO .XLSX CON LOS DATOS DEL SJR </label>
+                        <FormGroup>
+                          <input type='file' onChange={(e) => {
+                            const file = e.target.files[0];
+                            handleReadExcel(file)
+                          }} className="col-sm-12 col-md-8"></input>
+                          <Link to="#" id="ingresarSJR" className="link col-sm-12 col-md-3"><Button variant="primary" onClick={handleIngresarSJR}>Ingresar <i className="fas fa-file-upload fa-2x" /></Button></Link>
+                        </FormGroup>
+                      </Form.Group>
+                    </Col>
+                  </Row>
+
+                </Card.Header>
+                <Card.Body className="table-full-width table-responsive px-3">
+                  <table className="table table-bordered table-hover" id="dataTableMediosPublicacionSJR" width="100%" cellSpacing="0">
+                    <thead className="thead-dark">
+                      <tr>
+                        <th>RANK</th>
+                        <th>ID RECURSO</th>
+                        <th>TITULO</th>
+                        <th>TIPO</th>
+                        <th>ISNN</th>
+                        <th>SJR</th>
+                        <th>SJR BEST QUARTILE</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {mediosPublicacionSJR.map(item => (
+                        <tr className="small" key={item.id_sjr}>
+                          <td width="10%">{item.rank}</td>
+                          <td width="10%">{item.id_recurso}</td>
+                          <td width="30%">{item.titulo}</td>
+                          <td width="10%">{item.tipo}</td>
+                          <td width="10%">{item.isnn}</td>
+                          <td width="10%">{item.sjr}</td>
+                          <td width="10%">{item.quartil}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </Card.Body>
+              </Card>
+            </Col>
+          )}
         </Row>
       </Container>
     </>

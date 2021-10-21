@@ -311,7 +311,7 @@ function Publicaciones() {
       notify("tr", 'Existen campos sin llenar.', "danger");
     }
   }
-  
+
   const fileType =
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
   const fileExtension = ".xlsx";
@@ -354,15 +354,7 @@ function Publicaciones() {
                             const file = e.target.files[0];
                             handleReadExcel(file)
                           }} className="col-sm-12 col-md-8"></input>
-                          <Button
-                            id="ingresarPublicacion"
-                            className="btn active"
-                            type="button"
-                            variant="primary"
-                            onClick={handleIngresarPublicaciones}
-                          >
-                            Ingresar
-                          </Button>
+                          <Link to="#" id="ingresarPublicacion" className="link col-sm-12 col-md-3" onClick={handleIngresarPublicaciones}><Button variant="primary">Ingresar <i className="fas fa-file-upload fa-2x" /></Button></Link>
                         </FormGroup>
                       </Form.Group>
                     </Col>
