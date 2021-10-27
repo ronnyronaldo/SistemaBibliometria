@@ -33,6 +33,10 @@ from rutas.servicio_area_frascati import servicio_area_frascati
 from modelos.ArticuloScopus import db
 from rutas.servicio_articulo_scopus import servicio_articulo_scopus
 #Objeto Articulo Scopus
+#Objeto ArticuloAutor
+from modelos.ArticuloAutor import db
+from rutas.servicio_articulo_autor import servicio_articulo_autor
+#Objeto ArticuloAutor
 #Objeto Autor
 from modelos.Autor import db
 from rutas.servicio_autor import servicio_autor
@@ -67,6 +71,8 @@ from modelos.SJR import db
 from rutas.servicio_sjr import servicio_sjr
 #Objeto SJR
 #Configuracion de la aplicacion y de la base de datos
+
+#MySQL configurations
 app = Flask(__name__)
 CORS(app, allow_headers=["Content-Type", "Authorization", "Access-Control-Allow-Credentials"], supports_credentials=True)
 app.config.from_object('config')
@@ -76,6 +82,7 @@ migrate = Migrate(app, db)
 
 # Registrar los objetos para poder navegar
 app.register_blueprint(servicio_articulo, url_prefix='/articulo')
+app.register_blueprint(servicio_articulo_autor, url_prefix='/articuloAutor')
 app.register_blueprint(servicio_autor, url_prefix='/autor')
 app.register_blueprint(servicio_referencia, url_prefix='/referencia')
 app.register_blueprint(servicio_base_datos_digital, url_prefix='/baseDatosDigital')
