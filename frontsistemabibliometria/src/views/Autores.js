@@ -1,6 +1,7 @@
 import React from "react";
 import { tablaPaginacionService } from '../utils/tablaPaginacion.service';
 import { autorService } from '../_services/autor.service';
+import { articuloAutorService } from '../_services/articuloAutor.service';
 import { FormGroup } from "reactstrap";
 import *as XLSX from 'xlsx';
 
@@ -28,7 +29,8 @@ import {
   Container,
   Row,
   Col,
-  Form
+  Form,
+  Modal
 } from "react-bootstrap";
 function Autores() {
   /**Spinner */
@@ -38,28 +40,8 @@ function Autores() {
   const [showModal, setShowModal] = React.useState(false);
   const notificationAlertRef = React.useRef(null);
   const [nuevosAutores, setNuevosAutores] = React.useState([]);
+  const [modalIsOpenPublicaciones, setModalIsOpenPublicaciones] = React.useState(false);
   const notify = (place, mensaje, type) => {
-    //var color = Math.floor(Math.random() * 5 + 1);
-    //var type = "danger";
-    /*switch (color) {
-      case 1:
-        type = "primary";
-        break;
-      case 2:
-        type = "success";
-        break;
-      case 3:
-        type = "danger";
-        break;
-      case 4:
-        type = "warning";
-        break;
-      case 5:
-        type = "info";
-        break;
-      default:
-        break;
-    }*/
     var options = {};
     options = {
       place: place,
@@ -77,6 +59,8 @@ function Autores() {
     notificationAlertRef.current.notificationAlert(options);
   };
   const [autores, setAutores] = React.useState([]);
+  const [nombreAutor, setNombreAutor] = React.useState("");
+  const [publicaciones, setPublicaciones] = React.useState([]);
   async function handleCargarAutores() {
     setLoading(true);
     await tablaPaginacionService.destruirTabla('#dataAutores');
@@ -90,13 +74,23 @@ function Autores() {
     setLoading(true);
     autorService.eliminar(id_autor).then(value => {
       setLoading(false);
-      if(value.respuesta.error == "False"){
+      if (value.respuesta.error == "False") {
         handleCargarAutores();
         notify("tr", value.respuesta.valor, "primary");
-      }else{
+      } else {
         notify("tr", value.respuesta.valor, "danger");
       }
     })
+  }
+
+  const handleVerPublicacionesPorAutor = async(id_autor) => {
+    setLoading(true);
+    await tablaPaginacionService.destruirTabla('#dataPublicaciones');
+    await articuloAutorService.listarArticulosPorIdAutor(id_autor).then(value => {
+      setPublicaciones(value.publicaciones);
+      setLoading(false);
+    });
+    await tablaPaginacionService.paginacion('#dataPublicaciones');
   }
 
   async function handleReadExcel(file) {
@@ -129,7 +123,7 @@ function Autores() {
           handleCargarAutores();
           notify("tr", /*nuevoIngreso.titulo + '(' + nuevoIngreso.anio_publicacion + ')' + ': ' + */value.respuesta.valor, "primary");
         } else {
-          notify("tr", /*nuevoIngreso.titulo + '(' + nuevoIngreso.anio_publicacion + ')' + ' : ' + */value.respuesta.valor , "danger");
+          notify("tr", /*nuevoIngreso.titulo + '(' + nuevoIngreso.anio_publicacion + ')' + ' : ' + */value.respuesta.valor, "danger");
         }
       })
 
@@ -155,6 +149,17 @@ function Autores() {
       }*/
     }
   }
+  function closeModalPublicaciones() {
+    setNombreAutor("");
+    setModalIsOpenPublicaciones(false);
+  }
+
+  function openModalPublicaciones(id_autor, nombre) {
+    handleVerPublicacionesPorAutor(id_autor);
+    setNombreAutor(nombre);
+    setModalIsOpenPublicaciones(true);
+  }
+
   React.useEffect(() => {
     handleCargarAutores();
   }, []);
@@ -169,45 +174,34 @@ function Autores() {
           <Col md="12">
             <Card className="strpied-tabled-with-hover">
               <Card.Header>
-                <Card.Title as="h4">Ingreso de Articulo - Autor</Card.Title>
-                <p className="card-category">
-                  Ingreso de todos los autores por articulo
-                </p>
-              </Card.Header>
-              <Card.Body>
-                <Form>
-                  <Row>
-                    <Col className="pr-1" md="5">
-                      <Form.Group>
-                        <label>INGRESE EL ARCHIVO .XLSX CON LOS DATOS DE LOS AUTORES </label>
-                        <FormGroup>
-                          <input type='file' onChange={(e) => {
-                            const file = e.target.files[0];
-                            handleReadExcel(file)
-                          }} className="col-sm-12 col-md-8"></input>
-                          <Link to="#" id="ingresarPublicacion" className="link col-sm-12 col-md-3" onClick={handleIngresarAutores}><Button variant="primary">Ingresar <i className="fas fa-file-upload fa-2x" /></Button></Link>
-                        </FormGroup>
-                      </Form.Group>
-                    </Col>
-                  </Row>
-
-                </Form>
-              </Card.Body>
-            </Card>
-          </Col>
-          <Col md="12">
-            <Card className="strpied-tabled-with-hover">
-              <Card.Header>
                 <Card.Title as="h4">Autores</Card.Title>
                 <p className="card-category">
                   Autores de las publicaciones
                 </p>
+                <Card.Body>
+                  <Form>
+                    <Row>
+                      <Col className="pr-1" md="5">
+                        <Form.Group>
+                          <label>INGRESE EL ARCHIVO .XLSX CON LOS DATOS DE LOS AUTORES Y SUS RESPECTIVAS PUBLICACIONES</label>
+                          <FormGroup>
+                            <input type='file' onChange={(e) => {
+                              const file = e.target.files[0];
+                              handleReadExcel(file)
+                            }} className="col-sm-12 col-md-8"></input>
+                            <Link to="#" id="ingresarPublicacion" className="link col-sm-12 col-md-3" onClick={handleIngresarAutores}><Button variant="primary">Ingresar <i className="fas fa-file-upload fa-2x" /></Button></Link>
+                          </FormGroup>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                  </Form>
+                </Card.Body>
               </Card.Header>
               <Card.Body className="table-full-width table-responsive px-3">
                 <table className="table table-bordered table-hover" id="dataAutores" width="100%" cellSpacing="0">
                   <thead className="thead-dark">
                     <tr>
-                      <th>NOMBRE PUBLICACION</th>
                       <th>IDENTIFICACIÓN</th>
                       <th>NOMBRE</th>
                       <th>ACCIONES</th>
@@ -216,10 +210,14 @@ function Autores() {
                   <tbody>
                     {autores.map(item => (
                       <tr className="small" key={item.id_autor}>
-                        <td>{item.titulo}</td>
-                        <td>{item.identificacion.substr(1)}</td>
-                        <td>{item.nombre}</td>
-                        <td width="5%"><Link to="#" id="eliminarAutor" className="link col-sm-12 col-md-3" onClick={() => handleEliminarAutor(item.id_autor)}><i className="fas fa-trash-alt fa-2x"></i></Link></td>
+                        <td width="20%"><i className="fas fa-user"></i> {item.id_autor}</td>
+                        <td width="70%">{item.nombre}</td>
+                        <td width="10%">
+                          <div class="btn-group-vertical" role="group" aria-label="Basic example">
+                            <Button id="verPublicacionesAutor" className="btn-sm active" type="button" variant="success" onClick={() => openModalPublicaciones(item.id_autor, item.nombre)}>Ver Publicaciones</Button>
+                            {/*<Button id="eliminarAutor" className="btn-sm active" type="button" variant="danger" onClick={() => handleEliminarAutor(item.id_autor)} >Eliminar</Button>*/}
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -229,6 +227,69 @@ function Autores() {
           </Col>
         </Row>
       </Container>
+      <Modal
+        size="xl"
+        className="modal modal-primary"
+        show={modalIsOpenPublicaciones}
+      >
+        <Modal.Header className="justify-content-center">
+          <div className="modal-profile">
+            <i className="nc-icon nc-single-copy-04"></i>
+          </div>
+        </Modal.Header>
+        <Modal.Body className="text-center">
+          <p>Publicaciones</p>
+        </Modal.Body>
+        <Modal.Body className="text-left">
+          <Col className="pr-1" md="12">
+            <Form.Group>
+              <label>AUTOR</label>
+              <Form.Control
+                defaultValue={nombreAutor}
+                disabled
+                type="text"
+              ></Form.Control>
+            </Form.Group>
+          </Col>
+
+          <Col md="12">
+            <Card className="strpied-tabled-with-hover">
+              <Card.Body className="table-full-width table-responsive px-3">
+                <table className="table table-bordered" id="dataPublicaciones" width="100%" cellSpacing="0">
+                  <thead className="thead-dark">
+                    <tr>
+                      <th>PUBLICACION</th>
+                      <th>ENLACE</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {publicaciones.map(item => (
+                      <tr className="small" key={item.id_articulo_autor}>
+                        <td width="95%">{item.titulo}</td>
+                        <td width="5%">
+                          <a href={item.enlace_documento != null ? item.enlace_documento : item.url_dspace} target="_blank"><i className="fas fa-external-link-alt"></i>Abrir documento</a>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Modal.Body>
+
+        <div className="modal-footer">
+          <Button
+            id="regresar"
+            className="btn active"
+            type="button"
+            variant="secondary"
+            onClick={() => closeModalPublicaciones()}
+          >
+            Regresar
+          </Button>
+        </div>
+      </Modal>
     </>
   );
 }

@@ -7,6 +7,7 @@ const endpoints = {
     baseUrlAreaUnesco: `http://localhost:5000/areaUnesco`,
     baseUrlAreaFrascati: `http://localhost:5000/areaFrascati`,
     baseUrlAutor: `http://localhost:5000/autor`,
+    baseUrlArticuloAutor: `http://localhost:5000/articuloAutor`,
     baseUrlClustering: `http://localhost:5000/cluster`,
     baseUrlDetalleReferencia: `http://localhost:5000/detalleReferencia`,
     baseUrlLeyBradford: `http://localhost:5000/leyBradford`,

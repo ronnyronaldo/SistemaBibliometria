@@ -1,12 +1,14 @@
 import Dashboard from "views/Dashboard.js";
 import UserProfile from "views/UserProfile.js";
 import Publicaciones from "views/Publicaciones";
+import PublicacionesV2 from "views/PublicacionesV2";
 import MedioPublicacion from "views/MedioPublicacion";
 import BaseDatosDigital from "views/BaseDatosDigital";
 import AnalisisDataMining from "views/AnalisisDataMining";
 import Areas from "views/Areas";
 import Autores from "views/Autores";
 import Referencias from "views/Referencias";
+import ReferenciasV2 from "views/ReferenciasV2";
 
 import Typography from "views/Typography.js";
 import Icons from "views/Icons.js";
@@ -35,7 +37,7 @@ const dashboardRoutes = [
     path: "/publicaciones",
     name: "Publicaciones",
     icon: "nc-icon nc-single-copy-04",
-    component: Publicaciones,
+    component: PublicacionesV2,
     layout: "/admin",
   },
   {
@@ -49,7 +51,7 @@ const dashboardRoutes = [
     path: "/referencias",
     name: "Referencias",
     icon: "nc-icon nc-bullet-list-67",
-    component: Referencias,
+    component: ReferenciasV2,
     layout: "/admin",
   },
   {
