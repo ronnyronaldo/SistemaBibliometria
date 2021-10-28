@@ -4,6 +4,7 @@ import { autorService } from '../_services/autor.service';
 import { articuloAutorService } from '../_services/articuloAutor.service';
 import { FormGroup } from "reactstrap";
 import *as XLSX from 'xlsx';
+import * as FileSaver from "file-saver";
 
 // react plugin for creating notifications over the dashboard
 import NotificationAlert from "react-notification-alert";
@@ -70,12 +71,12 @@ function Autores() {
     });
     await tablaPaginacionService.paginacion('#dataAutores');
   }
-  const handleEliminarAutor = (id_autor) => {
+  const handleEliminarArticuloDelAutor = (id_articulo_autor, id_autor) => {
     setLoading(true);
-    autorService.eliminar(id_autor).then(value => {
+    articuloAutorService.eliminar(id_articulo_autor).then(value => {
       setLoading(false);
       if (value.respuesta.error == "False") {
-        handleCargarAutores();
+        handleVerPublicacionesPorAutor(id_autor);
         notify("tr", value.respuesta.valor, "primary");
       } else {
         notify("tr", value.respuesta.valor, "danger");
@@ -83,7 +84,7 @@ function Autores() {
     })
   }
 
-  const handleVerPublicacionesPorAutor = async(id_autor) => {
+  const handleVerPublicacionesPorAutor = async (id_autor) => {
     setLoading(true);
     await tablaPaginacionService.destruirTabla('#dataPublicaciones');
     await articuloAutorService.listarArticulosPorIdAutor(id_autor).then(value => {
@@ -114,39 +115,19 @@ function Autores() {
       console.log(value)
     })
   }
-  async function handleIngresarAutores() {
+  async function handleIngresarPublicaciones() {
     if (nuevosAutores.length != 0) {
       setLoading(true)
-      autorService.insertar(nuevosAutores).then(value => {
+      articuloAutorService.insertar(nuevosAutores).then(value => {
         setLoading(false);
         if (value.respuesta.error == "False") {
-          handleCargarAutores();
-          notify("tr", /*nuevoIngreso.titulo + '(' + nuevoIngreso.anio_publicacion + ')' + ': ' + */value.respuesta.valor, "primary");
-        } else {
-          notify("tr", /*nuevoIngreso.titulo + '(' + nuevoIngreso.anio_publicacion + ')' + ' : ' + */value.respuesta.valor, "danger");
-        }
-      })
-
-      /*for (var i = 0; i < nuevosAutores.length; i++) {
-        setLoading(true)
-        let nuevoIngreso = nuevosAutores[i];
-        autorService.insertar({
-          "nombre_base_datos_digital": nuevoIngreso.nombre != undefined ? nuevoIngreso.nombre : "",
-          "titulo": nuevoIngreso.titulo != undefined ? nuevoIngreso.titulo : "",
-          "titulo_alternativo": nuevoIngreso.titulo_alternativo != undefined ? nuevoIngreso.titulo_alternativo : "",
-          "anio_publicacion": nuevoIngreso.anio_publicacion != undefined ? nuevoIngreso.anio_publicacion : "",
-          "autor_identificación": nuevoIngreso.autor_identificación != undefined ? nuevoIngreso.autor_identificación : "",
-          "orden_autor": nuevoIngreso.orden_autor != undefined ? nuevoIngreso.orden_autor : "",
-          "nombres": nuevoIngreso.nombres != undefined ? nuevoIngreso.nombres : ""
-        }).then(value => {
-          setLoading(false);
-          if (value.respuesta.error == "False") {
-            notify("tr", nuevoIngreso.titulo + '(' + nuevoIngreso.anio_publicacion + ')' + ': ' + value.respuesta.valor, "primary");
-          } else {
-            notify("tr", nuevoIngreso.titulo + '(' + nuevoIngreso.anio_publicacion + ')' + ' : ' + value.respuesta.valor , "danger");
+          if (value.respuesta.mensajes.length > 0) {
+            exportToCSV(value.respuesta.mensajes, "observacionesIngresoAutoresPublicaciones");
+            notify("tc", "Revise las observaciones colocadas en el archivo de excel del ingreso de las autores por publicaciones.", "primary");
           }
-        })
-      }*/
+        }
+        handleCargarAutores();
+      })
     }
   }
   function closeModalPublicaciones() {
@@ -159,6 +140,17 @@ function Autores() {
     setNombreAutor(nombre);
     setModalIsOpenPublicaciones(true);
   }
+  const fileType =
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+  const fileExtension = ".xlsx";
+
+  const exportToCSV = (apiData, fileName) => {
+    const ws = XLSX.utils.json_to_sheet(apiData);
+    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const data = new Blob([excelBuffer], { type: fileType });
+    FileSaver.saveAs(data, fileName + fileExtension);
+  };
 
   React.useEffect(() => {
     handleCargarAutores();
@@ -189,7 +181,7 @@ function Autores() {
                               const file = e.target.files[0];
                               handleReadExcel(file)
                             }} className="col-sm-12 col-md-8"></input>
-                            <Link to="#" id="ingresarPublicacion" className="link col-sm-12 col-md-3" onClick={handleIngresarAutores}><Button variant="primary">Ingresar <i className="fas fa-file-upload fa-2x" /></Button></Link>
+                            <Link to="#" id="ingresarPublicacion" className="link col-sm-12 col-md-3" onClick={handleIngresarPublicaciones}><Button variant="primary">Ingresar <i className="fas fa-file-upload fa-2x" /></Button></Link>
                           </FormGroup>
                         </Form.Group>
                       </Col>
@@ -215,7 +207,6 @@ function Autores() {
                         <td width="10%">
                           <div class="btn-group-vertical" role="group" aria-label="Basic example">
                             <Button id="verPublicacionesAutor" className="btn-sm active" type="button" variant="success" onClick={() => openModalPublicaciones(item.id_autor, item.nombre)}>Ver Publicaciones</Button>
-                            {/*<Button id="eliminarAutor" className="btn-sm active" type="button" variant="danger" onClick={() => handleEliminarAutor(item.id_autor)} >Eliminar</Button>*/}
                           </div>
                         </td>
                       </tr>
@@ -260,36 +251,42 @@ function Autores() {
                     <tr>
                       <th>PUBLICACION</th>
                       <th>ENLACE</th>
+                      <th>ACCIONES</th>
                     </tr>
                   </thead>
                   <tbody>
                     {publicaciones.map(item => (
                       <tr className="small" key={item.id_articulo_autor}>
-                        <td width="95%">{item.titulo}</td>
+                        <td width="85%">{item.titulo}</td>
                         <td width="5%">
                           <a href={item.enlace_documento != null ? item.enlace_documento : item.url_dspace} target="_blank"><i className="fas fa-external-link-alt"></i>Abrir documento</a>
                         </td>
+                        <td width="10%">
+                          <div class="btn-group-vertical" role="group" aria-label="Basic example">
+                          <Button id="eliminarAutor" className="btn-sm active" type="button" variant="danger" onClick={() => handleEliminarArticuloDelAutor(item.id_articulo_autor, item.id_autor)} >Eliminar</Button>
+                        </div>
+                      </td>
                       </tr>
                     ))}
-                  </tbody>
-                </table>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Modal.Body>
+                </tbody>
+              </table>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Modal.Body>
 
-        <div className="modal-footer">
-          <Button
-            id="regresar"
-            className="btn active"
-            type="button"
-            variant="secondary"
-            onClick={() => closeModalPublicaciones()}
-          >
-            Regresar
-          </Button>
-        </div>
-      </Modal>
+      <div className="modal-footer">
+        <Button
+          id="regresar"
+          className="btn active"
+          type="button"
+          variant="secondary"
+          onClick={() => closeModalPublicaciones()}
+        >
+          Regresar
+        </Button>
+      </div>
+    </Modal>
     </>
   );
 }
