@@ -19,3 +19,9 @@ def listaAutores():
     autor = autor_schema.dump(get_autor)
     return make_response(jsonify({"autor": autor}))
 
+def buscaAutorPorId(id_autor):
+    get_autor = Autor.query.filter(Autor.id_autor == id_autor)
+    autor_schema = AutorSchema(many=True)
+    autor = autor_schema.dump(get_autor)
+    return make_response(jsonify({"autor": autor}))
+

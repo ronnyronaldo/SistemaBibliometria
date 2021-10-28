@@ -13,7 +13,7 @@ class ArticuloAutor(db.Model):
     __tablename__ = "articulo_autor"
     id_articulo_autor = db.Column(db.Integer, primary_key=True)
     id_articulo = db.Column(db.Integer)
-    id_autor = db.Column(db.String(15))
+    id_autor = db.Column(db.String(50))
     orden_autor = db.Column(db.Integer)
 
     def create(self):

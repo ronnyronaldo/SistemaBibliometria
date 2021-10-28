@@ -3,7 +3,7 @@ db = SQLAlchemy()
 
 class Autor(db.Model):
     __tablename__ = "autor"
-    id_autor = db.Column(db.String(15),  primary_key=True)
+    id_autor = db.Column(db.String(50),  primary_key=True)
     nombre = db.Column(db.String(200))
 
     def create(self):
