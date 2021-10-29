@@ -32,7 +32,6 @@ def buscaMedioPublicacionPorId(id_medio_publicacion):
     return make_response(jsonify({"mediosPublicacion": medios_publicacion}))
 
 def insertarMedioPublicacion(nuevoMedioPublicacion):
-    print(nuevoMedioPublicacion['nombre'])
     get_medio_publicacion = MedioPublicacion.query.filter(MedioPublicacion.nombre == nuevoMedioPublicacion['nombre'])
     medio_publicacion_schema = MedioPublicacionSchema(many=True)
     medios_publicacion = medio_publicacion_schema.dump(get_medio_publicacion)
@@ -44,8 +43,18 @@ def insertarMedioPublicacion(nuevoMedioPublicacion):
         return make_response(jsonify({"respuesta": {"valor":"El Medio de Publicación ya esta registrado", "error":"True"}}))
 
 def eliminarMedioPublicacion(id_medio_publicacion):
-    medioPublicacion = MedioPublicacion.query.get(id_medio_publicacion)
-    MedioPublicacion.delete(medioPublicacion)
-    return make_response(jsonify({"respuesta": {"valor":"Medio Publicación eliminada correctamente.", "error":"False"}}))
+    try:
+        medioPublicacion = MedioPublicacion.query.get(id_medio_publicacion)
+        MedioPublicacion.delete(medioPublicacion)
+        return make_response(jsonify({"respuesta": {"valor":"Medio Publicación eliminada correctamente.", "error":"False"}}))
+    except:
+        return make_response(jsonify({"respuesta": {"valor":"No se puede eliminar el medio de publicacion ya que hay datos relacionados con la misma.", "error":"True"}}))
+
+def actualizarMedioPublicacion(medioPublicacion):
+    medio_publicacion = MedioPublicacion.query.get_or_404(medioPublicacion['id_medio_publicacion'])
+    medio_publicacion.nombre = medioPublicacion['nombre']
+    MedioPublicacion.create(medio_publicacion)
+    return make_response(jsonify({"respuesta": {"valor":"Medio Publicacion actualizado correctamente.", "error":"False"}}))
+
 
 

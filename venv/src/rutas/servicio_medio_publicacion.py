@@ -1,6 +1,7 @@
 from flask import Blueprint
 from flask import request
 from controladores.MedioPublicacionController import listaMedioPublicacion, verificaMedioPublicacionPorNombre, insertarMedioPublicacion, eliminarMedioPublicacion
+from controladores.MedioPublicacionController import actualizarMedioPublicacion
 servicio_medio_publicacion =  Blueprint('servicio_medio_publicacion', __name__)
 @servicio_medio_publicacion.route('/insertar', methods=['POST']) 
 def insertar():
@@ -18,3 +19,8 @@ def listarMedioPublicacionPorNombre(nombre):
 @servicio_medio_publicacion.route('/eliminar/<int:id_medio_publicacion>', methods=['GET']) 
 def eliminarMedioPublicacionPorId(id_medio_publicacion):
     return eliminarMedioPublicacion(id_medio_publicacion)
+
+@servicio_medio_publicacion.route('/actualizar', methods=['POST']) 
+def actualizar():
+    medio_publicacion = request.json #Obtengo los datos del medio de publicacion para la actualizacion
+    return actualizarMedioPublicacion(medio_publicacion)
