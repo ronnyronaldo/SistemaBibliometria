@@ -25,3 +25,10 @@ def buscaAutorPorId(id_autor):
     autor = autor_schema.dump(get_autor)
     return make_response(jsonify({"autor": autor}))
 
+def actualizarAutor(autorActualizar):
+    autor = Autor.query.get_or_404(autorActualizar['id_autor'])
+    autor.id_autor = autorActualizar['id_autor']
+    autor.nombre = autorActualizar['nombre']
+    Autor.create(autor)
+    return make_response(jsonify({"respuesta": {"valor":"Autor actualizado correctamente.", "error":"False"}}))
+
