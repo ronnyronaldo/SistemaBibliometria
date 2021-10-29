@@ -2,6 +2,7 @@ import React from "react";
 import { tablaPaginacionService } from '../utils/tablaPaginacion.service';
 import { autorService } from '../_services/autor.service';
 import { articuloAutorService } from '../_services/articuloAutor.service';
+import { validacionInputService } from '../_services/validacionInput.service';
 import { FormGroup } from "reactstrap";
 import *as XLSX from 'xlsx';
 import * as FileSaver from "file-saver";
@@ -42,6 +43,12 @@ function Autores() {
   const notificationAlertRef = React.useRef(null);
   const [nuevosAutores, setNuevosAutores] = React.useState([]);
   const [modalIsOpenPublicaciones, setModalIsOpenPublicaciones] = React.useState(false);
+  const [modalIsOpen, setModalIsOpen] = React.useState(false);
+  const [autorObj, setAutorObj] = React.useState({
+    id_autor: 0,
+    nombre: ""
+  });
+
   const notify = (place, mensaje, type) => {
     var options = {};
     options = {
@@ -152,6 +159,41 @@ function Autores() {
     FileSaver.saveAs(data, fileName + fileExtension);
   };
 
+  function closeModal() {
+    setModalIsOpen(false);
+  }
+
+  function openModal() {
+    setModalIsOpen(true);
+  }
+
+  function handleCargarDetalleAutor(id_autor, nombre) {
+    setAutorObj({
+      id_autor: id_autor,
+      nombre: nombre
+    });
+    openModal()
+  }
+
+  function actualizarAutor() {
+    let id_autor = document.getElementById("idAutorText").value;
+    let nombre_autor =  document.getElementById("nombreAutorText").value;
+    if(validacionInputService.campoVacio(id_autor) && validacionInputService.campoVacio(nombre_autor)){
+      autorService.actualizar({
+        id_autor : id_autor,
+        nombre : nombre_autor
+      }).then(value => {
+        if(value.respuesta.error== "False"){
+          notify("tr", value.respuesta.valor, "primary");
+          handleCargarAutores();
+        }
+        closeModal();
+      })
+    }else{
+      notify("tr", 'Existen campos sin llenar.', "danger");
+    }
+  }
+
   React.useEffect(() => {
     handleCargarAutores();
   }, []);
@@ -207,6 +249,7 @@ function Autores() {
                         <td width="10%">
                           <div class="btn-group-vertical" role="group" aria-label="Basic example">
                             <Button id="verPublicacionesAutor" className="btn-sm active" type="button" variant="success" onClick={() => openModalPublicaciones(item.id_autor, item.nombre)}>Ver Publicaciones</Button>
+                            <Button id="actualizarAutor" className="btn-sm active" type="button" variant="info" onClick={() => handleCargarDetalleAutor(item.id_autor, item.nombre)} >Editar</Button>
                           </div>
                         </td>
                       </tr>
@@ -263,30 +306,83 @@ function Autores() {
                         </td>
                         <td width="10%">
                           <div class="btn-group-vertical" role="group" aria-label="Basic example">
-                          <Button id="eliminarAutor" className="btn-sm active" type="button" variant="danger" onClick={() => handleEliminarArticuloDelAutor(item.id_articulo_autor, item.id_autor)} >Eliminar</Button>
-                        </div>
-                      </td>
+                            <Button id="eliminarAutor" className="btn-sm active" type="button" variant="danger" onClick={() => handleEliminarArticuloDelAutor(item.id_articulo_autor, item.id_autor)} >Eliminar</Button>
+                          </div>
+                        </td>
                       </tr>
                     ))}
-                </tbody>
-              </table>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Modal.Body>
+                  </tbody>
+                </table>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Modal.Body>
 
-      <div className="modal-footer">
-        <Button
-          id="regresar"
-          className="btn active"
-          type="button"
-          variant="secondary"
-          onClick={() => closeModalPublicaciones()}
-        >
-          Regresar
-        </Button>
-      </div>
-    </Modal>
+        <div className="modal-footer">
+          <Button
+            id="regresar"
+            className="btn active"
+            type="button"
+            variant="secondary"
+            onClick={() => closeModalPublicaciones()}
+          >
+            Regresar
+          </Button>
+        </div>
+      </Modal>
+      <Modal
+        className="modal modal-primary"
+        show={modalIsOpen}
+      >
+        <Modal.Header className="justify-content-center">
+          <div className="modal-profile">
+            <i className="nc-icon nc-grid-45"></i>
+          </div>
+        </Modal.Header>
+        <Modal.Body className="text-center">
+          <p>Actualizar Autor</p>
+        </Modal.Body>
+        <div className="modal-footer">
+          <Col className="pr-1" md="12">
+            <Form.Group>
+              <label>ID</label>
+              <Form.Control
+                id="idAutorText"
+                defaultValue={autorObj.id_autor}
+                type="text"
+              ></Form.Control>
+            </Form.Group>
+          </Col>
+          <Col className="pr-1" md="12">
+            <Form.Group>
+              <label>NOMBRE</label>
+              <Form.Control
+                id="nombreAutorText"
+                defaultValue={autorObj.nombre}
+                type="text"
+              ></Form.Control>
+            </Form.Group>
+          </Col>
+          <Button
+            id="regresar"
+            className="btn active"
+            type="button"
+            variant="secondary"
+            onClick={() => closeModal()}
+          >
+            Regresar
+          </Button>
+          <Button
+            id="grabar"
+            className="btn active"
+            type="button"
+            variant="secondary"
+            onClick={() => actualizarAutor()}
+          >
+            Grabar
+          </Button>
+        </div>
+      </Modal>
     </>
   );
 }
