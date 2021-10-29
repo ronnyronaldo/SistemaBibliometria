@@ -31,6 +31,7 @@ import {
   Row,
   Col,
   Form,
+  Modal
 } from "react-bootstrap";
 
 import { FormGroup } from "reactstrap";
@@ -38,6 +39,9 @@ function MedioPublicacion() {
 
   const [showModal, setShowModal] = React.useState(false);
   const notificationAlertRef = React.useRef(null);
+  const [modalIsOpen, setModalIsOpen] = React.useState(false);
+  const [modalIsOpenEliminar, setModalIsOpenEliminar] = React.useState(false);
+  const [idMedioPublicacionEliminar, setIdMedioPublicacionEliminar] = React.useState('');
   const notify = (place, mensaje, type) => {
     //var color = Math.floor(Math.random() * 5 + 1);
     //var type = "danger";
@@ -86,6 +90,10 @@ function MedioPublicacion() {
   const [mediosPublicacionCitacion, setMediosPublicacionCitacion] = React.useState([]);
   const [mediosPublicacionSJR, setMediosPublicacionSJR] = React.useState([]);
   const [filtroPublicaciones, setFiltroPublicaciones] = React.useState('P');
+  const [medioPublicacionObj, setMedioPublicacionObj] = React.useState({
+    id_medio_publicacion: 0,
+    nombre: ""
+  });
   async function handleCargarMediosPublicacion() {
     setLoading(true);
     await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacion');
@@ -212,6 +220,50 @@ function MedioPublicacion() {
     }
   }
 
+  function closeModal() {
+    setModalIsOpen(false);
+  }
+
+  function openModal() {
+    setModalIsOpen(true);
+  }
+
+  function closeModalEliminar() {
+    setModalIsOpenEliminar(false);
+  }
+
+  function openModalEliminar(id_medio_publicacion) {
+    setIdMedioPublicacionEliminar(id_medio_publicacion);
+    setModalIsOpenEliminar(true);
+  }
+
+  function handleCargarDetalleMedioPublicacion(id_medio_publicacion, nombre) {
+    setMedioPublicacionObj({
+      id_medio_publicacion: id_medio_publicacion,
+      nombre: nombre
+    });
+    openModal()
+  }
+
+  function actualizarMedioPublicacion() {
+    let id_medio_publicacion = document.getElementById("idMedioPublicacionText").value;
+    let nombre_medio_publicacion = document.getElementById("nombreMedioPublicacionText").value;
+    if (validacionInputService.campoVacio(id_medio_publicacion) && validacionInputService.campoVacio(nombre_medio_publicacion)) {
+      medioPublicacionService.actualizar({
+        id_medio_publicacion: id_medio_publicacion,
+        nombre: nombre_medio_publicacion
+      }).then(value => {
+        if (value.respuesta.error == "False") {
+          notify("tr", value.respuesta.valor, "primary");
+          handleCargarMediosPublicacion();
+        }
+        closeModal();
+      })
+    } else {
+      notify("tr", 'Existen campos sin llenar.', "danger");
+    }
+  }
+
   React.useEffect(() => {
     handleCargarMediosPublicacion();
     handleCargarMediosPublicacionPublicacion();
@@ -269,7 +321,12 @@ function MedioPublicacion() {
                       <tr className="small" key={item.id_medio_publicacion}>
                         <td>{item.id_medio_publicacion}</td>
                         <td>{item.nombre}</td>
-                        <td width="5%"><Link to="#" id="eliminarMedioPublicacion" className="link col-sm-12 col-md-3" onClick={() => handleEliminarMedioPublicacion(item.id_medio_publicacion)}><i className="fas fa-trash-alt fa-2x"></i></Link></td>
+                        <td width="5%">
+                          <div class="btn-group-vertical" role="group" aria-label="Basic example">
+                            <Button id="actualizarMedioPublicacion" className="btn-sm active" type="button" variant="info" onClick={() => handleCargarDetalleMedioPublicacion(item.id_medio_publicacion, item.nombre)} >Editar</Button>
+                            <Button id="eliminarMedioPublicacion" className="btn-sm active" type="button" variant="danger" onClick={() => openModalEliminar(item.id_medio_publicacion)} >Eliminar</Button>
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -415,6 +472,95 @@ function MedioPublicacion() {
           )}
         </Row>
       </Container>
+      <Modal
+        size="xl"
+        className="modal modal-primary"
+        show={modalIsOpen}
+      >
+        <Modal.Header className="justify-content-center">
+          <div className="modal-profile">
+            <i className="nc-icon nc-grid-45"></i>
+          </div>
+        </Modal.Header>
+        <Modal.Body className="text-center">
+          <p>Actualizar Medio Publicacion</p>
+        </Modal.Body>
+        <div className="modal-footer">
+          <Col className="pr-1" md="12">
+            <Form.Group>
+              <label>ID</label>
+              <Form.Control
+                id="idMedioPublicacionText"
+                defaultValue={medioPublicacionObj.id_medio_publicacion}
+                type="text"
+                disabled
+              ></Form.Control>
+            </Form.Group>
+          </Col>
+          <Col className="pr-1" md="12">
+            <Form.Group>
+              <label>NOMBRE</label>
+              <Form.Control
+                id="nombreMedioPublicacionText"
+                defaultValue={medioPublicacionObj.nombre}
+                type="text"
+              ></Form.Control>
+            </Form.Group>
+          </Col>
+          <Button
+            id="regresar"
+            className="btn active"
+            type="button"
+            variant="secondary"
+            onClick={() => closeModal()}
+          >
+            Regresar
+          </Button>
+          <Button
+            id="grabar"
+            className="btn active"
+            type="button"
+            variant="secondary"
+            onClick={() => actualizarMedioPublicacion()}
+          >
+            Grabar
+          </Button>
+        </div>
+      </Modal>
+      <Modal
+        className="modal modal-primary"
+        show={modalIsOpenEliminar}
+        size="xl"
+      >
+        <Modal.Header className="justify-content-center">
+          <div className="modal-profile">
+            <i className="nc-icon nc-single-copy-04"></i>
+          </div>
+        </Modal.Header>
+        <Modal.Body className="text-center">
+          <p>¿ Esta seguro de eliminar el medio de publicación ?</p>
+        </Modal.Body>
+        <div className="modal-footer">
+          <Button
+            id="regresar"
+            className="btn active"
+            type="button"
+            variant="secondary"
+            onClick={() => closeModalEliminar()}
+          >
+            Regresar
+          </Button>
+          <Button
+            id="eliminar"
+            className="btn active"
+            type="button"
+            variant="secondary"
+            onClick={() => handleEliminarMedioPublicacion(idMedioPublicacionEliminar)}
+          >
+            SI
+          </Button>
+        </div>
+      </Modal>
     </>
   );
 }

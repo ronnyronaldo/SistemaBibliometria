@@ -19,8 +19,13 @@ export const medioPublicacionService = {
     actualizarMediosPublicacionCitacionPorAreaFrascati,
     actualizarMediosPublicacionCitacionPorAreaUnesco,
     actualizarMediosPublicacionCitacionPorAreaUnescoPorAnio,
-    actualizarMediosPublicacionCitacionPorAreaFrascatiPorAnio
+    actualizarMediosPublicacionCitacionPorAreaFrascatiPorAnio,
+    actualizar
 };
+
+async function actualizar(params) {
+    return fetchWrapper.post(`${endpoints.baseUrlMedioPublicacion}/actualizar`, params);
+}
 
 async function listar() {
     return fetchWrapper.get(`${endpoints.baseUrlMedioPublicacion}/listar`);
