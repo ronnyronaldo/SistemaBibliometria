@@ -588,7 +588,11 @@ function Referencias() {
                         <td width="5%">
                           <a href={item.pub_url} target="_blank"><i className="fas fa-external-link-alt"></i>Abrir documento</a>
                         </td>
-                        <td width="5%"><Link to="#" id="actualizarDetalleReferencia" className="link col-sm-12 col-md-3" onClick={() => handleCargarDatosDetalleReferencia(item.id_detalle_referencia, item.title, item.author, item.pub_year, item.venue)}><i className="fas fa-pen-square fa-2x"></i></Link></td>
+                        <td width="5%">
+                          <div class="btn-group-vertical" role="group" aria-label="Basic example">
+                            <Button id="actualizarDetalleReferencia" className="btn-sm active" type="button" variant="info" onClick={() => handleCargarDatosDetalleReferencia(item.id_detalle_referencia, item.title, item.author, item.pub_year, item.venue)}>Editar</Button>
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -728,17 +732,17 @@ function Referencias() {
             </Form.Group>
           </Col>
           <Button
-            className="btn-simple"
+            className="btn active"
             type="button"
-            variant="link"
+            variant="secondary"
             onClick={() => closeModal()}
           >
             Regresar
           </Button>
           <Button
-            className="btn-simple"
+            className="btn active"
             type="button"
-            variant="link"
+            variant="secondary"
             onClick={() => actualizarDetalleReferencia()}
           >
             Grabar

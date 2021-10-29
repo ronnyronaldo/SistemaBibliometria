@@ -227,7 +227,10 @@ function MedioPublicacion() {
           <Col md="12">
             <Card className="strpied-tabled-with-hover">
               <Card.Header>
-                <Card.Title as="h4">Ingreso Medio Publicación</Card.Title>
+                <Card.Title as="h4">Medios de Publicación</Card.Title>
+                <p className="card-category">
+                  Medios de Publicación donde se encuentran publicados los documentos de los investigadores con filiacion a la Universidad de Cuenca
+                </p>
                 <Row>
                   <Col className="pr-1" md="8">
                     <Form.Group>
@@ -251,16 +254,6 @@ function MedioPublicacion() {
                     </Form.Group>
                   </Col>
                 </Row>
-              </Card.Header>
-            </Card>
-          </Col>
-          <Col md="12">
-            <Card className="strpied-tabled-with-hover">
-              <Card.Header>
-                <Card.Title as="h4">Medios de Publicación</Card.Title>
-                <p className="card-category">
-                  Medios de Publicación donde se encuentran publicados los documentos de los investigadores con filiacion a la Universidad de Cuenca
-                </p>
               </Card.Header>
               <Card.Body className="table-full-width table-responsive px-3">
                 <table className="table table-bordered table-hover" id="dataTableMediosPublicacion" width="100%" cellSpacing="0">
