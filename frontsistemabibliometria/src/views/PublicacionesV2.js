@@ -535,17 +535,19 @@ function Publicaciones() {
         </Modal.Body>
         <div className="modal-footer">
           <Button
-            className="btn-simple"
+            id="regresar"
+            className="btn active"
             type="button"
-            variant="link"
+            variant="secondary"
             onClick={() => closeModalEliminar()}
           >
             Regresar
           </Button>
           <Button
-            className="btn-simple"
+            id="eliminar"
+            className="btn active"
             type="button"
-            variant="link"
+            variant="secondary"
             onClick={() => handleEliminarArticulo(idArticuloEliminar)}
           >
             SI
