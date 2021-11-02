@@ -31,11 +31,13 @@ def listaArticulosPorIdAutor(id_autor):
 
 # Listar autores para grafico en dashborad
 def listaAutoresNumPub():
-    get_articulo = Autor.query.all()
-    autor_schema = AutorSchema(many=True)
-    articulos = autor_schema.dump(get_articulo)
-    return make_response(jsonify(articulos))
-
+    articuloAutorRespuesta = (db.session.query(ArticuloAutor, Autor)
+        .with_entities(ArticuloAutor.id_articulo_autor, ArticuloAutor.orden_autor, Autor.nombre)
+        .join(Autor, ArticuloAutor.id_autor == Autor.id_autor)).all()
+    articuloAutores = []
+    for articuloAutor in articuloAutorRespuesta:
+        articuloAutores.append(dict(articuloAutor)) # Serializo cada fila
+    return make_response(jsonify(articuloAutores))
 
 def eliminarArticuloAutor(id_articulo_autor):
     articuloAutor = ArticuloAutor.query.get(id_articulo_autor)
