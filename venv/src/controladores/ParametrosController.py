@@ -53,3 +53,9 @@ def actualizarParametros(parametro):
     param.codigo_parametro = parametro['codigo_parametro']
     Parametro.create(param)
     return make_response(jsonify({"respuesta": {"valor":"Parámetro actualizado correctamente.", "error":"False"}}))
+
+def buscarParametroPorCodigoParametro(codigo_parametro):
+    get_parametro = Parametro.query.filter(Parametro.codigo_parametro == codigo_parametro)
+    parametro_schema = ParametroSchema(many=True)
+    parametro = parametro_schema.dump(get_parametro)
+    return make_response(jsonify({"parametro": parametro}))
