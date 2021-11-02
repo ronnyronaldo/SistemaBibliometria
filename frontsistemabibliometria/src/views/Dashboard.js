@@ -236,7 +236,7 @@ function Dashboard() {
     Highcharts.chart('redes-autores-grafo-total', {
       chart: {
         type: 'packedbubble',
-        height: '100%'
+        height: '70%'
       },
       title: {
         text: 'Número de publicaciones totales por autor'
@@ -247,12 +247,12 @@ function Dashboard() {
       },
       plotOptions: {
         packedbubble: {
-          minSize: '1%',
-          maxSize: '70%',
+          minSize: '30%',
+          maxSize: '120%',
           zMin: 0,
           zMax: 30,
           layoutAlgorithm: {
-            gravitationalConstant: 0.05,
+            gravitationalConstant: 0.00,
             splitSeries: false/*,
                 seriesInteraction: false,
                 dragBetweenSeries: true,
