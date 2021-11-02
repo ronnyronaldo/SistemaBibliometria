@@ -117,10 +117,10 @@ function MedioPublicacion() {
     setLoading(true);
     medioPublicacionService.eliminar(id_medio_publicacion).then(value => {
       setLoading(false);
+      closeModalEliminar();
       if (value.respuesta.error == "False") {
         handleCargarMediosPublicacion();
         notify("tr", value.respuesta.valor, "primary");
-        closeModalEliminar();
       } else {
         notify("tr", value.respuesta.valor, "danger");
       }

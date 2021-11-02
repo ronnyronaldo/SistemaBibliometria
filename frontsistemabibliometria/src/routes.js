@@ -63,7 +63,7 @@ const dashboardRoutes = [
   },
   {
     path: "/areas",
-    name: "Areas",
+    name: "Áreas",
     icon: "nc-icon nc-layers-3",
     component: Areas,
     layout: "/admin",

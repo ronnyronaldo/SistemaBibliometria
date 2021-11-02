@@ -5,7 +5,8 @@ export const areaUnescoService = {
     validarAreaUnescoPorNombre,
     listaAreasUnesco,
     insertar,
-    eliminar
+    eliminar,
+    actualizar
 };
 
 async function validarAreaUnescoPorNombre(nombre) {
@@ -22,6 +23,10 @@ async function insertar(params) {
 
 async function eliminar(id_area_unesco) {
     return fetchWrapper.get(`${endpoints.baseUrlAreaUnesco}/eliminar/` + id_area_unesco);
+}
+
+async function actualizar(params) {
+    return fetchWrapper.post(`${endpoints.baseUrlAreaUnesco}/actualizar`, params);
 }
 
 
