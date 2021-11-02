@@ -1,6 +1,7 @@
 from flask import Blueprint
 from flask import request
 from controladores.AreaFrascatiController import validarAreaFrascatiPorNombre, listaAreaFrascati, insertarAreaFrascati, eliminarAreaFrascati
+from controladores.AreaFrascatiController import actualizarAreaFrascati
 servicio_area_frascati= Blueprint('servicio_area_frascati', __name__)
 @servicio_area_frascati.route('/insertar', methods=['POST']) 
 def insertar():
@@ -18,5 +19,10 @@ def listaAreas():
 @servicio_area_frascati.route('/eliminar/<int:id_area_frascati>', methods=['GET']) 
 def eliminarAreaFrascatiPorId(id_area_frascati):
     return eliminarAreaFrascati(id_area_frascati)
+
+@servicio_area_frascati.route('/actualizar', methods=['POST']) 
+def actualizar():
+    area_frascati = request.json #Obtengo los datos del area frascati para la actualizacion
+    return actualizarAreaFrascati(area_frascati)
 
 

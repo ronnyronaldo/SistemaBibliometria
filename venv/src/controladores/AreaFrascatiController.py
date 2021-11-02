@@ -44,7 +44,17 @@ def insertarAreaFrascati(nuevoAreaFrascati):
         return make_response(jsonify({"respuesta": {"valor":"El Área Frascati ya esta registrado", "error":"True"}}))
 
 def eliminarAreaFrascati(id_area_frascati):
-    print(id_area_frascati)
-    areaFrascati = AreaFrascati.query.get(id_area_frascati)
-    AreaFrascati.delete(areaFrascati)
-    return make_response(jsonify({"respuesta": {"valor":"Área Frascati eliminada correctamente.", "error":"False"}}))
+    try:
+        areaFrascati = AreaFrascati.query.get(id_area_frascati)
+        AreaFrascati.delete(areaFrascati)
+        return make_response(jsonify({"respuesta": {"valor":"Área Frascati eliminada correctamente.", "error":"False"}}))
+    except:
+        return make_response(jsonify({"respuesta": {"valor":"No se puede eliminar el área frascati ya que hay datos relacionados con la misma.", "error":"True"}}))
+
+def actualizarAreaFrascati(areaFrascati):
+    area_frascati = AreaFrascati.query.get_or_404(areaFrascati['id_area_frascati'])
+    area_frascati.descripcion = areaFrascati['descripcion']
+    AreaFrascati.create(area_frascati)
+    return make_response(jsonify({"respuesta": {"valor":"Área Frascati actualizado correctamente.", "error":"False"}}))
+
+   
