@@ -64,27 +64,6 @@ function Referencias() {
   });
  
   const notify = (place, mensaje, type) => {
-    //var color = Math.floor(Math.random() * 5 + 1);
-    //var type = "danger";
-    /*switch (color) {
-      case 1:
-        type = "primary";
-        break;
-      case 2:
-        type = "success";
-        break;
-      case 3:
-        type = "danger";
-        break;
-      case 4:
-        type = "warning";
-        break;
-      case 5:
-        type = "info";
-        break;
-      default:
-        break;
-    }*/
     var options = {};
     options = {
       place: place,
@@ -192,23 +171,6 @@ function Referencias() {
         }
       })
     }
-    /*if(tipoBusquedaReferencias.ingresoIndividual == true){
-      if(referenciaSeleccionada.id_referencia != 0){
-        referenciaService.buscarDetalleReferenciaIndividual({
-          "id_referencia": referenciaSeleccionada.id_referencia,
-          "referencia": referenciaSeleccionada.referencia
-        }).then(value => {
-          if(value.respuesta.error == "False"){
-            handleCargarReferencias(publicacionSeleccionada.id_articulo, publicacionSeleccionada.titulo, publicacionSeleccionada.autor, publicacionSeleccionada.anio_publicacion);
-            notify("tr", value.respuesta.valor, "primary");
-          }else{
-            notify("tr", value.respuesta.valor, "danger");
-          }
-        })
-      }else{
-        notify("tr", 'No ha seleccionado ninguna referencia.', "danger");
-      }
-    }*/
   }
    /** Carga las areas frascati para el filtro*/
   async function handleAreasFrascati() {
