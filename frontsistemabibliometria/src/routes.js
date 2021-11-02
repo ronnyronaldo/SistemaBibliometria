@@ -56,7 +56,7 @@ const dashboardRoutes = [
   },
   {
     path: "/mediosPublicacion",
-    name: "Medios Publicacion",
+    name: "Medios Publicación",
     icon: "nc-icon nc-paper-2",
     component: MedioPublicacion,
     layout: "/admin",

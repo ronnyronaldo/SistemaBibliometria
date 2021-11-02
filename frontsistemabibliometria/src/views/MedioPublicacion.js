@@ -43,27 +43,6 @@ function MedioPublicacion() {
   const [modalIsOpenEliminar, setModalIsOpenEliminar] = React.useState(false);
   const [idMedioPublicacionEliminar, setIdMedioPublicacionEliminar] = React.useState('');
   const notify = (place, mensaje, type) => {
-    //var color = Math.floor(Math.random() * 5 + 1);
-    //var type = "danger";
-    /*switch (color) {
-      case 1:
-        type = "primary";
-        break;
-      case 2:
-        type = "success";
-        break;
-      case 3:
-        type = "danger";
-        break;
-      case 4:
-        type = "warning";
-        break;
-      case 5:
-        type = "info";
-        break;
-      default:
-        break;
-    }*/
     var options = {};
     options = {
       place: place,
@@ -89,7 +68,7 @@ function MedioPublicacion() {
   const [mediosPublicacionPublicacion, setMediosPublicacionPublicacion] = React.useState([]);
   const [mediosPublicacionCitacion, setMediosPublicacionCitacion] = React.useState([]);
   const [mediosPublicacionSJR, setMediosPublicacionSJR] = React.useState([]);
-  const [filtroPublicaciones, setFiltroPublicaciones] = React.useState('P');
+  const [filtroPublicaciones, setFiltroPublicaciones] = React.useState('I');
   const [medioPublicacionObj, setMedioPublicacionObj] = React.useState({
     id_medio_publicacion: 0,
     nombre: ""
@@ -141,6 +120,7 @@ function MedioPublicacion() {
       if (value.respuesta.error == "False") {
         handleCargarMediosPublicacion();
         notify("tr", value.respuesta.valor, "primary");
+        closeModalEliminar();
       } else {
         notify("tr", value.respuesta.valor, "danger");
       }
@@ -217,6 +197,8 @@ function MedioPublicacion() {
       await handleCargarMediosPublicacionCitacion();
     } else if (filtroPublicaciones == 'SJR') {
       await handleCargarSJR();
+    } else if (filtroPublicaciones == 'I') {
+      await handleCargarMediosPublicacion();
     }
   }
 
@@ -266,7 +248,6 @@ function MedioPublicacion() {
 
   React.useEffect(() => {
     handleCargarMediosPublicacion();
-    handleCargarMediosPublicacionPublicacion();
   }, []);
   return (
     <>
@@ -278,74 +259,17 @@ function MedioPublicacion() {
         <Row>
           <Col md="12">
             <Card className="strpied-tabled-with-hover">
-              <Card.Header>
-                <Card.Title as="h4">Medios de Publicación</Card.Title>
-                <p className="card-category">
-                  Medios de Publicación donde se encuentran publicados los documentos de los investigadores con filiacion a la Universidad de Cuenca
-                </p>
-                <Row>
-                  <Col className="pr-1" md="8">
-                    <Form.Group>
-                      <label>NOMBRE MEDIO PUBLICACIÓN</label>
-                      <Form.Control
-                        id="medioPublicacionText"
-                        defaultValue=""
-                        type="text"
-                      ></Form.Control>
-                    </Form.Group>
-                  </Col>
-                  <Col className="pr-1" md="3">
-                    <Form.Group>
-                      <label></label>
-                      <Form.Control
-                        defaultValue="AGREGAR"
-                        type="button"
-                        className="btn-outline-success"
-                        onClick={handleAgregarMedioPublicacion}
-                      ></Form.Control>
-                    </Form.Group>
-                  </Col>
-                </Row>
-              </Card.Header>
-              <Card.Body className="table-full-width table-responsive px-3">
-                <table className="table table-bordered table-hover" id="dataTableMediosPublicacion" width="100%" cellSpacing="0">
-                  <thead className="thead-dark">
-                    <tr>
-                      <th>ID</th>
-                      <th>NOMBRE</th>
-                      <th>ACCIONES</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {mediosPublicacion.map(item => (
-                      <tr className="small" key={item.id_medio_publicacion}>
-                        <td>{item.id_medio_publicacion}</td>
-                        <td>{item.nombre}</td>
-                        <td width="5%">
-                          <div class="btn-group-vertical" role="group" aria-label="Basic example">
-                            <Button id="actualizarMedioPublicacion" className="btn-sm active" type="button" variant="info" onClick={() => handleCargarDetalleMedioPublicacion(item.id_medio_publicacion, item.nombre)} >Editar</Button>
-                            <Button id="eliminarMedioPublicacion" className="btn-sm active" type="button" variant="danger" onClick={() => openModalEliminar(item.id_medio_publicacion)} >Eliminar</Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </Card.Body>
-            </Card>
-          </Col>
-          <Col md="12">
-            <Card className="strpied-tabled-with-hover">
               <Card.Body className="table-full-width table-responsive px-3">
                 <Row>
                   <Col className="pr-1" md="6">
                     <Form.Group>
-                      <label>Ranking Medio de Publicación</label>
+                      <label>Medios de Publicación</label>
                       <Form.Row>
                         <select className="form-control" id="filtroPublicaciones" onChange={handleCargarDatosPublicacionesPorFiltro}>
-                          <option value="P">Publicación</option>
-                          <option value="C">Citación</option>
-                          <option value="SJR">SJR</option>
+                          <option value="I">Ingreso medios de publicación</option>
+                          <option value="P">Ranking Medio Publicación</option>
+                          <option value="C">Ranking Medio Citación</option>
+                          <option value="SJR">Factor de Impacto SJR</option>
                         </select>
                       </Form.Row>
                     </Form.Group>
@@ -354,6 +278,66 @@ function MedioPublicacion() {
               </Card.Body>
             </Card>
           </Col>
+          {filtroPublicaciones === 'I' && (
+            <Col md="12">
+              <Card className="strpied-tabled-with-hover">
+                <Card.Header>
+                  <Card.Title as="h4">Medios de Publicación</Card.Title>
+                  <p className="card-category">
+                    Medios de Publicación donde se encuentran publicados los documentos de los investigadores con filiacion a la Universidad de Cuenca
+                  </p>
+                  <Row>
+                    <Col className="pr-1" md="8">
+                      <Form.Group>
+                        <label>NOMBRE MEDIO PUBLICACIÓN</label>
+                        <Form.Control
+                          id="medioPublicacionText"
+                          defaultValue=""
+                          type="text"
+                        ></Form.Control>
+                      </Form.Group>
+                    </Col>
+                    <Col className="pr-1" md="3">
+                      <Form.Group>
+                        <label></label>
+                        <Form.Control
+                          defaultValue="AGREGAR"
+                          type="button"
+                          className="btn-outline-success"
+                          onClick={handleAgregarMedioPublicacion}
+                        ></Form.Control>
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                </Card.Header>
+                <Card.Body className="table-full-width table-responsive px-3">
+                  <table className="table table-bordered table-hover" id="dataTableMediosPublicacion" width="100%" cellSpacing="0">
+                    <thead className="thead-dark">
+                      <tr>
+                        <th>ID</th>
+                        <th>NOMBRE</th>
+                        <th>ACCIONES</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {mediosPublicacion.map(item => (
+                        <tr className="small" key={item.id_medio_publicacion}>
+                          <td>{item.id_medio_publicacion}</td>
+                          <td>{item.nombre}</td>
+                          <td width="5%">
+                            <div class="btn-group-vertical" role="group" aria-label="Basic example">
+                              <Button id="actualizarMedioPublicacion" className="btn-sm active" type="button" variant="info" onClick={() => handleCargarDetalleMedioPublicacion(item.id_medio_publicacion, item.nombre)} >Editar</Button>
+                              <Button id="eliminarMedioPublicacion" className="btn-sm active" type="button" variant="danger" onClick={() => openModalEliminar(item.id_medio_publicacion)} >Eliminar</Button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </Card.Body>
+              </Card>
+            </Col>
+          )}
           {filtroPublicaciones === 'P' && (
             <Col md="12">
               <Card className="strpied-tabled-with-hover">
