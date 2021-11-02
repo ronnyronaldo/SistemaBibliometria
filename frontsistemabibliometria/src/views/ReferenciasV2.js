@@ -199,6 +199,7 @@ function Referencias() {
       referenciaService.buscarDetalleReferenciaTotal({
         "id_articulo": publicacionSeleccionada.id_articulo
       }).then(value => {
+        closeModalReferencias();
         if (value.respuesta.error == "False") {
           if (value.respuesta.error == "False") {
             handleCargarReferenciasNoEncontradas(publicacionSeleccionada.id_articulo, publicacionSeleccionada.titulo, publicacionSeleccionada.autor, publicacionSeleccionada.anio_publicacion);
@@ -607,6 +608,7 @@ function Referencias() {
         className="modal modal-primary"
         show={modalIsOpenReferencias}
       >
+        <FadeLoader loading={loading} css={override} size={50} />
         <Modal.Header className="justify-content-center">
           <div className="modal-profile">
             <i className="nc-icon nc-single-copy-04"></i>
@@ -754,6 +756,7 @@ function Referencias() {
         className="modal modal-primary"
         show={modalIsOpenExtraccionReferencias}
       >
+        <FadeLoader loading={loading} css={override} size={50} />
         <Modal.Header className="justify-content-center">
           <div className="modal-profile">
             <i className="nc-icon nc-single-copy-04"></i>
