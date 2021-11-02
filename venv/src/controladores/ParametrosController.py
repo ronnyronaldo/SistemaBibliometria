@@ -42,7 +42,7 @@ def eliminarParametros(id_parametro):
     try:
         parametro = Parametro.query.get(id_parametro)
         Parametro.delete(parametro)
-        return make_response(jsonify({"respuesta": {"valor":"Parametro eliminada correctamente.", "error":"False"}}))
+        return make_response(jsonify({"respuesta": {"valor":"Parámetro eliminada correctamente.", "error":"False"}}))
     except:
         return make_response(jsonify({"respuesta": {"valor":"No se puede eliminar el parametro.", "error":"True"}}))
 
@@ -52,4 +52,4 @@ def actualizarParametros(parametro):
     param.valor = parametro['valor']
     param.codigo_parametro = parametro['codigo_parametro']
     Parametro.create(param)
-    return make_response(jsonify({"respuesta": {"valor":"Parametro actualizado correctamente.", "error":"False"}}))
+    return make_response(jsonify({"respuesta": {"valor":"Parámetro actualizado correctamente.", "error":"False"}}))

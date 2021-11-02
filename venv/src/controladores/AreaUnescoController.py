@@ -52,7 +52,6 @@ def eliminarAreaUnesco(id_area_unesco):
         return make_response(jsonify({"respuesta": {"valor":"No se puede eliminar el área unesco ya que hay datos relacionados con la misma.", "error":"True"}}))
 
 def actualizarAreaUnesco(areaUnesco):
-    print(areaUnesco)
     area_unesco = AreaUnesco.query.get_or_404(areaUnesco['id_area_unesco'])
     area_unesco.descripcion_unesco = areaUnesco['descripcion_unesco']
     AreaUnesco.create(area_unesco)
