@@ -76,10 +76,10 @@ def eliminarReferenciaPorIdArticulo(id_articulo):
 def obtenerDetalleReferenciaTotal(articuloBuscar):
     scraperApi = ''
     try:
-        scraperApi = buscarParametroPorCodigoParametro('1').json['parametro'][0]['valor']
+        scraperApi = buscarParametroPorCodigoParametro('7').json['parametro'][0]['valor']
     except:
         return make_response(jsonify({"respuesta": {"valor":"Error al recuperar la API para buscar en Google Scholar.", "error":"True"}}))
-        
+
     id_articulo = articuloBuscar['id_articulo']
     referenciasNoEncontradas = listaReferenciasNoEncontradasPorIdArticulo(id_articulo)
     referencias = referenciasNoEncontradas.json['referencias']
