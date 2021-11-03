@@ -84,27 +84,6 @@ function Dashboard() {
   });
   const [opcionGrafico, setOpcionGrafico] = React.useState('OA');
   const notify = (place, mensaje, type) => {
-    //var color = Math.floor(Math.random() * 5 + 1);
-    //var type = "danger";
-    /*switch (color) {
-      case 1:
-        type = "primary";
-        break;
-      case 2:
-        type = "success";
-        break;
-      case 3:
-        type = "danger";
-        break;
-      case 4:
-        type = "warning";
-        break;
-      case 5:
-        type = "info";
-        break;
-      default:
-        break;
-    }*/
     var options = {};
     options = {
       place: place,
@@ -296,22 +275,6 @@ function Dashboard() {
 
   }
 
-  /** Carga las areas frascati para el filtro*/
-  async function handleAreasFrascati() {
-    setLoading(true);
-    await areaFrascatiService.listaAreasFrascati().then(value => {
-      setAreasFrascati(value.area_frascati);
-      setLoading(false);
-    });
-  }
-  /**Carga las areas unesco para el filtro */
-  async function handleAreasUnesco() {
-    setLoading(true);
-    await areaUnescoService.listaAreasUnesco().then(value => {
-      setAreasUnesco(value.area_unesco);
-      setLoading(false);
-    });
-  }
   /**Carga los datos para la red de autores */
   async function handleGrafoOrdenAutor() {
     setLoading(true);
@@ -477,15 +440,6 @@ function Dashboard() {
           setLoading(false);
         });
       });
-      
-      /*
-      setLoading(true)
-      await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
-      await leyBradfordService.numeroMediosPublicacionesReferencias().then(async (value) => {
-        await handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
-        await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
-        setLoading(false)
-      })*/
     }
     else if (idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati == 0 && idAreaUnesco == 0) {
       setLoading(true)
@@ -496,14 +450,6 @@ function Dashboard() {
           setLoading(false);
         });
       });
-
-      /*setLoading(true)
-      await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
-      await leyBradfordService.numeroMediosPublicacionesReferenciasPorAnio(idAnioDesde, idAnioHasta).then(async (value) => {
-        await handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
-        await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
-        setLoading(false)
-      })*/
     }
     else if (idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati != 0 && idAreaUnesco == 0) {
       setLoading(true)
@@ -514,14 +460,6 @@ function Dashboard() {
           setLoading(false);
         });
       });
-
-      /*setLoading(true)
-      await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
-      await leyBradfordService.numeroMediosPublicacionPorAreaFrascati(idAreaFrascati).then(async (value) => {
-        await handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
-        await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
-        setLoading(false)
-      })*/
     }
     else if (idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati == 0 && idAreaUnesco != 0) {
       setLoading(true)
@@ -532,14 +470,6 @@ function Dashboard() {
           setLoading(false);
         });
       });
-
-      /*setLoading(true)
-      await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
-      await leyBradfordService.numeroMediosPublicacionPorAreaUnesco(idAreaUnesco).then(async (value) => {
-        handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
-        await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
-        setLoading(false)
-      })*/
     }
     else if (idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati != 0 && idAreaUnesco == 0) {
       setLoading(true)
@@ -550,14 +480,6 @@ function Dashboard() {
           setLoading(false);
         });
       });
-
-      /*setLoading(true)
-      await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
-      await leyBradfordService.numeroMediosPublicacionPorAreaFrascatiPorAnio(idAnioDesde, idAnioHasta, idAreaFrascati).then(async (value) => {
-        handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
-        await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
-        setLoading(false)
-      })*/
     }
     else if (idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati == 0 && idAreaUnesco != 0) {
       setLoading(true)
@@ -568,79 +490,10 @@ function Dashboard() {
           setLoading(false);
         });
       });
-
-      /*setLoading(true)
-      await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
-      await leyBradfordService.numeroMediosPublicacionPorAreaUnescoPorAnio(idAnioDesde, idAnioHasta, idAreaUnesco).then(async (value) => {
-        handleCalcularPrcentajesLeyBradford(value.numeroMediosPublicacion)
-        await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
-        setLoading(false)
-      })*/
     }
     else if (idAreaUnesco != 0 && idAreaFrascati != 0) {
       notify("tr", 'Solo puede seleccionar un filtro de área (Frascati o Unesco).', "danger");
     }
-    /*
-      if (idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati == 0 && idAreaUnesco == 0) {
-        setLoading(true)
-        await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
-        await leyBradfordService.numeroMediosPublicacionesPropios().then(async (value) => {
-          await handleCalcularPrcentajesLeyBradfordInternas(value.numeroMediosPublicacion)
-          await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
-          setLoading(false)
-        })
-      }
-      else if (idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati == 0 && idAreaUnesco == 0) {
-        setLoading(true)
-        await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
-        await leyBradfordService.numeroMediosPublicacionesPropiosPorAnio(idAnioDesde, idAnioHasta).then(async (value) => {
-          await handleCalcularPrcentajesLeyBradfordInternas(value.numeroMediosPublicacion)
-          await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
-          setLoading(false)
-        })
-      }
-      else if (idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati != 0 && idAreaUnesco == 0) {
-        setLoading(true)
-        await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
-        await leyBradfordService.numeroMediosPublicacionPropiosPorAreaFrascati(idAreaFrascati).then(async (value) => {
-          await handleCalcularPrcentajesLeyBradfordInternas(value.numeroMediosPublicacion)
-          await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
-          setLoading(false)
-        })
-      }
-      else if (idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati == 0 && idAreaUnesco != 0) {
-        setLoading(true)
-        await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
-        await leyBradfordService.numeroMediosPublicacionPropiosPorAreaUnesco(idAreaUnesco).then(async (value) => {
-          handleCalcularPrcentajesLeyBradfordInternas(value.numeroMediosPublicacion)
-          await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
-          setLoading(false)
-        })
-      }
-      else if (idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati != 0 && idAreaUnesco == 0) {
-        setLoading(true)
-        await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
-        await leyBradfordService.numeroMediosPublicacionPropiosPorAreaFrascatiPorAnio(idAnioDesde, idAnioHasta, idAreaFrascati).then(async (value) => {
-          handleCalcularPrcentajesLeyBradfordInternas(value.numeroMediosPublicacion)
-          await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
-          setLoading(false)
-        })
-      }
-      else if (idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati == 0 && idAreaUnesco != 0) {
-        setLoading(true)
-        await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionReferencias');
-        await leyBradfordService.numeroMediosPublicacionPropiosPorAreaUnescoPorAnio(idAnioDesde, idAnioHasta, idAreaUnesco).then(async (value) => {
-          handleCalcularPrcentajesLeyBradfordInternas(value.numeroMediosPublicacion)
-          await tablaPaginacionService.paginacion('#dataTableMediosPublicacionReferencias');
-          setLoading(false)
-        })
-      } else if (idAreaUnesco != 0 && idAreaFrascati != 0) {
-        notify("tr", 'Solo puede seleccionar un filtro de área (Frascati o Unesco).', "danger");
-      }
-    } else {
-      notify("tr", 'Seleccione a que Publicaciones aplicar la Ley de Bradford', "danger");
-    }*/
-
   }
 
   async function handleCargarDatosGraficosBurbujas() {
@@ -657,15 +510,8 @@ function Dashboard() {
   }
 
   React.useEffect(() => {
-    // document.getElementById("idOrdenAutor").value=1;
-    // document.getElementById("idAreaUnescoGrafo").value=1;
     handleCargarTotalesArticulosReferencias();
-    // handleCargarRedesDeAutores();
-    handleAreasUnesco();
-    handleAreasFrascati();
     handleGrafoOrdenAutor();
-    // handleCargarRedesDeAutoresAreas();
-    // handleCargarRedesDeAutoresAreasOrden();
   }, []);
   return (
     <>
@@ -823,121 +669,6 @@ function Dashboard() {
                 {/* <div>
                 <img src={"data:image/png;base64,"+ redesAreas} width="100%" height="100%" alt="Red dot" />
               </div> */}
-              </Card.Body>
-            </Card>
-          </Col>
-          <Col md="12">
-            <Card className="strpied-tabled-with-hover">
-              <Card.Header>
-                <Card.Title as="h4">Ley de Bradford</Card.Title>
-                <p className="card-category">
-                  Medios de Publicación núcleo de cada Área
-                </p>
-                <Row>
-                  <Col className="pr-1" md="1">
-                    <Form.Group>
-                      <label>PUBLICACIONES</label>
-                      <Form.Row>
-                        <select className="form-control" id="idPublicacionCorrespondiente">
-                          <option value="0">Seleccione</option>
-                          <option value="I">Internas (Investigadores U Cuenca)</option>
-                          <option value="E">Externas (Referencias)</option>
-                        </select>
-                      </Form.Row>
-                    </Form.Group>
-                  </Col>
-                  <Col className="pr-1" md="1">
-                    <Form.Group>
-                      <label>AÑO DESDE</label>
-                      <Form.Row>
-                        <select className="form-control" id="idAnioDesde">
-                          <option value="0">Seleccione</option>
-                          <option value="2016">2016</option>
-                          <option value="2017">2017</option>
-                          <option value="2018">2018</option>
-                          <option value="2019">2019</option>
-                          <option value="2020">2020</option>
-                          <option value="2021">2021</option>
-                        </select>
-                      </Form.Row>
-                    </Form.Group>
-                  </Col>
-                  <Col className="pr-1" md="1">
-                    <Form.Group>
-                      <label>AÑO HASTA</label>
-                      <Form.Row>
-                        <select className="form-control" id="idAnioHasta">
-                          <option value="0">Seleccione</option>
-                          <option value="2016">2016</option>
-                          <option value="2017">2017</option>
-                          <option value="2018">2018</option>
-                          <option value="2019">2019</option>
-                          <option value="2020">2020</option>
-                          <option value="2021">2021</option>
-                        </select>
-                      </Form.Row>
-                    </Form.Group>
-                  </Col>
-                  <Col className="pr-1" md="3">
-                    <Form.Group>
-                      <label>Area Frascati</label>
-                      <Form.Row>
-                        <select className="form-control" id="idAreaFrascati">
-                          <option value="0">Seleccione</option>
-                          {areasFracati.map(item => (
-                            <option value={item.id_area_frascati} key={item.id_area_frascati}>{item.descripcion}</option>
-                          ))}
-                        </select>
-                      </Form.Row>
-                    </Form.Group>
-                  </Col>
-                  <Col className="pr-1" md="3">
-                    <Form.Group>
-                      <label>Area Unesco</label>
-                      <Form.Row>
-                        <select className="form-control" id="idAreaUnesco">
-                          <option value="0">Seleccione</option>
-                          {areasUnesco.map(item => (
-                            <option value={item.id_area_unesco} key={item.id_area_unesco}>{item.descripcion_unesco}</option>
-                          ))}
-                        </select>
-                      </Form.Row>
-                    </Form.Group>
-                  </Col>
-                  <Col className="pr-1" md="1">
-                    <Form.Group>
-                      <label></label>
-                      <Form.Control
-                        defaultValue="EJECUTAR"
-                        type="button"
-                        className="btn-outline-success"
-                        onClick={handleCargarDatosLeyBradford}
-                      ></Form.Control>
-                    </Form.Group>
-                  </Col>
-                </Row>
-              </Card.Header>
-              <Card.Body className="table-full-width table-responsive px-3">
-                <table className="table table-bordered table-hover" id="dataTableMediosPublicacionReferencias" width="100%" cellSpacing="0">
-                  <thead className="thead-dark">
-                    <tr>
-                      <th>REVISTA</th>
-                      <th>NUMERO CITAS</th>
-                      <th>NUMERO ACUMULADO CITAS</th>
-                      <th>% ACUMULADO DE CITAS</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {datosLeyBradford.map((item, index, elements) => (
-                      <tr className="small" key={item.id_referencia}>
-                        <td>{item.venue}</td>
-                        <td>{item.contador}</td>
-                        <td>{item.numeroAcumuladoCitas}</td>
-                        <td>{item.procentajeAcumuladoCitas}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
               </Card.Body>
             </Card>
           </Col>

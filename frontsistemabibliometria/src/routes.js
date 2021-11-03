@@ -3,6 +3,7 @@ import UserProfile from "views/UserProfile.js";
 import Publicaciones from "views/Publicaciones";
 import PublicacionesV2 from "views/PublicacionesV2";
 import MedioPublicacion from "views/MedioPublicacion";
+import LeyBradford from "views/LeyBradford";
 import BaseDatosDigital from "views/BaseDatosDigital";
 import AnalisisDataMining from "views/AnalisisDataMining";
 import Areas from "views/Areas";
@@ -59,6 +60,13 @@ const dashboardRoutes = [
     name: "Medios Publicación",
     icon: "nc-icon nc-paper-2",
     component: MedioPublicacion,
+    layout: "/admin",
+  },
+  {
+    path: "/leyBradford",
+    name: "Ley de Bradford",
+    icon: "nc-icon nc-tap-01",
+    component: LeyBradford,
     layout: "/admin",
   },
   {
