@@ -4,6 +4,7 @@ import { areaFrascatiService } from "_services/areaFrascati.service";
 import { areaUnescoService } from "_services/areaUnesco.service";
 import { validacionInputService } from '../_services/validacionInput.service';
 import { medioPublicacionService } from '../_services/medio_publicacion.service';
+import { leyBradfordService } from '../_services/ley_bradford.service';
 import { Link } from "react-router-dom";
 import logo from '../images/formula.PNG';
 // react plugin for creating notifications over the dashboard
@@ -85,18 +86,18 @@ function LeyBradford() {
 
     if (idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati == 0 && idAreaUnesco == 0) {
       setLoading(true)
-      await medioPublicacionService.actualizarMediosPublicacionCitacion().then(async(value) => { 
+      await medioPublicacionService.actualizarMediosPublicacionCitacion().then(async (value) => {
         console.log(value);
         await medioPublicacionService.actualizarMediosPublicacionPublicacion().then(value => {
           console.log(value);
           setLoading(false);
         });
       });
-      
+
     }
     else if (idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati == 0 && idAreaUnesco == 0) {
       setLoading(true)
-      await medioPublicacionService.actualizarMediosPublicacionCitacionPorAnio(idAnioDesde, idAnioHasta).then(async(value) => { 
+      await medioPublicacionService.actualizarMediosPublicacionCitacionPorAnio(idAnioDesde, idAnioHasta).then(async (value) => {
         console.log(value);
         await medioPublicacionService.actualizarMediosPublicacionPublicacionPorAnio(idAnioDesde, idAnioHasta).then(value => {
           console.log(value);
@@ -107,7 +108,7 @@ function LeyBradford() {
     }
     else if (idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati != 0 && idAreaUnesco == 0) {
       setLoading(true)
-      await medioPublicacionService.actualizarMediosPublicacionCitacionPorAreaFrascati(idAreaFrascati).then(async(value) => { 
+      await medioPublicacionService.actualizarMediosPublicacionCitacionPorAreaFrascati(idAreaFrascati).then(async (value) => {
         console.log(value);
         await medioPublicacionService.actualizarMediosPublicacionPublicacionPorAreaFrascati(idAreaFrascati).then(value => {
           console.log(value);
@@ -117,7 +118,7 @@ function LeyBradford() {
     }
     else if (idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati == 0 && idAreaUnesco != 0) {
       setLoading(true)
-      await medioPublicacionService.actualizarMediosPublicacionCitacionPorAreaUnesco(idAreaUnesco).then(async(value) => { 
+      await medioPublicacionService.actualizarMediosPublicacionCitacionPorAreaUnesco(idAreaUnesco).then(async (value) => {
         console.log(value);
         await medioPublicacionService.actualizarMediosPublicacionPublicacionPorAreaUnesco(idAreaUnesco).then(value => {
           console.log(value);
@@ -127,7 +128,7 @@ function LeyBradford() {
     }
     else if (idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati != 0 && idAreaUnesco == 0) {
       setLoading(true)
-      await medioPublicacionService.actualizarMediosPublicacionCitacionPorAreaFrascatiPorAnio(idAnioDesde, idAnioHasta, idAreaFrascati).then(async(value) => { 
+      await medioPublicacionService.actualizarMediosPublicacionCitacionPorAreaFrascatiPorAnio(idAnioDesde, idAnioHasta, idAreaFrascati).then(async (value) => {
         console.log(value);
         await medioPublicacionService.actualizarMediosPublicacionPublicacionPorAreaFrascatiPorAnio(idAnioDesde, idAnioHasta, idAreaFrascati).then(value => {
           console.log(value);
@@ -137,7 +138,7 @@ function LeyBradford() {
     }
     else if (idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati == 0 && idAreaUnesco != 0) {
       setLoading(true)
-      await medioPublicacionService.actualizarMediosPublicacionCitacionPorAreaUnescoPorAnio(idAnioDesde, idAnioHasta, idAreaUnesco).then(async(value) => { 
+      await medioPublicacionService.actualizarMediosPublicacionCitacionPorAreaUnescoPorAnio(idAnioDesde, idAnioHasta, idAreaUnesco).then(async (value) => {
         console.log(value);
         await medioPublicacionService.actualizarMediosPublicacionPublicacionPorAreaUnescoPorAnio(idAnioDesde, idAnioHasta, idAreaUnesco).then(value => {
           console.log(value);
@@ -148,9 +149,17 @@ function LeyBradford() {
     else if (idAreaUnesco != 0 && idAreaFrascati != 0) {
       notify("tr", 'Solo puede seleccionar un filtro de área (Frascati o Unesco).', "danger");
     }
+    await handleListarDatosLeyBradford();
   }
-
+  async function handleListarDatosLeyBradford() {
+    await tablaPaginacionService.destruirTabla('#dataTableLeyBradford');
+    await leyBradfordService.listar().then(value => {
+      setDatosLeyBradford(value);
+    })
+    await tablaPaginacionService.paginacion('#dataTableLeyBradford');
+  }
   React.useEffect(() => {
+    handleListarDatosLeyBradford();
     handleAreasUnesco();
     handleAreasFrascati();
   }, []);
@@ -162,7 +171,7 @@ function LeyBradford() {
       </div>
       <Container fluid>
         <Row>
-        <Col md="12">
+          <Col md="12">
             <Card className="strpied-tabled-with-hover">
               <Card.Header>
                 <Card.Title as="h4"><img src={logo} alt="logo" /></Card.Title>
@@ -242,22 +251,22 @@ function LeyBradford() {
                 </Row>
               </Card.Header>
               <Card.Body className="table-full-width table-responsive px-3">
-                <table className="table table-bordered table-hover" id="dataTableMediosPublicacionReferencias" width="100%" cellSpacing="0">
+                <table className="table table-bordered table-hover" id="dataTableLeyBradford" width="100%" cellSpacing="0">
                   <thead className="thead-dark">
                     <tr>
-                      <th>REVISTA</th>
+                      <th>MEDIO PUBLICACION</th>
+                      <th>NUMERO PUBLICACIONES</th>
                       <th>NUMERO CITAS</th>
-                      <th>NUMERO ACUMULADO CITAS</th>
-                      <th>% ACUMULADO DE CITAS</th>
+                      <th>SJR</th>
                     </tr>
                   </thead>
                   <tbody>
                     {datosLeyBradford.map((item, index, elements) => (
-                      <tr className="small" key={item.id_referencia}>
-                        <td>{item.venue}</td>
-                        <td>{item.contador}</td>
-                        <td>{item.numeroAcumuladoCitas}</td>
-                        <td>{item.procentajeAcumuladoCitas}</td>
+                      <tr className="small" key={item.nombre}>
+                        <td>{item.nombre}</td>
+                        <td>{item.numero_publicaciones}</td>
+                        <td>{item.numero_citas}</td>
+                        <td>{item.sjr}</td>
                       </tr>
                     ))}
                   </tbody>

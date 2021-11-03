@@ -13,9 +13,12 @@ export const leyBradfordService = {
     numeroMediosPublicacionPropiosPorAreaFrascati,
     numeroMediosPublicacionPropiosPorAreaUnesco,
     numeroMediosPublicacionPropiosPorAreaUnescoPorAnio,
-    numeroMediosPublicacionPropiosPorAreaFrascatiPorAnio
+    numeroMediosPublicacionPropiosPorAreaFrascatiPorAnio,
+    listar
 };
-
+async function listar() {
+    return fetchWrapper.get(`${endpoints.baseUrlLeyBradford}/listar`);
+}
 // Medios de Publicacion de las Referencias
 async function numeroMediosPublicacionesReferencias() {
     return fetchWrapper.get(`${endpoints.baseUrlLeyBradford}/numeroMediosPublicacion`);
