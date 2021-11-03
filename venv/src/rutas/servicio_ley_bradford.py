@@ -7,7 +7,13 @@ from controladores.LeyBradfordController  import numeroMediosPublicacionPropiasA
 from controladores.LeyBradfordController  import numeroMediosPublicacionPropiasAreaUnesco
 from controladores.LeyBradfordController  import numeroMediosPublicacionPropiasAreaFrascatiPorAnio
 from controladores.LeyBradfordController  import numeroMediosPublicacionPropiasAreaUnescoPorAnio
+from controladores.LeyBradfordController  import listarDatosLeyBradford
 servicio_ley_bradford =  Blueprint('servicio_ley_bradford', __name__)
+
+@servicio_ley_bradford.route('/listar', methods=['GET']) 
+def listar():
+    return listarDatosLeyBradford()
+
 # Medios de Publicacion Sin Filtros
 @servicio_ley_bradford.route('/numeroMediosPublicacion', methods=['GET']) 
 def contarMediosPublicacionReferencias():

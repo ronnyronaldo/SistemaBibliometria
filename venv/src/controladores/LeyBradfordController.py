@@ -5,10 +5,24 @@ from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
 from modelos.DetalleReferencia import DetalleReferencia 
 from modelos.MedioPublicacion import MedioPublicacion 
+from modelos.MedioPublicacionPublicacion import MedioPublicacionPublicacion
+from modelos.MedioPublicacionCitacion import MedioPublicacionCitacion
+from modelos.SJR import SJR
 from modelos.Articulo import Articulo 
 from modelos.Referencia import Referencia 
 
 db = SQLAlchemy()
+
+def listarDatosLeyBradford():
+    datosLeyBradfordRespuesta = (db.session.query(MedioPublicacionPublicacion, MedioPublicacionCitacion, SJR)
+        .with_entities(MedioPublicacionPublicacion.nombre, MedioPublicacionPublicacion.numero_publicaciones, MedioPublicacionCitacion.numero_citas, SJR.sjr)
+        .join(MedioPublicacionCitacion, MedioPublicacionPublicacion.nombre == MedioPublicacionCitacion.nombre)
+        .join(SJR, MedioPublicacionPublicacion.nombre == SJR.titulo)).all()
+    datos = []
+    for dato in datosLeyBradfordRespuesta:
+        datos.append(dict(dato))
+    return make_response(jsonify(datos))
+    
 # Medios de Publicacion de los autores de la Universidad de Cuenca
 def numeroMediosPublicacionPropiasPorAnio(anio_publicacion_desde, anio_publicacion_hasta):
     count_ = func.count('*')
