@@ -5,7 +5,7 @@ import { areaUnescoService } from "_services/areaUnesco.service";
 import { validacionInputService } from '../_services/validacionInput.service';
 import { medioPublicacionService } from '../_services/medio_publicacion.service';
 import { Link } from "react-router-dom";
-
+import logo from '../images/formula.PNG';
 // react plugin for creating notifications over the dashboard
 import NotificationAlert from "react-notification-alert";
 
@@ -165,7 +165,7 @@ function LeyBradford() {
         <Col md="12">
             <Card className="strpied-tabled-with-hover">
               <Card.Header>
-                <Card.Title as="h4">Ley de Bradford</Card.Title>
+                <Card.Title as="h4">Ley de Bradford <img src={logo} alt="logo" /></Card.Title>
                 <p className="card-category">
                   Medios de Publicación núcleo de cada Área
                 </p>
