@@ -165,7 +165,7 @@ function LeyBradford() {
         <Col md="12">
             <Card className="strpied-tabled-with-hover">
               <Card.Header>
-                <Card.Title as="h4">Ley de Bradford <img src={logo} alt="logo" /></Card.Title>
+                <Card.Title as="h4"><img src={logo} alt="logo" /></Card.Title>
                 <p className="card-category">
                   Medios de Publicación núcleo de cada Área
                 </p>
