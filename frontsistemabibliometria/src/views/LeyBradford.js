@@ -269,9 +269,9 @@ function LeyBradford() {
                     {datosLeyBradford.map((item, index, elements) => (
                       <tr className="small" key={item.nombre}>
                         <td>{item.nombre}</td>
-                        <td>{'P1 ('+item.pesoPublicacion +') * P ('+item.numero_publicaciones+')'}</td>
-                        <td>{'P2 ('+item.pesoCitacion +') * C ('+item.numero_citas+')'}</td>
-                        <td>{'P5 ('+item.pesoSJR +') * SJR ('+item.sjr+')'}</td>
+                        <td>{'P1 ('+item.pesoPublicacion +'%) * P ('+item.numero_publicaciones+')'}</td>
+                        <td>{'P2 ('+item.pesoCitacion +'%) * C ('+item.numero_citas+')'}</td>
+                        <td>{'P5 ('+item.pesoSJR +'%) * SJR ('+item.sjr+')'}</td>
                       </tr>
                     ))}
                   </tbody>
