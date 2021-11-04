@@ -9,20 +9,40 @@ from modelos.MedioPublicacionPublicacion import MedioPublicacionPublicacion
 from modelos.MedioPublicacionCitacion import MedioPublicacionCitacion
 from modelos.SJR import SJR
 from modelos.Articulo import Articulo 
-from modelos.Referencia import Referencia 
+from modelos.Referencia import Referencia
+from controladores.ParametrosController import buscarParametroPorCodigoParametro 
 
 db = SQLAlchemy()
 
 def listarDatosLeyBradford():
+    pesoPublicacion = 0
+    pesoCitacion = 0
+    pesoSJR = 0
+    try:
+        pesoPublicacion = buscarParametroPorCodigoParametro('1').json['parametro'][0]['valor']
+        pesoCitacion = buscarParametroPorCodigoParametro('2').json['parametro'][0]['valor']
+        pesoSJR = buscarParametroPorCodigoParametro('5').json['parametro'][0]['valor']
+    except:
+        return make_response(jsonify({"respuesta": {"valor":"Error al recuperar los pesos.", "error":"True"}}))
+
     datosLeyBradfordRespuesta = (db.session.query(MedioPublicacionPublicacion, MedioPublicacionCitacion, SJR)
         .with_entities(MedioPublicacionPublicacion.nombre, MedioPublicacionPublicacion.numero_publicaciones, MedioPublicacionCitacion.numero_citas, SJR.sjr)
         .join(MedioPublicacionCitacion, MedioPublicacionPublicacion.nombre == MedioPublicacionCitacion.nombre)
         .join(SJR, MedioPublicacionPublicacion.nombre == SJR.titulo)).all()
     datos = []
     for dato in datosLeyBradfordRespuesta:
-        datos.append(dict(dato))
-    return make_response(jsonify(datos))
-    
+        valor = {
+            'nombre' : dato['nombre'],
+            'numero_publicaciones': dato['numero_publicaciones'],
+            'numero_citas': dato['numero_citas'],
+            'sjr': dato['sjr'],
+            'pesoPublicacion': pesoPublicacion,
+            'pesoCitacion': pesoCitacion,
+            'pesoSJR': pesoSJR
+        }
+        datos.append(dict(valor))
+    return make_response(jsonify({"respuesta": {"valor":"Datos procesados exitosamente.", "error":"False"}, "datos": datos}))
+
 # Medios de Publicacion de los autores de la Universidad de Cuenca
 def numeroMediosPublicacionPropiasPorAnio(anio_publicacion_desde, anio_publicacion_hasta):
     count_ = func.count('*')
