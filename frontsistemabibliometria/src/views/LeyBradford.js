@@ -154,7 +154,12 @@ function LeyBradford() {
   async function handleListarDatosLeyBradford() {
     await tablaPaginacionService.destruirTabla('#dataTableLeyBradford');
     await leyBradfordService.listar().then(value => {
-      setDatosLeyBradford(value);
+      if (value.respuesta.error == "False") {
+        //notify("tr", value.respuesta.valor, "primary");
+        setDatosLeyBradford(value.datos);
+      } else {
+        notify("tr", value.respuesta.valor, "danger");
+      }
     })
     await tablaPaginacionService.paginacion('#dataTableLeyBradford');
   }
@@ -264,9 +269,9 @@ function LeyBradford() {
                     {datosLeyBradford.map((item, index, elements) => (
                       <tr className="small" key={item.nombre}>
                         <td>{item.nombre}</td>
-                        <td>{item.numero_publicaciones}</td>
-                        <td>{item.numero_citas}</td>
-                        <td>{item.sjr}</td>
+                        <td>{'P1 ('+item.pesoPublicacion +') * P ('+item.numero_publicaciones+')'}</td>
+                        <td>{'P2 ('+item.pesoCitacion +') * C ('+item.numero_citas+')'}</td>
+                        <td>{'P5 ('+item.pesoSJR +') * SJR ('+item.sjr+')'}</td>
                       </tr>
                     ))}
                   </tbody>
