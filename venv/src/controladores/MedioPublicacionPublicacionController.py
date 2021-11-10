@@ -17,6 +17,12 @@ class MedioPublicacionPublicacionSchema(ModelSchema):
     nombre = fields.String(required=True)
     numero_publicaciones = fields.Number(required=True)
 
+# Coincidencia con los nombres de los medios de publicacion
+def matchMediosPublicacionPublicacion(nombre):
+    get_medio_publicacion_publicacion = MedioPublicacionPublicacion.query.filter(MedioPublicacionPublicacion.nombre.match(nombre))
+    medio_publicacion_publicacion_schema = MedioPublicacionPublicacionSchema(many=True)
+    medios_publicacion_publicacion = medio_publicacion_publicacion_schema.dump(get_medio_publicacion_publicacion)
+    return make_response(jsonify({"mediosPublicacionPublicacion": medios_publicacion_publicacion}))
 
 def listaMedioPublicacionPublicacion():
     #conteoMediosPublicacionPublicacion()

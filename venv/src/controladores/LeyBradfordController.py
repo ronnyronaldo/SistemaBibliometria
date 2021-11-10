@@ -11,6 +11,9 @@ from modelos.SJR import SJR
 from modelos.Articulo import Articulo 
 from modelos.Referencia import Referencia
 from controladores.ParametrosController import buscarParametroPorCodigoParametro 
+from controladores.SJRController import listaSJR
+from controladores.MedioPublicacionPublicacionController import matchMediosPublicacionPublicacion
+from difflib import SequenceMatcher as SM
 
 db = SQLAlchemy()
 
@@ -41,6 +44,23 @@ def listarDatosLeyBradford():
             'pesoSJR': pesoSJR
         }
         datos.append(dict(valor))
+    return make_response(jsonify({"respuesta": {"valor":"Datos procesados exitosamente.", "error":"False"}, "datos": datos}))
+
+def coincidenciasNombreRevistas():
+    listadoSJR = listaSJR().json['sjr']
+    datos = []
+    for sjr in listadoSJR:
+        try:
+            listadoPublicacion = matchMediosPublicacionPublicacion(sjr['titulo']).json['mediosPublicacionPublicacion']
+        except:
+            pass
+        for publicacion in listadoPublicacion:
+            dato = {
+                'medioSJR': sjr['titulo'],
+                'medioPublicacion': publicacion['nombre'],
+                'valorCoincidencia': SM(None, sjr['titulo'], publicacion['nombre']).ratio()
+            }
+            datos.append(dict(dato))
     return make_response(jsonify({"respuesta": {"valor":"Datos procesados exitosamente.", "error":"False"}, "datos": datos}))
 
 # Medios de Publicacion de los autores de la Universidad de Cuenca

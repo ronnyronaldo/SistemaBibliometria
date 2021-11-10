@@ -1,4 +1,5 @@
 from modelos.SJR import SJR
+from controladores.CategoriasSJRController import insertar
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify, make_response
 from marshmallow_sqlalchemy import ModelSchema
@@ -37,7 +38,12 @@ def insertarSJR(registrosNuevosSJR):
             Type = extraerDatosString(registro, 'Type')
             Issn = extraerDatosString(registro, 'Issn')
             valorSJR = extraerDatosNumber(registro, 'SJR')
-            Quartil = extraerDatosString(registro, 'SJR Best Quartile')        
+            Quartil = extraerDatosString(registro, 'SJR Best Quartile')  
+            Categorias =  extraerDatosString(registro, 'Categories')    
+            categoriasList = Categorias.split(';')
+            for categoria in categoriasList:
+                nombreCategoria = categoria.replace(" ", "")
+                insertar(nombreCategoria)
             SJR(Rank, Sourceid, Title, Type, Issn, valorSJR, Quartil).create()
     except Exception as e:   
         return make_response(jsonify({"error":"True"}))
