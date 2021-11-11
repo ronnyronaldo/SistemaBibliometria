@@ -42,7 +42,7 @@ def insertarSJR(registrosNuevosSJR):
             Categorias =  extraerDatosString(registro, 'Categories')    
             categoriasList = Categorias.split(';')
             for categoria in categoriasList:
-                nombreCategoria = categoria.replace(" ", "")
+                nombreCategoria = categoria.lstrip()
                 insertar(nombreCategoria)
             SJR(Rank, Sourceid, Title, Type, Issn, valorSJR, Quartil).create()
     except Exception as e:   

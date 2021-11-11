@@ -43,10 +43,15 @@ from rutas.servicio_autor import servicio_autor
 #Objeto Autor
 #Objeto Categorias SJR
 from modelos.CategoriasSJR import db
+from rutas.servicio_categorias_sjr import servicio_categorias_sjr
 #Objeto Categorias SJR
 #Objeto Areas SJR
 from modelos.AreaSJR import db
 from rutas.servicio_area_sjr import servicio_area_sjr
+#Objeto Areas SJR
+#Objeto Areas SJR
+from modelos.AreaCategoriaSJR import db
+from rutas.servicio_area_categoria_sjr import servicio_area_categoria_sjr
 #Objeto Areas SJR
 #Objeto DetalleReferencia
 from modelos.DetalleReferencia import db
@@ -98,6 +103,8 @@ app.register_blueprint(servicio_estadisticas_uso, url_prefix='/estadisticasUso')
 app.register_blueprint(servicio_area_frascati, url_prefix='/areaFrascati') 
 app.register_blueprint(servicio_area_unesco, url_prefix='/areaUnesco') 
 app.register_blueprint(servicio_area_sjr, url_prefix='/areaSJR') 
+app.register_blueprint(servicio_categorias_sjr, url_prefix='/categoriasSJR') 
+app.register_blueprint(servicio_area_categoria_sjr, url_prefix='/areaCategoriaSJR') 
 app.register_blueprint(servicio_articulo_scopus, url_prefix='/articuloScopus')
 app.register_blueprint(servicio_clustering, url_prefix='/cluster')
 app.register_blueprint(servicio_detalle_referencia, url_prefix='/detalleReferencia')

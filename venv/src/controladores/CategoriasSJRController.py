@@ -16,3 +16,9 @@ class CategoriasSJRSchema(ModelSchema):
 def insertar(nombre):
     CategoriasSJR(nombre).create()
 
+def listaCategorias():
+    get_categoria = CategoriasSJR.query.all()
+    categoria_schema = CategoriasSJRSchema(many=True)
+    categoria = categoria_schema.dump(get_categoria)
+    return make_response(jsonify({"categorias": categoria}))
+
