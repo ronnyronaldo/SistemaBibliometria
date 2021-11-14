@@ -13,8 +13,8 @@ class SJR(db.Model):
     __tablename__ = "journal_sjr"
     id_sjr = db.Column(db.Integer, primary_key=True)
     rank = db.Column(db.Integer)
-    id_recurso = db.Column(db.String(50))
-    titulo = db.Column(db.String(300))
+    id_recurso = db.Column(db.String(100))
+    titulo = db.Column(db.String(1000))
     tipo = db.Column(db.String(200))
     isnn = db.Column(db.String(30))
     sjr = db.Column(db.Float)
