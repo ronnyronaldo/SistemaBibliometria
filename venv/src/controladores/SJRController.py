@@ -1,5 +1,6 @@
 from modelos.SJR import SJR
-from controladores.CategoriasSJRController import insertar
+from controladores.CategoriasSJRController import insertar, buscarCategoriaPorNombre
+from controladores.CategoriaJournalSJRController import insertarCategoriaJournalSJR
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify, make_response
 from marshmallow_sqlalchemy import ModelSchema
@@ -41,10 +42,15 @@ def insertarSJR(registrosNuevosSJR):
             Quartil = extraerDatosString(registro, 'SJR Best Quartile')  
             Categorias =  extraerDatosString(registro, 'Categories')    
             categoriasList = Categorias.split(';')
-            for categoria in categoriasList:
-                nombreCategoria = categoria.lstrip()
-                insertar(nombreCategoria)
             SJR(Rank, Sourceid, Title, Type, Issn, valorSJR, Quartil).create()
+            journal = buscarJournalSJR(Rank, Sourceid, Title, Type, Issn, Quartil)
+            id_journal = journal[0]['id_sjr']
+            for categoria in categoriasList: 
+                nombreCategoria = categoria.lstrip()
+                categoria = buscarCategoriaPorNombre(nombreCategoria)
+                id_categoria = categoria[0]['id_categoria']
+                #insertar(nombreCategoria) // Cuando es nuevo ingreso se le ingresan las categorias
+                insertarCategoriaJournalSJR(id_categoria, id_journal) #Relacionamos al journal con la categoria
     except Exception as e:   
         return make_response(jsonify({"error":"True"}))
     return make_response(jsonify({"error":"False"}))
@@ -68,5 +74,12 @@ def eliminarDatosSJR():
     except:
         db.session.rollback()
     return make_response(jsonify({"error": "False"}))
+
+def buscarJournalSJR(Rank, Sourceid, Title, Type, Issn, Quartil):
+    get_journal_sjr = SJR.query.filter((SJR.rank == Rank) & (SJR.id_recurso == Sourceid)&(SJR.titulo == Title)&(SJR.tipo == Type)&(SJR.isnn == Issn)&(SJR.quartil == Quartil))
+    journal_sjr_schema = SJRSchema(many=True)
+    journal_sjr = journal_sjr_schema.dump(get_journal_sjr)
+    return journal_sjr
+
 
 

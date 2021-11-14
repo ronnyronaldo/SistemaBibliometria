@@ -10,7 +10,7 @@ db = SQLAlchemy()
 
 ###Models####
 class SJR(db.Model):
-    __tablename__ = "sjr"
+    __tablename__ = "journal_sjr"
     id_sjr = db.Column(db.Integer, primary_key=True)
     rank = db.Column(db.Integer)
     id_recurso = db.Column(db.String(50))

@@ -53,6 +53,7 @@ from rutas.servicio_area_sjr import servicio_area_sjr
 from modelos.AreaCategoriaSJR import db
 from rutas.servicio_area_categoria_sjr import servicio_area_categoria_sjr
 #Objeto Areas SJR
+from modelos.CategoriaJournalSJR import db
 #Objeto DetalleReferencia
 from modelos.DetalleReferencia import db
 from rutas.servicio_detalle_referencia import servicio_detalle_referencia

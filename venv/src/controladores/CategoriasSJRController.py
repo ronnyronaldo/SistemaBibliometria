@@ -22,3 +22,9 @@ def listaCategorias():
     categoria = categoria_schema.dump(get_categoria)
     return make_response(jsonify({"categorias": categoria}))
 
+def buscarCategoriaPorNombre(nombre):
+    get_categoria = CategoriasSJR.query.filter(CategoriasSJR.nombre == nombre)
+    categoria_schema = CategoriasSJRSchema(many=True)
+    categoria = categoria_schema.dump(get_categoria)
+    return categoria
+
