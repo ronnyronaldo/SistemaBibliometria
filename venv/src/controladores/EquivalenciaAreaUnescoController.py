@@ -8,7 +8,7 @@ from marshmallow import fields
 
 db = SQLAlchemy()
 
-class EquivalenciaAreasSchema(ModelSchema):
+class EquivalenciaAreaUnescoSchema(ModelSchema):
     class Meta(ModelSchema.Meta):
         model = EquivalenciaAreaUnesco
         sqla_session = db.session
@@ -27,14 +27,21 @@ def listaEquivalenciaAreaUnesco(id_area_unesco):
     return make_response(jsonify({"datos": datos}))
 
 def insertarEquivalenciaAreaUnesco(nuevaEquivalencia):
-    id_area_unesco = nuevaEquivalencia['id_area_unesco']
-    id_area_sjr = nuevaEquivalencia['id_area_sjr']
-    EquivalenciaAreaUnesco(int(id_area_unesco), int(id_area_sjr)).create()
+    get_equivalencia = EquivalenciaAreaUnesco.query.filter((EquivalenciaAreaUnesco.id_area_unesco == int(nuevaEquivalencia['id_area_unesco'])) & (EquivalenciaAreaUnesco.id_area_sjr == int(nuevaEquivalencia['id_area_sjr'])))
+    equivalencia_schema = EquivalenciaAreaUnescoSchema(many=True)
+    equivalencia = equivalencia_schema.dump(get_equivalencia)
+    numeroEquivalencias = len(equivalencia)
+    if numeroEquivalencias  == 0:
+        EquivalenciaAreaUnesco(int(nuevaEquivalencia['id_area_unesco']), int(nuevaEquivalencia['id_area_sjr'])).create()
+        return make_response(jsonify({"respuesta": {"valor":"Asignado la equivalencia correctamente", "error":"False"}}))
+    else:
+        return make_response(jsonify({"respuesta": {"valor":"La equivalencia ya esta ingresada", "error":"True"}}))
+
 
 def eliminarEquivalenciaAreaUnesco(id_equivalencia_area):
     try:
         equivalencia = EquivalenciaAreaUnesco.query.get(id_equivalencia_area)
-        EquivalenciaAreaUnesco.delete(id_equivalencia_area)
+        EquivalenciaAreaUnesco.delete(equivalencia)
         return make_response(jsonify({"respuesta": {"valor":"Equivalencia eliminada correctamente.", "error":"False"}}))
     except:
         return make_response(jsonify({"respuesta": {"valor":"No se puede eliminar la equivalencia.", "error":"True"}}))
