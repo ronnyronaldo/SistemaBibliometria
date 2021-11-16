@@ -8,6 +8,7 @@ const endpoints = {
     baseUrlAreaFrascati: `http://localhost:5000/areaFrascati`,
     baseUrlAreaSJR: `http://localhost:5000/areaSJR`,
     baseUrlAreaCategoriaSJR: `http://localhost:5000/areaCategoriaSJR`,
+    baseUrlEquivalenciaAreaUnesco: `http://localhost:5000/equivalenciaAreaUnesco`,
     baseUrlCategoriasSJR: `http://localhost:5000/categoriasSJR`,
     baseUrlAutor: `http://localhost:5000/autor`,
     baseUrlArticuloAutor: `http://localhost:5000/articuloAutor`,

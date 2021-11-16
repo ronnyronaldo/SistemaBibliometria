@@ -1,8 +1,11 @@
 import React from "react";
 import { tablaPaginacionService } from '../utils/tablaPaginacion.service';
 import { areaFrascatiService } from "_services/areaFrascati.service";
+import { areaUnescoService } from "_services/areaUnesco.service";
+import { areaSJRService } from "_services/areaSJR.service";
 import { parametroService } from "_services/parametro.service";
 import { validacionInputService } from '../_services/validacionInput.service';
+import { equivalenciaAreaUnescoService } from "_services/equivalenciaAreaUnesco.service";
 import { Link } from "react-router-dom";
 
 
@@ -40,6 +43,9 @@ function Parametro() {
 
   const [showModal, setShowModal] = React.useState(false);
   const [modalIsOpen, setModalIsOpen] = React.useState(false);
+  const [areasUnesco, setAreasUnesco] = React.useState([]);
+  const [areasSJR, setAreasSJR] = React.useState([]);
+  const [equivalenciaPorAreaUnesco, setEquivalenciaPorAreaUnesco] = React.useState([]);
   const [parametroObj, setParametroObj] = React.useState({
     id_parametro: 0,
     nombre: "",
@@ -178,8 +184,78 @@ function Parametro() {
     setIdEliminarParametro(id_parametro);
     setModalIsOpenEliminar(true);
   }
+
+  async function handleAreasUnesco() {
+    setLoading(true);
+    await areaUnescoService.listaAreasUnesco().then(value => {
+      setAreasUnesco(value.area_unesco);
+      setLoading(false);
+    });
+  }
+
+  async function handleAreasSJR() {
+    setLoading(true);
+    await areaSJRService.listaAreasSJR().then(value => {
+      setAreasSJR(value.area_sjr);
+      setLoading(false);
+    });
+  }
+
+  async function handleEquivalenciaPorAreaUnesco() {
+    let idAreaUnesco = parseInt(document.getElementById("idAreaUnesco").value);
+    setLoading(true);
+    await tablaPaginacionService.destruirTabla('#dataEquivalenciaAreaUnesco');
+    await equivalenciaAreaUnescoService.listaEquivalenciaAreaUnesco(idAreaUnesco).then(value => {
+      setEquivalenciaPorAreaUnesco(value.datos);
+      setLoading(false);
+    });
+    await tablaPaginacionService.paginacion('#dataEquivalenciaAreaUnesco');
+  }
+
+  const handleAgregarEquivalenciaAreaUnesco = (event) => {
+    let idAreaUnesco = parseInt(document.getElementById("idAreaUnesco").value);
+    let idAreaSJR = parseInt(document.getElementById("idAreaSJR").value);
+
+    if (idAreaUnesco != "0") {
+      if (idAreaSJR != "0") {
+        setLoading(true);
+        equivalenciaAreaUnescoService.insertar({
+          "id_area_unesco": idAreaUnesco,
+          "id_area_sjr": idAreaSJR,
+        }).then(value => {
+          setLoading(false);
+          if (value.respuesta.error == "False") {
+            handleEquivalenciaPorAreaUnesco();
+            notify("tr", value.respuesta.valor, "primary");
+          } else {
+            notify("tr", value.respuesta.valor, "danger");
+          }
+        })
+      } else {
+        notify("tr", "No ha seleccionado el área sjr", "danger");
+      }
+    } else {
+      notify("tr", "No ha seleccionado el área unesco", "danger");
+    }
+
+  }
+
+  const handleEliminarEquivalenciaPorAreaUnesco = (id_equivalencia_area_unesco) => {
+    setLoading(true);
+    equivalenciaAreaUnescoService.eliminar(id_equivalencia_area_unesco).then(value => {
+      setLoading(false);
+      if (value.respuesta.error == "False") {
+        handleEquivalenciaPorAreaUnesco();
+        notify("tr", value.respuesta.valor, "primary");
+      } else {
+        notify("tr", value.respuesta.valor, "danger");
+      }
+    })
+  }
   React.useEffect(() => {
     handleListaParametro();
+    handleAreasUnesco();
+    handleAreasSJR();
   }, []);
   return (
     <>
@@ -257,10 +333,75 @@ function Parametro() {
                         <td width="25%">{item.nombre}</td>
                         <td width="25%">{item.valor}</td>
                         <td width="5%">
-                          <div class="btn-group-vertical" role="group" aria-label="Basic example" size={10}>
+                          <div className="btn-group-vertical" role="group" aria-label="Basic example" size={10}>
                             <Button id="actualizarParametro" className="btn btn-sm active" type="button" variant="info" onClick={() => handleCargarDetalleParametro(item.id_parametro, item.nombre, item.valor, item.codigo_parametro)} >Editar</Button>
                             <Button id="eliminarParametro" className="btn-sm active" type="button" variant="danger" onClick={() => openModalEliminar(item.id_parametro)}>Eliminar</Button>
                           </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col md="12">
+            <Card className="strpied-tabled-with-hover">
+              <Card.Header>
+                <Card.Title as="h4">Equivalencia Area Unesco</Card.Title>
+                <p className="card-category">
+                  Equivalencia Area Unesco y Area SJR
+                </p>
+                <Row>
+                    <Col className="pr-1" md="3">
+                      <Form.Group>
+                        <label></label>
+                        <select className="form-control" id="idAreaUnesco" onClick={handleEquivalenciaPorAreaUnesco}>
+                          <option value="0">Seleccione el área unesco</option>
+                          {areasUnesco.map(item => (
+                            <option value={item.id_area_unesco} key={item.id_area_unesco}>{item.descripcion_unesco}</option>
+                          ))}
+                        </select>
+                      </Form.Group>
+                    </Col>
+                    <Col className="pr-1" md="3">
+                      <Form.Group>
+                        <label></label>
+                        <select className="form-control" id="idAreaSJR">
+                          <option value="0">Seleccione el área sjr</option>
+                          {areasSJR.map(item => (
+                            <option value={item.id_area_sjr} key={item.id_area_sjr}>{item.nombre}</option>
+                          ))}
+                        </select>
+                      </Form.Group>
+                    </Col>
+                    <Col className="pr-1" md="3">
+                      <Form.Group>
+                        <label></label>
+                        <Form.Control
+                          defaultValue="AGREGAR"
+                          type="button"
+                          className="btn-outline-success"
+                          onClick={handleAgregarEquivalenciaAreaUnesco}
+                        ></Form.Control>
+                      </Form.Group>
+                    </Col>
+                  </Row>
+              </Card.Header>
+              <Card.Body className="table-full-width table-responsive px-3">
+                <table className="table table-bordered table-hover" id="dataEquivalenciaAreaUnesco" width="100%" cellSpacing="0">
+                  <thead className="thead-dark">
+                    <tr>
+                      <th>NOMBRE AREA SJR</th>
+                      <th>ACCIONES</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {equivalenciaPorAreaUnesco.map(item => (
+                      <tr className="small" key={item.id_equivalencia_area}>
+                        <td width="25%">{item.areaSJR}</td>
+                        <td width="5%">
+                          <Button id="eliminarEquivalenciaAreaUnesco" className="btn-sm active" type="button" variant="danger" onClick={()=>handleEliminarEquivalenciaPorAreaUnesco(item.id_equivalencia_area)} >Eliminar</Button>
                         </td>
                       </tr>
                     ))}
