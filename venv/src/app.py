@@ -87,6 +87,12 @@ from rutas.servicio_parametro import servicio_parametro
 from modelos.SJR import db
 from rutas.servicio_sjr import servicio_sjr
 #Objeto SJR
+#Objeto Journal
+from modelos.Journal import db
+#Objeto Journal
+#Objeto Estadisticas Journal
+from modelos.EstadisticasJournal import db
+#Objeto Estadisticas Journal
 #Configuracion de la aplicacion y de la base de datos
 
 #MySQL configurations
