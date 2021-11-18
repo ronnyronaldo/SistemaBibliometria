@@ -89,6 +89,7 @@ from rutas.servicio_sjr import servicio_sjr
 #Objeto SJR
 #Objeto Journal
 from modelos.Journal import db
+from rutas.servicio_journal import servicio_journal
 #Objeto Journal
 #Objeto Estadisticas Journal
 from modelos.EstadisticasJournal import db
@@ -126,6 +127,7 @@ app.register_blueprint(servicio_medio_publicacion_citacion, url_prefix='/medioPu
 app.register_blueprint(servicio_medio_publicacion_publicacion, url_prefix='/medioPublicacionPublicacion')
 app.register_blueprint(servicio_parametro, url_prefix='/parametro')
 app.register_blueprint(servicio_sjr, url_prefix='/sjr')
+app.register_blueprint(servicio_journal, url_prefix='/journal')
 
 # Correr la aplicacion
 app.run()
