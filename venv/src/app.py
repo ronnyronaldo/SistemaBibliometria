@@ -94,6 +94,9 @@ from rutas.servicio_journal import servicio_journal
 #Objeto Estadisticas Journal
 from modelos.EstadisticasJournal import db
 #Objeto Estadisticas Journal
+#Objeto Base Datos Digital Journal
+from modelos. BaseDatosDigitalJournal import db
+#Objeto Base Datos Digital Journal
 #Configuracion de la aplicacion y de la base de datos
 
 #MySQL configurations

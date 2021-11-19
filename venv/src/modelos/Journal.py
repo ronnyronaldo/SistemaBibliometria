@@ -13,7 +13,6 @@ class Journal(db.Model):
     __tablename__ = "journal"
     id_journal = db.Column(db.Integer, primary_key=True)
     titulo = db.Column(db.String(200))
-    id_base_datos_digital = db.Column(db.Integer)
 
     def create(self):
       db.session.add(self)
@@ -25,9 +24,8 @@ class Journal(db.Model):
       db.session.commit()
       return journal
 
-    def __init__(self, titulo, id_base_datos_digital):
+    def __init__(self, titulo):
         self.titulo = titulo
-        self.id_base_datos_digital = id_base_datos_digital
 
     def __repr__(self):
         return '' % self.id_journal
