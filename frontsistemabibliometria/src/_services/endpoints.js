@@ -19,6 +19,7 @@ const endpoints = {
     baseUrlMedioPublicacionPublicacion: `http://localhost:5000/medioPublicacionPublicacion`,
     baseUrlMedioPublicacionCitacion: `http://localhost:5000/medioPublicacionCitacion`,
     baseUrlSJR: `http://localhost:5000/sjr`,
+    baseUrlJournal: `http://localhost:5000/journal`,
     baseUrlParametro: `http://localhost:5000/parametro`
 }
 export default endpoints;

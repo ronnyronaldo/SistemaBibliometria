@@ -2,9 +2,12 @@ import React from "react";
 import { baseDatosDigitalService } from '../_services/baseDatosDigital.service';
 import { estadisticasUsoService } from '../_services/estadisticasUso.service';
 import { validacionInputService } from '../_services/validacionInput.service';
+import { JournalService } from '../_services/journal.service';
 import { Bar } from 'react-chartjs-2';
+import * as FileSaver from "file-saver";
 // react plugin for creating notifications over the dashboard
 import NotificationAlert from "react-notification-alert";
+import *as XLSX from 'xlsx';
 
 /**Spinner */
 import { css } from "@emotion/react";
@@ -28,6 +31,7 @@ import {
   Row,
   Col,
   Form,
+  FormGroup
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { tablaPaginacionService } from '../utils/tablaPaginacion.service';
@@ -77,6 +81,7 @@ function EstadisticasProveedores() {
   let [loading, setLoading] = React.useState(false);
   /**Spinner */
   const [baseDatosDigital, setBaseDatosDigital] = React.useState([]);
+  const [nuevosJournal, setNuevosJournal] = React.useState([]);
   const [etiquetas, setEtiquetas] = React.useState([]);
   const [datos, setDatos] = React.useState([]);
   const [datosEstadisticasUso, setDatosEstadisticasUso] = React.useState([]);
@@ -143,15 +148,15 @@ function EstadisticasProveedores() {
             setLoading(true);
             estadisticasUsoService.insertar({
               "id_base_datos_digital": idBaseDatosDigital,
-              "año" : anio,
+              "año": anio,
               "mes": mes,
               "numero_busquedas": numero_busquedas
-            }).then(value =>{
+            }).then(value => {
               setLoading(false);
-              if(value.respuesta.error == "False"){
+              if (value.respuesta.error == "False") {
                 handleCargarEstadisticasUso();
                 notify("tr", value.respuesta.valor, "primary");
-              }else{
+              } else {
                 notify("tr", value.respuesta.valor, "danger");
               }
             })
@@ -172,13 +177,69 @@ function EstadisticasProveedores() {
     setLoading(true);
     estadisticasUsoService.eliminar(id_estadisticas_uso).then(value => {
       setLoading(false);
-      if(value.respuesta.error == "False"){
+      if (value.respuesta.error == "False") {
         handleCargarEstadisticasUso();
         notify("tr", value.respuesta.valor, "primary");
-      }else{
+      } else {
         notify("tr", value.respuesta.valor, "danger");
       }
     })
+  }
+  async function handleReadExcel(file) {
+    const promise = new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsArrayBuffer(file);
+      fileReader.onload = (e) => {
+        const bufferArray = e.target.result;
+        const wb = XLSX.read(bufferArray, { type: "buffer" });
+        const wsname = wb.SheetNames[1];
+        const ws = wb.Sheets[wsname];
+        const data = XLSX.utils.sheet_to_json(ws);
+        setNuevosJournal(data);
+        resolve(data);
+      };
+      fileReader.onerror = (error) => {
+        reject(error)
+      };
+    })
+    promise.then(value => {
+      console.log(value)
+    })
+  }
+
+  const fileType =
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+  const fileExtension = ".xlsx";
+
+  const exportToCSV = (apiData, fileName) => {
+    const ws = XLSX.utils.json_to_sheet(apiData);
+    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const data = new Blob([excelBuffer], { type: fileType });
+    FileSaver.saveAs(data, fileName + fileExtension);
+  };
+
+  async function handleIngresarJournals() {
+    let idBaseDatosDigital = document.getElementById("idBaseDatosDigitalIngresoJournal").value;
+    if (idBaseDatosDigital != 0) {
+      if (nuevosJournal.length != 0) {
+        setLoading(true)
+        JournalService.insertarScienceDirect({ "nuevasJournal": nuevosJournal, "idBaseDatosDigital": idBaseDatosDigital }).then(value => {
+          setLoading(false);
+          if (value.respuesta.error == "False") {
+            notify("tc", "Proceso terminado.", "primary");
+            if (value.respuesta.mensajes.length > 0) {
+              exportToCSV(value.respuesta.mensajes, "observacionesIngresoJournalBD");
+              notify("tc", "Revise las observaciones colocadas en el archivo de excel del ingreso de journal por base de datos digital.", "primary");
+            }
+          }
+        })
+      } else {
+        notify("tr", 'Ingrese el archivo con la información.', "danger");
+      }
+    } else {
+      notify("tr", 'No ha seleccionado la base de datos digital.', "danger");
+    }
   }
   React.useEffect(() => {
     handleCargarBaseDatosDigitales();
@@ -289,7 +350,7 @@ function EstadisticasProveedores() {
                         <td >{item.año}</td>
                         <td >{item.mes}</td>
                         <td >{item.numero_busquedas}</td>
-                        <td width="5%"><Link to="#" id="eliminarEstadisticasUso" className="link col-sm-12 col-md-3" onClick={()=>handleEliminarEstadisticasUso(item.id_estadisticas_uso)}><i className="fas fa-trash-alt fa-2x"></i></Link></td>
+                        <td width="5%"><Link to="#" id="eliminarEstadisticasUso" className="link col-sm-12 col-md-3" onClick={() => handleEliminarEstadisticasUso(item.id_estadisticas_uso)}><i className="fas fa-trash-alt fa-2x"></i></Link></td>
                       </tr>
                     ))}
                   </tbody>
@@ -311,6 +372,46 @@ function EstadisticasProveedores() {
                 </div>
 
               </Card.Body>
+            </Card>
+          </Col>
+          <Col md="12">
+            <Card className="strpied-tabled-with-hover">
+              <Card.Header>
+                <Card.Title as="h4">Ingreso Journal-Estadísticas Base de Datos Digitales</Card.Title>
+                <Row>
+                  <Col className="pr-1" md="3">
+                    <Form.Group>
+                      <label>BASE DATOS DIGITAL</label>
+                      <Form.Row>
+                        <select className="form-control" id="idBaseDatosDigitalIngresoJournal">
+                          <option value="0">Seleccione</option>
+                          {baseDatosDigital.map(item => (
+                            <option value={item.id_base_datos_digital} key={item.id_base_datos_digital}>{item.nombre_base_datos_digital}</option>
+                          ))}
+                        </select>
+                      </Form.Row>
+                    </Form.Group>
+                  </Col>
+                  <Col className="pr-1" md="9">
+                    <Form>
+                      <Row>
+                        <Col className="pr-1" md="12">
+                          <Form.Group>
+                            <label>INGRESE EL ARCHIVO .XLSX CON LA INFORMACIÓN DE LAS BASES DE DATOS DIGITALES</label>
+                            <FormGroup>
+                              <input type='file' onChange={(e) => {
+                                const file = e.target.files[0];
+                                handleReadExcel(file)
+                              }} className="col-sm-12 col-md-8"></input>
+                              <Link to="#" id="ingresarPublicacion" className="link col-sm-12 col-md-3"><Button variant="primary" onClick={handleIngresarJournals}>Ingresar <i className="fas fa-file-upload fa-2x" /></Button></Link>
+                            </FormGroup>
+                          </Form.Group>
+                        </Col>
+                      </Row>
+                    </Form>
+                  </Col>
+                </Row>
+              </Card.Header>
             </Card>
           </Col>
         </Row>
