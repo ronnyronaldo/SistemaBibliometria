@@ -17,11 +17,14 @@ class JournalSchema(ModelSchema):
 
 
 
-def listaJournal():
-    get_journal = Journal.query.all()
-    journal_schema = JournalSchema(many=True)
-    journal = journal_schema.dump(get_journal)
-    return make_response(jsonify({"journal": journal}))
+def listaJournalPorBaseDatosDigital(id_base_datos_digital):
+    journalRespuesta= (db.session.query(BaseDatosDigitalJournal, Journal).filter(BaseDatosDigitalJournal.id_base_datos_digital == id_base_datos_digital)
+        .with_entities(BaseDatosDigitalJournal.id_base_datos_digital_journal, Journal.titulo)
+        .join(Journal, BaseDatosDigitalJournal.id_journal == Journal.id_journal)).all()
+    datos = []
+    for dato in journalRespuesta:
+        datos.append(dict(dato)) # Serializo cada fila
+    return make_response(jsonify({"datosJournal": datos}))
 
 def insertarJournalScienceDirect(registrosJournal):
     mensajesRespuesta = []
@@ -52,6 +55,39 @@ def insertarJournalScienceDirect(registrosJournal):
                         "mensaje": "El journal "+ nombreJournal + " ya está asignada a la base de datos seleccionada"
                     }
                     mensajesRespuesta.append(mensaje)
+    except Exception as e:   
+        return make_response(jsonify({"respuesta": {"mensajes":mensajesRespuesta, "error":"True"}}))
+    return make_response(jsonify({"respuesta": {"mensajes":mensajesRespuesta, "error":"False"}}))
+
+def insertarJournalEbsco(registrosJournal):
+    mensajesRespuesta = []
+    journals = registrosJournal['nuevasJournal']
+    idBaseDatosDigital = registrosJournal['idBaseDatosDigital']
+    id_journal = 0
+    try: 
+        for i in range(len(journals)):
+            nombreJournal = journals[i]['Database']
+            journalRespuesta = encontrarPorNombre(nombreJournal)
+            numeroJournal = len(journalRespuesta)
+            if(numeroJournal == 0):
+                Journal(nombreJournal).create()
+                journalRespuesta = encontrarPorNombre(nombreJournal)
+                id_journal = journalRespuesta[0]['id_journal']
+            else:
+                journalRespuesta = encontrarPorNombre(nombreJournal)
+                id_journal = journalRespuesta[0]['id_journal']
+
+            bd_journal = existeRelacion(idBaseDatosDigital, id_journal)
+            numero_bd_journal = len(bd_journal)
+            if(numero_bd_journal == 0):
+                BaseDatosDigitalJournal(idBaseDatosDigital,id_journal).create()
+            else:
+                mensaje = {
+                    "error": "True",
+                    "mensaje": "El journal "+ nombreJournal + " ya está asignada a la base de datos seleccionada",
+                    "estado": "Ingresada"
+                }
+                mensajesRespuesta.append(mensaje)
     except Exception as e:   
         return make_response(jsonify({"respuesta": {"mensajes":mensajesRespuesta, "error":"True"}}))
     return make_response(jsonify({"respuesta": {"mensajes":mensajesRespuesta, "error":"False"}}))
