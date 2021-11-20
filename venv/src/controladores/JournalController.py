@@ -19,7 +19,7 @@ class JournalSchema(ModelSchema):
 
 def listaJournalPorBaseDatosDigital(id_base_datos_digital):
     journalRespuesta= (db.session.query(BaseDatosDigitalJournal, Journal).filter(BaseDatosDigitalJournal.id_base_datos_digital == id_base_datos_digital)
-        .with_entities(BaseDatosDigitalJournal.id_base_datos_digital_journal, Journal.titulo)
+        .with_entities(BaseDatosDigitalJournal.id_base_datos_digital_journal, Journal.titulo, Journal.id_journal)
         .join(Journal, BaseDatosDigitalJournal.id_journal == Journal.id_journal)).all()
     datos = []
     for dato in journalRespuesta:
