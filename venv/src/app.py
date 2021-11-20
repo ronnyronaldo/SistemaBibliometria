@@ -96,6 +96,7 @@ from modelos.EstadisticasJournal import db
 #Objeto Estadisticas Journal
 #Objeto Base Datos Digital Journal
 from modelos. BaseDatosDigitalJournal import db
+from rutas.servicio_estadisticas_journal import servicio_estadisticas_journal
 #Objeto Base Datos Digital Journal
 #Configuracion de la aplicacion y de la base de datos
 
@@ -115,6 +116,7 @@ app.register_blueprint(servicio_referencia, url_prefix='/referencia')
 app.register_blueprint(servicio_base_datos_digital, url_prefix='/baseDatosDigital')
 app.register_blueprint(servicio_medio_publicacion, url_prefix='/medioPublicacion')
 app.register_blueprint(servicio_estadisticas_uso, url_prefix='/estadisticasUso') 
+app.register_blueprint(servicio_estadisticas_journal, url_prefix='/estadisticasJournal') 
 app.register_blueprint(servicio_area_frascati, url_prefix='/areaFrascati') 
 app.register_blueprint(servicio_area_unesco, url_prefix='/areaUnesco') 
 app.register_blueprint(servicio_area_sjr, url_prefix='/areaSJR') 
