@@ -86,6 +86,7 @@ function EstadisticasProveedores() {
   const [datos, setDatos] = React.useState([]);
   const [datosEstadisticasUso, setDatosEstadisticasUso] = React.useState([]);
   const [journalBaseDatosDigital, setJournalBaseDatosDigital] = React.useState([]);
+  const [journalBaseDatosDigitalEstadisticas, setJournalBaseDatosDigitalEstadisticas] = React.useState([]);
   const data = {
     labels: etiquetas,
     datasets: [{
@@ -114,6 +115,7 @@ function EstadisticasProveedores() {
   }
 
   async function handleCargarEstadisticasUso() {
+    handleCargarJournal();
     setLoading(true);
     await tablaPaginacionService.destruirTabla('#dataEstadisticasUso');
     let id_base_datos_digital = document.getElementById("idBaseDatosDigital").value;
@@ -135,6 +137,19 @@ function EstadisticasProveedores() {
       notify("tr", 'No ha seleccionado la base de datos digital.', "danger");
     }
     await tablaPaginacionService.paginacion('#dataEstadisticasUso');
+  }
+
+  async function handleCargarJournal() {
+    setLoading(true);
+    let id_base_datos_digital = document.getElementById("idBaseDatosDigital").value;
+    if (id_base_datos_digital !== 0) {
+      await JournalService.listarJournalPorBaseDatosDigital(id_base_datos_digital).then(value => {
+        setJournalBaseDatosDigitalEstadisticas(value.datos_journal);
+        setLoading(false);
+      });
+    } else {
+      notify("tr", 'No ha seleccionado la base de datos digital.', "danger");
+    }
   }
 
   async function handleCargarJournalPorBaseDatosDigital() {
@@ -332,7 +347,20 @@ function EstadisticasProveedores() {
                       </Form.Row>
                     </Form.Group>
                   </Col>
-                  <Col className="pr-1" md="2">
+                  <Col className="pr-1" md="3">
+                    <Form.Group>
+                      <label>JOURNAL</label>
+                      <Form.Row>
+                        <select className="form-control"  id="idJournal">
+                          <option value="0">Seleccione</option>
+                          {journalBaseDatosDigitalEstadisticas.map(item => (
+                            <option value={item.id_journal} key={item.id_journal}>{item.titulo}</option>
+                          ))}
+                        </select>
+                      </Form.Row>
+                    </Form.Group>
+                  </Col>
+                  <Col className="pr-1" md="1">
                     <Form.Group>
                       <label>AÑO</label>
                       <Form.Control
@@ -342,7 +370,7 @@ function EstadisticasProveedores() {
                       ></Form.Control>
                     </Form.Group>
                   </Col>
-                  <Col className="pr-1" md="2">
+                  <Col className="pr-1" md="1">
                     <Form.Group>
                       <label>MES</label>
                       <Form.Row>
@@ -363,9 +391,9 @@ function EstadisticasProveedores() {
                       </Form.Row>
                     </Form.Group>
                   </Col>
-                  <Col className="pr-1" md="2">
+                  <Col className="pr-1" md="1">
                     <Form.Group>
-                      <label>NÚMERO DE BÚSQUEDAS</label>
+                      <label># BÚSQUEDAS</label>
                       <Form.Control
                         id="numeroBusquedaText"
                         defaultValue=""
