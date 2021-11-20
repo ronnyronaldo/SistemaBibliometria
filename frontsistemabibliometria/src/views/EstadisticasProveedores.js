@@ -1,6 +1,7 @@
 import React from "react";
 import { baseDatosDigitalService } from '../_services/baseDatosDigital.service';
 import { estadisticasUsoService } from '../_services/estadisticasUso.service';
+import { estadisticasJournalService } from '../_services/estadisticasJournal.service';
 import { validacionInputService } from '../_services/validacionInput.service';
 import { JournalService } from '../_services/journal.service';
 import { Bar } from 'react-chartjs-2';
@@ -119,6 +120,7 @@ function EstadisticasProveedores() {
     setLoading(true);
     await tablaPaginacionService.destruirTabla('#dataEstadisticasUso');
     let id_base_datos_digital = document.getElementById("idBaseDatosDigital").value;
+    let id_journal = document.getElementById("idJournal").value;
     if (id_base_datos_digital !== 0) {
       await estadisticasUsoService.listarEstadisticasUsoPorId(id_base_datos_digital).then(value => {
         var estadisticas_uso = value.estadisticas_uso
@@ -133,6 +135,32 @@ function EstadisticasProveedores() {
         setDatos(datos)
         setLoading(false);
       });
+    } else {
+      notify("tr", 'No ha seleccionado la base de datos digital.', "danger");
+    }
+    await tablaPaginacionService.paginacion('#dataEstadisticasUso');
+  }
+  async function handleCargarEstadisticasJournal() {
+    setLoading(true);
+    await tablaPaginacionService.destruirTabla('#dataEstadisticasUso');
+    let id_base_datos_digital = document.getElementById("idBaseDatosDigital").value;
+    let id_journal = document.getElementById("idJournal").value;
+    if (id_base_datos_digital !== 0) {
+      if (id_journal !== 0) {
+        await estadisticasJournalService.listarEstadisticasJournalPorId(id_base_datos_digital, id_journal).then(value => {
+          var estadisticas_uso = value.estadisticas_uso_journal
+          setDatosEstadisticasUso(estadisticas_uso);
+          let etiquetas = []
+          let datos = []
+          for (var i = 0; i < estadisticas_uso.length; i++) {
+            etiquetas.push(estadisticas_uso[i].mes + '-' + estadisticas_uso[i].año)
+            datos.push(estadisticas_uso[i].numero_busquedas)
+          }
+          setEtiquetas(etiquetas)
+          setDatos(datos)
+          setLoading(false);
+        });
+      }
     } else {
       notify("tr", 'No ha seleccionado la base de datos digital.', "danger");
     }
@@ -169,6 +197,7 @@ function EstadisticasProveedores() {
 
   const handleCargarEstadisticas = () => {
     let idBaseDatosDigital = document.getElementById("idBaseDatosDigital").value;
+    let idJournal = document.getElementById("idJournal").value;
     let anio = document.getElementById("anioText").value;
     let mes = document.getElementById("idMes").value;
     let numero_busquedas = document.getElementById("numeroBusquedaText").value;
@@ -176,21 +205,39 @@ function EstadisticasProveedores() {
       if (validacionInputService.campoVacio(anio) && validacionInputService.esNumero(anio)) {
         if (mes != 0) {
           if (validacionInputService.campoVacio(numero_busquedas)) {
-            setLoading(true);
-            estadisticasUsoService.insertar({
-              "id_base_datos_digital": idBaseDatosDigital,
-              "año": anio,
-              "mes": mes,
-              "numero_busquedas": numero_busquedas
-            }).then(value => {
-              setLoading(false);
-              if (value.respuesta.error == "False") {
-                handleCargarEstadisticasUso();
-                notify("tr", value.respuesta.valor, "primary");
-              } else {
-                notify("tr", value.respuesta.valor, "danger");
-              }
-            })
+            if (idJournal == 0) {
+              setLoading(true);
+              estadisticasUsoService.insertar({
+                "id_base_datos_digital": idBaseDatosDigital,
+                "año": anio,
+                "mes": mes,
+                "numero_busquedas": numero_busquedas
+              }).then(value => {
+                setLoading(false);
+                if (value.respuesta.error == "False") {
+                  handleCargarEstadisticasUso();
+                  notify("tr", value.respuesta.valor, "primary");
+                } else {
+                  notify("tr", value.respuesta.valor, "danger");
+                }
+              })
+            } else {
+              setLoading(true);
+              estadisticasJournalService.insertar({
+                "id_base_datos_digital": idBaseDatosDigital,
+                "id_journal": idJournal,
+                "año": anio,
+                "mes": mes,
+                "numero_busquedas": numero_busquedas
+              }).then(value => {
+                setLoading(false);
+                if (value.respuesta.error == "False") {
+                  notify("tr", value.respuesta.valor, "primary");
+                } else {
+                  notify("tr", value.respuesta.valor, "danger");
+                }
+              })
+            }
           } else {
             notify("tr", 'Número de búsquedas ingresadas incorrectamente.', "danger");
           }
@@ -351,7 +398,7 @@ function EstadisticasProveedores() {
                     <Form.Group>
                       <label>JOURNAL</label>
                       <Form.Row>
-                        <select className="form-control"  id="idJournal">
+                        <select className="form-control" id="idJournal" onChange={handleCargarEstadisticasJournal}>
                           <option value="0">Seleccione</option>
                           {journalBaseDatosDigitalEstadisticas.map(item => (
                             <option value={item.id_journal} key={item.id_journal}>{item.titulo}</option>
@@ -473,7 +520,7 @@ function EstadisticasProveedores() {
                     <Form.Group>
                       <label>BASE DATOS DIGITAL</label>
                       <Form.Row>
-                        <select className="form-control" id="idBaseDatosDigitalIngresoJournal" onClick={handleCargarJournalPorBaseDatosDigital}>
+                        <select className="form-control" id="idBaseDatosDigitalIngresoJournal" onChange={handleCargarJournalPorBaseDatosDigital}>
                           <option value="0">Seleccione</option>
                           {baseDatosDigital.map(item => (
                             <option value={item.id_base_datos_digital} key={item.id_base_datos_digital}>{item.nombre_base_datos_digital}</option>
