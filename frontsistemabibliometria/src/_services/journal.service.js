@@ -1,15 +1,15 @@
-import { fetchWrapper} from '../_helpers/fetch-wrapper';
+import { fetchWrapper } from '../_helpers/fetch-wrapper';
 import endpoints from "./endpoints";
 
 export const JournalService = {
-    listar,
+    listarJournalPorBaseDatosDigital,
     insertarScienceDirect,
     insertarEbsco
 
 };
 
-async function listar() {
-    return fetchWrapper.get(`${endpoints.baseUrlJournal}/listar`);
+async function listarJournalPorBaseDatosDigital(id_base_datos_digital) {
+    return fetchWrapper.get(`${endpoints.baseUrlJournal}/listarPorBaseDatosDigital/` + id_base_datos_digital);
 }
 
 async function insertarScienceDirect(params) {

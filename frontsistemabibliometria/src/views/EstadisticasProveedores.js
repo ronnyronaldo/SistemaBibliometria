@@ -85,6 +85,7 @@ function EstadisticasProveedores() {
   const [etiquetas, setEtiquetas] = React.useState([]);
   const [datos, setDatos] = React.useState([]);
   const [datosEstadisticasUso, setDatosEstadisticasUso] = React.useState([]);
+  const [journalBaseDatosDigital, setJournalBaseDatosDigital] = React.useState([]);
   const data = {
     labels: etiquetas,
     datasets: [{
@@ -134,6 +135,21 @@ function EstadisticasProveedores() {
       notify("tr", 'No ha seleccionado la base de datos digital.', "danger");
     }
     await tablaPaginacionService.paginacion('#dataEstadisticasUso');
+  }
+
+  async function handleCargarJournalPorBaseDatosDigital() {
+    setLoading(true);
+    await tablaPaginacionService.destruirTabla('#dataJournalPorBaseDigital');
+    let id_base_datos_digital = document.getElementById("idBaseDatosDigitalIngresoJournal").value;
+    if (id_base_datos_digital !== 0) {
+      await JournalService.listarJournalPorBaseDatosDigital(id_base_datos_digital).then(value => {
+        setJournalBaseDatosDigital(value.datos_journal);
+        setLoading(false);
+      });
+    } else {
+      notify("tr", 'No ha seleccionado la base de datos digital.', "danger");
+    }
+    await tablaPaginacionService.paginacion('#dataJournalPorBaseDigital');
   }
 
   const handleCargarEstadisticas = () => {
@@ -261,6 +277,7 @@ function EstadisticasProveedores() {
                 exportToCSV(value.respuesta.mensajes, "observacionesIngresoJournalBD");
                 notify("tc", "Revise las observaciones colocadas en el archivo de excel del ingreso de journal por base de datos digital.", "primary");
               }
+              handleCargarJournalPorBaseDatosDigital();
             }
           })
         } else if (idBaseDatosDigital == 3) {
@@ -273,6 +290,7 @@ function EstadisticasProveedores() {
                 exportToCSV(value.respuesta.mensajes, "observacionesIngresoJournalBD");
                 notify("tc", "Revise las observaciones colocadas en el archivo de excel del ingreso de journal por base de datos digital.", "primary");
               }
+              handleCargarJournalPorBaseDatosDigital();
             }
           })
         } else {
@@ -427,7 +445,7 @@ function EstadisticasProveedores() {
                     <Form.Group>
                       <label>BASE DATOS DIGITAL</label>
                       <Form.Row>
-                        <select className="form-control" id="idBaseDatosDigitalIngresoJournal">
+                        <select className="form-control" id="idBaseDatosDigitalIngresoJournal" onClick={handleCargarJournalPorBaseDatosDigital}>
                           <option value="0">Seleccione</option>
                           {baseDatosDigital.map(item => (
                             <option value={item.id_base_datos_digital} key={item.id_base_datos_digital}>{item.nombre_base_datos_digital}</option>
@@ -456,6 +474,32 @@ function EstadisticasProveedores() {
                   </Col>
                 </Row>
               </Card.Header>
+            </Card>
+          </Col>
+          <Col md="12">
+            <Card className="strpied-tabled-with-hover">
+              <Card.Header>
+                <Card.Title as="h4">Base de Datos Digitales</Card.Title>
+                <p className="card-category">
+                  Universidad de Cuenca
+                </p>
+              </Card.Header>
+              <Card.Body className="table-full-width table-responsive px-3">
+                <table className="table table-bordered table-hover" id="dataJournalPorBaseDigital" width="100%" cellSpacing="0">
+                  <thead className="thead-dark">
+                    <tr>
+                      <th>TITULO</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {journalBaseDatosDigital.map(item => (
+                      <tr className="small" key={item.id_base_datos_digital_journal}>
+                        <td >{item.titulo}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </Card.Body>
             </Card>
           </Col>
         </Row>
