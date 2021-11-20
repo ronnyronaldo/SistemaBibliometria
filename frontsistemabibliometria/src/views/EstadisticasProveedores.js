@@ -232,6 +232,7 @@ function EstadisticasProveedores() {
               }).then(value => {
                 setLoading(false);
                 if (value.respuesta.error == "False") {
+                  handleCargarEstadisticasJournal();
                   notify("tr", value.respuesta.valor, "primary");
                 } else {
                   notify("tr", value.respuesta.valor, "danger");
@@ -252,16 +253,34 @@ function EstadisticasProveedores() {
     }
   }
   const handleEliminarEstadisticasUso = (id_estadisticas_uso) => {
-    setLoading(true);
-    estadisticasUsoService.eliminar(id_estadisticas_uso).then(value => {
-      setLoading(false);
-      if (value.respuesta.error == "False") {
-        handleCargarEstadisticasUso();
-        notify("tr", value.respuesta.valor, "primary");
-      } else {
-        notify("tr", value.respuesta.valor, "danger");
+    let idBaseDatosDigital = document.getElementById("idBaseDatosDigital").value;
+    let idJournal = document.getElementById("idJournal").value;
+    if (idBaseDatosDigital != 0) {
+      if (idJournal == 0) {
+        setLoading(true);
+        estadisticasUsoService.eliminar(id_estadisticas_uso).then(value => {
+          setLoading(false);
+          if (value.respuesta.error == "False") {
+            handleCargarEstadisticasUso();
+            notify("tr", value.respuesta.valor, "primary");
+          } else {
+            notify("tr", value.respuesta.valor, "danger");
+          }
+        });
+      }else{
+        setLoading(true);
+        estadisticasJournalService.eliminar(id_estadisticas_uso).then(value => {
+          setLoading(false);
+          if (value.respuesta.error == "False") {
+            handleCargarEstadisticasJournal();
+            notify("tr", value.respuesta.valor, "primary");
+          } else {
+            notify("tr", value.respuesta.valor, "danger");
+          }
+        });
       }
-    })
+    }
+
   }
   async function handleReadExcelScienceDirect(file) {
     const promise = new Promise((resolve, reject) => {

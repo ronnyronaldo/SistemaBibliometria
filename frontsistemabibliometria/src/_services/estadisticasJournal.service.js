@@ -12,7 +12,7 @@ async function insertar(params) {
 }
 
 async function listarEstadisticasJournalPorId(id_base_datos_digital, id_journal) {
-    return fetchWrapper.get(`${endpoints.baseUrlEstadisticasJournal}//buscarEstadisticasJournalaPorId/`+ id_base_datos_digital+'/'+id_journal);
+    return fetchWrapper.get(`${endpoints.baseUrlEstadisticasJournal}/buscarEstadisticasJournalaPorId/`+ id_base_datos_digital+'/'+id_journal);
 }
 
 async function eliminar(id_estadisticas_journal) {
