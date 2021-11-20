@@ -185,7 +185,7 @@ function EstadisticasProveedores() {
       }
     })
   }
-  async function handleReadExcel(file) {
+  async function handleReadExcelScienceDirect(file) {
     const promise = new Promise((resolve, reject) => {
       const fileReader = new FileReader();
       fileReader.readAsArrayBuffer(file);
@@ -206,7 +206,35 @@ function EstadisticasProveedores() {
       console.log(value)
     })
   }
-
+  async function handleReadExcelEbsco(file) {
+    const promise = new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsArrayBuffer(file);
+      fileReader.onload = (e) => {
+        const bufferArray = e.target.result;
+        const wb = XLSX.read(bufferArray, { type: "buffer" });
+        const wsname = wb.SheetNames[0];
+        const ws = wb.Sheets[wsname];
+        const data = XLSX.utils.sheet_to_json(ws);
+        setNuevosJournal(data);
+        resolve(data);
+      };
+      fileReader.onerror = (error) => {
+        reject(error)
+      };
+    })
+    promise.then(value => {
+      console.log(value)
+    })
+  }
+  async function handleReadExcel(file) {
+    let idBaseDatosDigital = document.getElementById("idBaseDatosDigitalIngresoJournal").value;
+    if (idBaseDatosDigital == 11) {
+      handleReadExcelScienceDirect(file);
+    } else if (idBaseDatosDigital == 3) {
+      handleReadExcelEbsco(file);
+    }
+  }
   const fileType =
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
   const fileExtension = ".xlsx";
@@ -223,17 +251,33 @@ function EstadisticasProveedores() {
     let idBaseDatosDigital = document.getElementById("idBaseDatosDigitalIngresoJournal").value;
     if (idBaseDatosDigital != 0) {
       if (nuevosJournal.length != 0) {
-        setLoading(true)
-        JournalService.insertarScienceDirect({ "nuevasJournal": nuevosJournal, "idBaseDatosDigital": idBaseDatosDigital }).then(value => {
-          setLoading(false);
-          if (value.respuesta.error == "False") {
-            notify("tc", "Proceso terminado.", "primary");
-            if (value.respuesta.mensajes.length > 0) {
-              exportToCSV(value.respuesta.mensajes, "observacionesIngresoJournalBD");
-              notify("tc", "Revise las observaciones colocadas en el archivo de excel del ingreso de journal por base de datos digital.", "primary");
+        if (idBaseDatosDigital == 11) {
+          setLoading(true)
+          JournalService.insertarScienceDirect({ "nuevasJournal": nuevosJournal, "idBaseDatosDigital": idBaseDatosDigital }).then(value => {
+            setLoading(false);
+            if (value.respuesta.error == "False") {
+              notify("tc", "Proceso terminado.", "primary");
+              if (value.respuesta.mensajes.length > 0) {
+                exportToCSV(value.respuesta.mensajes, "observacionesIngresoJournalBD");
+                notify("tc", "Revise las observaciones colocadas en el archivo de excel del ingreso de journal por base de datos digital.", "primary");
+              }
             }
-          }
-        })
+          })
+        } else if (idBaseDatosDigital == 3) {
+          setLoading(true)
+          JournalService.insertarEbsco({ "nuevasJournal": nuevosJournal, "idBaseDatosDigital": idBaseDatosDigital }).then(value => {
+            setLoading(false);
+            if (value.respuesta.error == "False") {
+              notify("tc", "Proceso terminado.", "primary");
+              if (value.respuesta.mensajes.length > 0) {
+                exportToCSV(value.respuesta.mensajes, "observacionesIngresoJournalBD");
+                notify("tc", "Revise las observaciones colocadas en el archivo de excel del ingreso de journal por base de datos digital.", "primary");
+              }
+            }
+          })
+        } else {
+          notify("tr", 'No es posible ingresar datos correspondientes a la base de datos seleccionada.', "danger");
+        }
       } else {
         notify("tr", 'Ingrese el archivo con la información.', "danger");
       }

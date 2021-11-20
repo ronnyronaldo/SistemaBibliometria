@@ -3,7 +3,8 @@ import endpoints from "./endpoints";
 
 export const JournalService = {
     listar,
-    insertarScienceDirect
+    insertarScienceDirect,
+    insertarEbsco
 
 };
 
@@ -13,4 +14,8 @@ async function listar() {
 
 async function insertarScienceDirect(params) {
     return fetchWrapper.post(`${endpoints.baseUrlJournal}/insertarScienceDirect`, params);
+}
+
+async function insertarEbsco(params) {
+    return fetchWrapper.post(`${endpoints.baseUrlJournal}/insertarEbsco`, params);
 }
