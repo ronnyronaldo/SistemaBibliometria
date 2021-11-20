@@ -18,10 +18,12 @@ class EstadisticasJournalSchema(ModelSchema):
     numero_busquedas = fields.Number(required=True)
 
 def buscarEstadisticasJournalPorId(id_base_datos_digital, id_journal):
-    get_estadisticas_uso = EstadisticasJournal.query.filter((EstadisticasJournal.id_base_datos_digital == id_base_datos_digital) & (EstadisticasJournal.id_journal == id_journal))
-    estadisticas_uso_schema = EstadisticasJournalSchema(many=True)
-    estadisticas_uso = estadisticas_uso_schema.dump(get_estadisticas_uso)
-    return make_response(jsonify({"estadisticas_uso_journal": estadisticas_uso}))
+    estadisticasRespuesta= (db.session.query(EstadisticasJournal).filter((EstadisticasJournal.id_base_datos_digital == id_base_datos_digital) & (EstadisticasJournal.id_journal == id_journal))
+        .with_entities(EstadisticasJournal.id_estadisticas_journal.label('id_estadisticas_uso'),EstadisticasJournal.año, EstadisticasJournal.mes, EstadisticasJournal.numero_busquedas)).all()
+    datos = []
+    for dato in estadisticasRespuesta:
+        datos.append(dict(dato)) # Serializo cada fila
+    return make_response(jsonify({"estadisticas_uso_journal": datos}))
 
 def insertarEstadisticasJournal(nuevoEstadisticasUso):
     get_estadisticas_uso = EstadisticasJournal.query.filter((EstadisticasJournal.id_base_datos_digital == nuevoEstadisticasUso['id_journal']) & (EstadisticasJournal.id_base_datos_digital == nuevoEstadisticasUso['id_base_datos_digital']) & (EstadisticasJournal.año == nuevoEstadisticasUso['año']) & (EstadisticasJournal.mes == nuevoEstadisticasUso['mes']))
