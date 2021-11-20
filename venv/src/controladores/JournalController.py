@@ -24,7 +24,7 @@ def listaJournalPorBaseDatosDigital(id_base_datos_digital):
     datos = []
     for dato in journalRespuesta:
         datos.append(dict(dato)) # Serializo cada fila
-    return make_response(jsonify({"datosJournal": datos}))
+    return make_response(jsonify({"datos_journal": datos}))
 
 def insertarJournalScienceDirect(registrosJournal):
     mensajesRespuesta = []
