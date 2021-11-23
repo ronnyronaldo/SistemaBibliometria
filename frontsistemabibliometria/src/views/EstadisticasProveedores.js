@@ -193,7 +193,8 @@ function EstadisticasProveedores() {
                 "id_base_datos_digital": idBaseDatosDigital,
                 "año": anio,
                 "mes": mes,
-                "numero_busquedas": numero_busquedas
+                "numero_busquedas": numero_busquedas,
+                "id_mes": numeroMes(mes)
               }).then(value => {
                 setLoading(false);
                 if (value.respuesta.error == "False") {
@@ -210,7 +211,8 @@ function EstadisticasProveedores() {
                 "id_journal": idJournal,
                 "año": anio,
                 "mes": mes,
-                "numero_busquedas": numero_busquedas
+                "numero_busquedas": numero_busquedas,
+                "id_mes": numeroMes(mes)
               }).then(value => {
                 setLoading(false);
                 if (value.respuesta.error == "False") {
@@ -249,7 +251,7 @@ function EstadisticasProveedores() {
             notify("tr", value.respuesta.valor, "danger");
           }
         });
-      }else{
+      } else {
         setLoading(true);
         estadisticasJournalService.eliminar(id_estadisticas_uso).then(value => {
           setLoading(false);
@@ -263,6 +265,21 @@ function EstadisticasProveedores() {
       }
     }
 
+  }
+
+  const numeroMes = (mes) => {
+    if (mes == 'Enero') return 1;
+    if (mes == 'Febrero') return 2;
+    if (mes == 'Marzo') return 3;
+    if (mes == 'Abril') return 4;
+    if (mes == 'Mayo') return 5;
+    if (mes == 'Junio') return 6;
+    if (mes == 'Julio') return 7;
+    if (mes == 'Agosto') return 8;
+    if (mes == 'Septiembre') return 9;
+    if (mes == 'Octubre') return 10;
+    if (mes == 'Noviembre') return 11;
+    if (mes == 'Diciembre') return 12;
   }
 
   React.useEffect(() => {
