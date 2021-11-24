@@ -413,6 +413,18 @@ function Areas() {
     });
     openModalActualizarAU()
   }
+  async function handleOpcionPantalla(opcion) { // Cargo los datos en Pantalla
+    setFiltroAreas(opcion);
+    if (opcion == 'AF') {
+      await handleAreasFrascati();
+    } else if (opcion == 'AU') {
+      await handleAreasUnesco();
+    } else if (opcion == 'AS') {
+      setCategoriaPorArea([]);
+      await handleAreasSJR();
+      await handleCategoriasSJR();
+    }
+  }
 
   React.useEffect(() => {
     handleAreasFrascati();
@@ -427,24 +439,19 @@ function Areas() {
         <Row>
           <Col md="12">
             <Card className="strpied-tabled-with-hover">
-              <Card.Body className="table-full-width table-responsive px-3">
-                <Row>
-                  <Col className="pr-1" md="6">
-                    <Form.Group>
-                      <label>Áreas</label>
-                      <Form.Row>
-                        <select className="form-control" id="filtroOpcionesAreas" onChange={handleCargarDatosAreasPorFiltro}>
-                          <option value="AF">Ingreso área frascati</option>
-                          <option value="AU">Ingreso área unesco</option>
-                          <option value="AS">Ingreso área sjr</option>
-                        </select>
-                      </Form.Row>
-                    </Form.Group>
-                  </Col>
-                </Row>
-              </Card.Body>
+              <nav className="navbar navbar-expand-sm bg-dark navbar-dark">
+                <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
+                  <div className="navbar-nav">
+                    <a className="nav-item nav-link" onClick={() => handleOpcionPantalla("AF")}>Área Frascati</a>
+                    <a className="nav-item nav-link" onClick={() => handleOpcionPantalla("AU")}>Área Unesco</a>
+                    <a className="nav-item nav-link" onClick={() => handleOpcionPantalla("AS")}>Área SJR</a>
+                  </div>
+                </div>
+              </nav>
             </Card>
           </Col>
+        </Row>
+        <Row>
           {filtroAreas === 'AF' && (
             <Col md="12">
               <Card className="strpied-tabled-with-hover">
@@ -682,7 +689,7 @@ function Areas() {
                         <tr className="small" key={item.id_area_categoria_sjr}>
                           <td>{item.nombreCategoria}</td>
                           <td width="5%">
-                          <Button id="eliminarAreaCategoria" className="btn-sm active" type="button" variant="danger" onClick={() => openModalEliminarACS(item.id_area_categoria_sjr)} >Eliminar</Button>
+                            <Button id="eliminarAreaCategoria" className="btn-sm active" type="button" variant="danger" onClick={() => openModalEliminarACS(item.id_area_categoria_sjr)} >Eliminar</Button>
                           </td>
                         </tr>
                       ))}
