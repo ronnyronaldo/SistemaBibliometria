@@ -98,8 +98,8 @@ const dashboardRoutes = [
     layout: "/admin",
   },
   {
-    path: "/parametro",
-    name: "Parámetro",
+    path: "/Configuración",
+    name: "Configuración",
     icon: "nc-icon nc-settings-gear-64",
     component: Parametro,
     layout: "/admin",
