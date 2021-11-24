@@ -38,6 +38,7 @@ import { tablaPaginacionService } from '../utils/tablaPaginacion.service';
 function EstadisticasProveedores() {
   const [showModal, setShowModal] = React.useState(false);
   const notificationAlertRef = React.useRef(null);
+  const [opcionPantalla, setOpcionPantalla] = React.useState("td");
   const notify = (place, mensaje, type) => {
     //var color = Math.floor(Math.random() * 5 + 1);
     //var type = "danger";
@@ -282,6 +283,19 @@ function EstadisticasProveedores() {
     if (mes == 'Diciembre') return 12;
   }
 
+  function handleOpcionPantalla(opcion) { // Cargo los datos en Pantalla
+    if (opcion == "td") {
+      let idBaseDatosDigital = document.getElementById("idBaseDatosDigital").value;
+      let idJournal = document.getElementById("idJournal").value;
+      if (idJournal == 0) {
+        handleCargarEstadisticasUso();
+      } else {
+        handleCargarEstadisticasJournal();
+      }
+    }
+    setOpcionPantalla(opcion);
+  }
+
   React.useEffect(() => {
     handleCargarBaseDatosDigitales();
   }, []);
@@ -292,6 +306,20 @@ function EstadisticasProveedores() {
         <NotificationAlert ref={notificationAlertRef} />
       </div>
       <Container fluid>
+        <Row>
+          <Col md="12">
+            <Card className="strpied-tabled-with-hover">
+              <nav className="navbar navbar-expand-sm bg-dark navbar-dark">
+                <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
+                  <div className="navbar-nav">
+                    <a className="nav-item nav-link" onClick={() => handleOpcionPantalla("td")}>Tabla Datos</a>
+                    <a className="nav-item nav-link" onClick={() => handleOpcionPantalla("g")}>Gráfico</a>
+                  </div>
+                </div>
+              </nav>
+            </Card>
+          </Col>
+        </Row>
         <Row>
           <Col md="12">
             <Card className="strpied-tabled-with-hover">
@@ -380,54 +408,61 @@ function EstadisticasProveedores() {
               </Card.Header>
             </Card>
           </Col>
-          <Col md="12">
-            <Card className="strpied-tabled-with-hover">
-              <Card.Header>
-                <Card.Title as="h4">Base de Datos Digitales</Card.Title>
-                <p className="card-category">
-                  Universidad de Cuenca
-                </p>
-              </Card.Header>
-              <Card.Body className="table-full-width table-responsive px-3">
-                <table className="table table-bordered table-hover" id="dataEstadisticasUso" width="100%" cellSpacing="0">
-                  <thead className="thead-dark">
-                    <tr>
-                      <th>AÑO</th>
-                      <th>MES</th>
-                      <th>NÚMERO DE BÚSQUEDAS</th>
-                      <th>ACCIONES</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {datosEstadisticasUso.map(item => (
-                      <tr className="small" key={item.id_estadisticas_uso}>
-                        <td >{item.año}</td>
-                        <td >{item.mes}</td>
-                        <td >{item.numero_busquedas}</td>
-                        <td width="5%"><Link to="#" id="eliminarEstadisticasUso" className="link col-sm-12 col-md-3" onClick={() => handleEliminarEstadisticasUso(item.id_estadisticas_uso)}><i className="fas fa-trash-alt fa-2x"></i></Link></td>
+          {opcionPantalla === 'td' && (
+            <Col md="12">
+              <Card className="strpied-tabled-with-hover">
+                <Card.Header>
+                  <Card.Title as="h4">Base de Datos Digitales</Card.Title>
+                  <p className="card-category">
+                    Universidad de Cuenca
+                  </p>
+                </Card.Header>
+                <Card.Body className="table-full-width table-responsive px-3">
+                  <table className="table table-bordered table-hover" id="dataEstadisticasUso" width="100%" cellSpacing="0">
+                    <thead className="thead-dark">
+                      <tr>
+                        <th>AÑO</th>
+                        <th>MES</th>
+                        <th>NÚMERO DE BÚSQUEDAS</th>
+                        <th>ACCIONES</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </Card.Body>
-            </Card>
-          </Col>
-          <Col md="12">
-            <Card className="strpied-tabled-with-hover">
-              <Card.Header>
-                <Card.Title as="h4">Estadísticas de Búsqueda</Card.Title>
-                <p className="card-category">
-                  Universidad de Cuenca
-                </p>
-              </Card.Header>
-              <Card.Body className="table-full-width table-responsive px-3">
-                <div style={{ width: '100%', height: '400px' }}>
-                  <Bar data={data} options={opciones}></Bar>
-                </div>
+                    </thead>
+                    <tbody>
+                      {datosEstadisticasUso.map(item => (
+                        <tr className="small" key={item.id_estadisticas_uso}>
+                          <td >{item.año}</td>
+                          <td >{item.mes}</td>
+                          <td >{item.numero_busquedas}</td>
+                          <td width="5%">
+                            <div class="btn-group-vertical" role="group" aria-label="Basic example">
+                              <Button id="eliminarEstadisticasUso" className="btn btn-sm active" type="button" variant="danger" onClick={() => handleEliminarEstadisticasUso(item.id_estadisticas_uso)}>Eliminar</Button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </Card.Body>
+              </Card>
+            </Col>)}
+          {opcionPantalla === 'g' && (
+            <Col md="12">
+              <Card className="strpied-tabled-with-hover">
+                <Card.Header>
+                  <Card.Title as="h4">Estadísticas de Búsqueda</Card.Title>
+                  <p className="card-category">
+                    Universidad de Cuenca
+                  </p>
+                </Card.Header>
+                <Card.Body className="table-full-width table-responsive px-3">
+                  <div style={{ width: '100%', height: '400px' }}>
+                    <Bar data={data} options={opciones}></Bar>
+                  </div>
 
-              </Card.Body>
-            </Card>
-          </Col>
+                </Card.Body>
+              </Card>
+            </Col>
+          )}
         </Row>
       </Container>
     </>
