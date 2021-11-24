@@ -8,7 +8,6 @@ import { JournalService } from '../_services/journal.service';
 import * as FileSaver from "file-saver";
 import *as XLSX from 'xlsx';
 
-
 /**Spinner */
 import { css } from "@emotion/react";
 import FadeLoader from "react-spinners/FadeLoader";
@@ -42,30 +41,10 @@ function BaseDatosDigital() {
   const [showModal, setShowModal] = React.useState(false);
   const notificationAlertRef = React.useRef(null);
   const [modalIsOpen, setModalIsOpen] = React.useState(false);
+  const [opcionPantalla, setOpcionPantalla] = React.useState("bd");
   const [journalBaseDatosDigital, setJournalBaseDatosDigital] = React.useState([]);
   const [nuevosJournal, setNuevosJournal] = React.useState([]);
   const notify = (place, mensaje, type) => {
-    //var color = Math.floor(Math.random() * 5 + 1);
-    //var type = "danger";
-    /*switch (color) {
-      case 1:
-        type = "primary";
-        break;
-      case 2:
-        type = "success";
-        break;
-      case 3:
-        type = "danger";
-        break;
-      case 4:
-        type = "warning";
-        break;
-      case 5:
-        type = "info";
-        break;
-      default:
-        break;
-    }*/
     var options = {};
     options = {
       place: place,
@@ -103,14 +82,14 @@ function BaseDatosDigital() {
       data: datos
     }]
   }
-  
+
   const [baseDatosDigitalObj, setBaseDatosDigitalObj] = React.useState({
-    id_base_datos_digital:0, 
-    nombre: "", 
-    proveedor: "", 
-    costo_actual: 0, 
-    suscripcion_descripcion: "", 
-    area_servicio:""
+    id_base_datos_digital: 0,
+    nombre: "",
+    proveedor: "",
+    costo_actual: 0,
+    suscripcion_descripcion: "",
+    area_servicio: ""
   })
 
   const opciones = {
@@ -142,18 +121,18 @@ function BaseDatosDigital() {
               if (validacionInputService.esDecimal(costoActual)) {
                 setLoading(true);
                 baseDatosDigitalService.insertar({
-                  "nombre_base_datos_digital" : nombreBaseDatos,
+                  "nombre_base_datos_digital": nombreBaseDatos,
                   "proveedor": nombreProveedor,
                   "costo_actual": costoActual,
                   "suscripcion_descripcion": suscripcionDescripcion,
                   "area_servicio": areaServicio,
-                  "esUtilizadaEstudio" : 0
-                }).then(value =>{
+                  "esUtilizadaEstudio": 0
+                }).then(value => {
                   setLoading(false);
-                  if(value.respuesta.error == "False"){
+                  if (value.respuesta.error == "False") {
                     handleCargarBaseDatosDigitales();
                     notify("tr", value.respuesta.valor, "primary");
-                  }else{
+                  } else {
                     notify("tr", value.respuesta.valor, "danger");
                   }
                 })
@@ -180,10 +159,10 @@ function BaseDatosDigital() {
     setLoading(true);
     baseDatosDigitalService.eliminar(id_base_datos_digital).then(value => {
       setLoading(false);
-      if(value.respuesta.error == "False"){
+      if (value.respuesta.error == "False") {
         handleCargarBaseDatosDigitales();
         notify("tr", value.respuesta.valor, "primary");
-      }else{
+      } else {
         notify("tr", value.respuesta.valor, "danger");
       }
     })
@@ -197,25 +176,25 @@ function BaseDatosDigital() {
   }
   function handleCargarDetalleBaseDatosDigital(id_base_datos_digital, nombre_base_datos_digital, proveedor, costo_actual, suscripcion_descripcion, area_servicio) {
     setBaseDatosDigitalObj({
-      id_base_datos_digital:id_base_datos_digital, 
-      nombre: nombre_base_datos_digital, 
-      proveedor: proveedor, 
-      costo_actual: costo_actual, 
-      suscripcion_descripcion: suscripcion_descripcion, 
-      area_servicio:area_servicio
+      id_base_datos_digital: id_base_datos_digital,
+      nombre: nombre_base_datos_digital,
+      proveedor: proveedor,
+      costo_actual: costo_actual,
+      suscripcion_descripcion: suscripcion_descripcion,
+      area_servicio: area_servicio
     });
     openModal()
   }
 
   function actualizarBaseDatosDigital() {
     let id_base_datos_digital = baseDatosDigitalObj.id_base_datos_digital;
-    let nombreBaseDatosDigital =  document.getElementById("nombreBaseDatosDigitalActText").value;
-    let nombreProveedor =  document.getElementById("proveedorActText").value;
-    let costo_actual =  document.getElementById("costoActualActText").value;
-    let suscripcion_descripcion =  document.getElementById("suscripcionDescripcionActText").value;
-    let area_servicio =  document.getElementById("areaServicioActText").value;
+    let nombreBaseDatosDigital = document.getElementById("nombreBaseDatosDigitalActText").value;
+    let nombreProveedor = document.getElementById("proveedorActText").value;
+    let costo_actual = document.getElementById("costoActualActText").value;
+    let suscripcion_descripcion = document.getElementById("suscripcionDescripcionActText").value;
+    let area_servicio = document.getElementById("areaServicioActText").value;
 
-    if(validacionInputService.campoVacio(nombreBaseDatosDigital) && validacionInputService.campoVacio(nombreProveedor) && validacionInputService.campoVacio(suscripcion_descripcion) && validacionInputService.campoVacio(area_servicio) & validacionInputService.campoVacio(costo_actual) & validacionInputService.esDecimal(costo_actual)){
+    if (validacionInputService.campoVacio(nombreBaseDatosDigital) && validacionInputService.campoVacio(nombreProveedor) && validacionInputService.campoVacio(suscripcion_descripcion) && validacionInputService.campoVacio(area_servicio) & validacionInputService.campoVacio(costo_actual) & validacionInputService.esDecimal(costo_actual)) {
       baseDatosDigitalService.actualizar({
         "id_base_datos_digital": id_base_datos_digital,
         "nombre": nombreBaseDatosDigital,
@@ -225,14 +204,14 @@ function BaseDatosDigital() {
         "area_servicio": area_servicio
 
       }).then(value => {
-        if(value.respuesta.error== "False"){
+        if (value.respuesta.error == "False") {
           notify("tr", value.respuesta.valor, "primary");
           handleCargarBaseDatosDigitales();
         }
         closeModal();
       })
-     
-    }else{
+
+    } else {
       notify("tr", 'Existen campos sin llenar.', "danger");
     }
   }
@@ -354,6 +333,14 @@ function BaseDatosDigital() {
     const data = new Blob([excelBuffer], { type: fileType });
     FileSaver.saveAs(data, fileName + fileExtension);
   };
+  function handleOpcionPantallaBD(opcion) {
+    setOpcionPantalla(opcion);
+    if (opcion == "bd") {
+      handleCargarBaseDatosDigitales();
+    } else {
+      handleCargarJournalPorBaseDatosDigital();
+    }
+  }
 
   React.useEffect(() => {
     handleCargarBaseDatosDigitales();
@@ -368,268 +355,283 @@ function BaseDatosDigital() {
         <Row>
           <Col md="12">
             <Card className="strpied-tabled-with-hover">
-              <Card.Header>
-                <Card.Title as="h4">Ingreso Base Datos Digital</Card.Title>
-                <Row>
-                  <Col className="pr-1" md="4">
-                    <Form.Group>
-                      <label>NOMBRE BASE DATOS DIGITAL</label>
-                      <Form.Control
-                        id="nombreBaseDatosText"
-                        defaultValue=""
-                        type="text"
-                      ></Form.Control>
-                    </Form.Group>
-                  </Col>
-                  <Col className="pr-1" md="4">
-                    <Form.Group>
-                      <label>NOMBRE DEL PROVEEDOR</label>
-                      <Form.Control
-                        id="nombreProveedorText"
-                        defaultValue=""
-                        type="text"
-                      ></Form.Control>
-                    </Form.Group>
-                  </Col>
-                  <Col className="pr-1" md="4">
-                    <Form.Group>
-                      <label>COSTO ACTUAL</label>
-                      <Form.Control
-                        id="costoActualText"
-                        defaultValue=""
-                        type="text"
-                      ></Form.Control>
-                    </Form.Group>
-                  </Col>
-                  <Col className="pr-1" md="4">
-                    <Form.Group>
-                      <label>SUSCRIPCIÓN/DESCRIPCIÓN</label>
-                      <Form.Control
-                        id="suscripcionDescripcionText"
-                        defaultValue=""
-                        type="text"
-                      ></Form.Control>
-                    </Form.Group>
-                  </Col>
-                  <Col className="pr-1" md="4">
-                    <Form.Group>
-                      <label>AREA/SERVICIO</label>
-                      <Form.Control
-                        id="areaServicioText"
-                        defaultValue=""
-                        cols="80"
-                        rows="4"
-                        as="textarea"
-                      ></Form.Control>
-                    </Form.Group>
-                  </Col>
-                  <Col className="pr-1" md="4">
-                    <Form.Group>
-                      <label></label>
-                      <Form.Control
-                        defaultValue="AGREGAR"
-                        type="button"
-                        className="btn-outline-success"
-                        onClick={handleAgregarBaseDatosDigitales}
-                      ></Form.Control>
-                    </Form.Group>
-                  </Col>
-                </Row>
-              </Card.Header>
-            </Card>
-          </Col>
-          <Col md="12">
-            <Card className="strpied-tabled-with-hover">
-              <Card.Header>
-                <Card.Title as="h4">Base de Datos Digitales</Card.Title>
-                <p className="card-category">
-                  Universidad de Cuenca
-                </p>
-              </Card.Header>
-              <Card.Body className="table-full-width table-responsive px-3">
-                <table className="table table-bordered table-hover" id="dataTableBaseDatosDigitales" width="100%" cellSpacing="0">
-                  <thead className="thead-dark">
-                    <tr>
-                      <th>ID</th>
-                      <th>NOMBRE</th>
-                      <th>PROVEEDOR</th>
-                      <th>COSTO ACTUAL</th>
-                      <th>SUSCRIPCION/DESCRIPCION</th>
-                      <th>AREA/SERVICIO</th>
-                      <th>ACCIONES</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {baseDatosDigital.map(item => (
-                      <tr className="small" key={item.id_base_datos_digital}>
-                        <td >{item.id_base_datos_digital}</td>
-                        <td >{item.nombre_base_datos_digital}</td>
-                        <td >{item.proveedor}</td>
-                        <td >{item.costo_actual}</td>
-                        <td >{item.suscripcion_descripcion}</td>
-                        <td >{item.area_servicio}</td>
-                        <td width="5%"><Link to="#" id="actualizarPublicacion" className="link col-sm-12 col-md-3" onClick={() => handleCargarDetalleBaseDatosDigital(item.id_base_datos_digital, item.nombre_base_datos_digital, item.proveedor, item.costo_actual, item.suscripcion_descripcion, item.area_servicio)} ><i className="fas fa-pen-square fa-2x"></i></Link>
-                        <Link to="#" id="eliminarBaseDatosDigital" className="link col-sm-12 col-md-3" onClick={()=>handleEliminarBaseDatosDigital(item.id_base_datos_digital)}><i className="fas fa-trash-alt fa-2x"></i></Link></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </Card.Body>
-            </Card>
-          </Col>
-          <Col md="12">
-            <Card className="strpied-tabled-with-hover">
-              <Card.Header>
-                <Card.Title as="h4">Ingreso Journal-Estadísticas Base de Datos Digitales</Card.Title>
-                <Row>
-                  <Col className="pr-1" md="3">
-                    <Form.Group>
-                      <label>BASE DATOS DIGITAL</label>
-                      <Form.Row>
-                        <select className="form-control" id="idBaseDatosDigitalIngresoJournal" onChange={handleCargarJournalPorBaseDatosDigital}>
-                          <option value="0">Seleccione</option>
-                          {baseDatosDigital.map(item => (
-                            <option value={item.id_base_datos_digital} key={item.id_base_datos_digital}>{item.nombre_base_datos_digital}</option>
-                          ))}
-                        </select>
-                      </Form.Row>
-                    </Form.Group>
-                  </Col>
-                  <Col className="pr-1" md="9">
-                    <Form>
-                      <Row>
-                        <Col className="pr-1" md="12">
-                          <Form.Group>
-                            <label>INGRESE EL ARCHIVO .XLSX CON LA INFORMACIÓN DE LAS BASES DE DATOS DIGITALES</label>
-                            <FormGroup>
-                              <input type='file' onChange={(e) => {
-                                const file = e.target.files[0];
-                                handleReadExcel(file)
-                              }} className="col-sm-12 col-md-8"></input>
-                              <Link to="#" id="ingresarPublicacion" className="link col-sm-12 col-md-3"><Button variant="primary" onClick={handleIngresarJournals}>Ingresar <i className="fas fa-file-upload fa-2x" /></Button></Link>
-                            </FormGroup>
-                          </Form.Group>
-                        </Col>
-                      </Row>
-                    </Form>
-                  </Col>
-                </Row>
-              </Card.Header>
-            </Card>
-          </Col>
-          <Col md="12">
-            <Card className="strpied-tabled-with-hover">
-              <Card.Header>
-                <Card.Title as="h4">Base de Datos Digitales</Card.Title>
-                <p className="card-category">
-                  Universidad de Cuenca
-                </p>
-              </Card.Header>
-              <Card.Body className="table-full-width table-responsive px-3">
-                <table className="table table-bordered table-hover" id="dataJournalPorBaseDigital" width="100%" cellSpacing="0">
-                  <thead className="thead-dark">
-                    <tr>
-                      <th>TITULO</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {journalBaseDatosDigital.map(item => (
-                      <tr className="small" key={item.id_base_datos_digital_journal}>
-                        <td >{item.titulo}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </Card.Body>
+              <nav className="navbar navbar-expand-sm bg-dark navbar-dark">
+                <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
+                  <div className="navbar-nav">
+                    <a className="nav-item nav-link" onClick={() => handleOpcionPantallaBD("bd")}>Base Datos Digital</a>
+                    <a className="nav-item nav-link" onClick={() => handleOpcionPantallaBD("jdb")}>Journal - Database</a>
+                  </div>
+                </div>
+              </nav>
             </Card>
           </Col>
         </Row>
+        <Row>
+          {opcionPantalla === 'bd' && (
+            <Col md="12">
+              <Card className="strpied-tabled-with-hover">
+                <Card.Header>
+                  <Card.Title as="h4">Ingreso Base Datos Digital</Card.Title>
+                  <Row>
+
+                    <Col className="pr-1" md="3">
+                      <Form.Group>
+                        <label>NOMBRE BASE DATOS DIGITAL</label>
+                        <Form.Control
+                          id="nombreBaseDatosText"
+                          defaultValue=""
+                          type="text"
+                        ></Form.Control>
+                        <label>NOMBRE DEL PROVEEDOR</label>
+                        <Form.Control
+                          id="nombreProveedorText"
+                          defaultValue=""
+                          type="text"
+                        ></Form.Control>
+                        <label>COSTO ACTUAL</label>
+                        <Form.Control
+                          id="costoActualText"
+                          defaultValue=""
+                          type="text"
+                        ></Form.Control>
+                      </Form.Group>
+                    </Col>
+                    <Col className="pr-1" md="3">
+                      <Form.Group>
+                        <label>SUSCRIPCIÓN/DESCRIPCIÓN</label>
+                        <Form.Control
+                          id="suscripcionDescripcionText"
+                          defaultValue=""
+                          type="text"
+                        ></Form.Control>
+                        <label>AREA/SERVICIO</label>
+                        <Form.Control
+                          id="areaServicioText"
+                          defaultValue=""
+                          cols="80"
+                          rows="4"
+                          as="textarea"
+                        ></Form.Control>
+                      </Form.Group>
+                    </Col>
+                    <Col className="pr-1" md="2">
+                      <Form.Group>
+                        <label></label>
+                        <Form.Control
+                          defaultValue="AGREGAR"
+                          type="button"
+                          className="btn-outline-success"
+                          onClick={handleAgregarBaseDatosDigitales}
+                        ></Form.Control>
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                </Card.Header>
+              </Card>
+            </Col>
+          )}
+          {opcionPantalla === 'bd' && (
+            <Col md="12">
+              <Card className="strpied-tabled-with-hover">
+                <Card.Header>
+                  <Card.Title as="h4">Base de Datos Digitales</Card.Title>
+                  <p className="card-category">
+                    Universidad de Cuenca
+                  </p>
+                </Card.Header>
+                <Card.Body className="table-full-width table-responsive px-3">
+                  <table className="table table-bordered table-hover" id="dataTableBaseDatosDigitales" width="100%" cellSpacing="0">
+                    <thead className="thead-dark">
+                      <tr>
+                        <th>ID</th>
+                        <th>NOMBRE</th>
+                        <th>PROVEEDOR</th>
+                        <th>COSTO ACTUAL</th>
+                        <th>SUSCRIPCION/DESCRIPCION</th>
+                        <th>AREA/SERVICIO</th>
+                        <th>ACCIONES</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {baseDatosDigital.map(item => (
+                        <tr className="small" key={item.id_base_datos_digital}>
+                          <td >{item.id_base_datos_digital}</td>
+                          <td >{item.nombre_base_datos_digital}</td>
+                          <td >{item.proveedor}</td>
+                          <td >{item.costo_actual}</td>
+                          <td >{item.suscripcion_descripcion}</td>
+                          <td >{item.area_servicio}</td>
+                          <td width="5%"><Link to="#" id="actualizarPublicacion" className="link col-sm-12 col-md-3" onClick={() => handleCargarDetalleBaseDatosDigital(item.id_base_datos_digital, item.nombre_base_datos_digital, item.proveedor, item.costo_actual, item.suscripcion_descripcion, item.area_servicio)} ><i className="fas fa-pen-square fa-2x"></i></Link>
+                            <Link to="#" id="eliminarBaseDatosDigital" className="link col-sm-12 col-md-3" onClick={() => handleEliminarBaseDatosDigital(item.id_base_datos_digital)}><i className="fas fa-trash-alt fa-2x"></i></Link></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </Card.Body>
+              </Card>
+            </Col>
+          )}
+          {opcionPantalla === 'jdb' && (
+            <Col md="12">
+              <Card className="strpied-tabled-with-hover">
+                <Card.Header>
+                  <Card.Title as="h4">Ingreso Base Datos Digital - Journal</Card.Title>
+                  <Row>
+                    <Col className="pr-1" md="3">
+                      <Form.Group>
+                        <label>BASE DATOS DIGITAL</label>
+                        <Form.Row>
+                          <select className="form-control" id="idBaseDatosDigitalIngresoJournal" onChange={handleCargarJournalPorBaseDatosDigital}>
+                            <option value="0">Seleccione</option>
+                            {baseDatosDigital.map(item => (
+                              <option value={item.id_base_datos_digital} key={item.id_base_datos_digital}>{item.nombre_base_datos_digital}</option>
+                            ))}
+                          </select>
+                        </Form.Row>
+                      </Form.Group>
+                    </Col>
+                    <Col className="pr-1" md="5">
+                      <Form.Group>
+                        <label>INGRESE EL ARCHIVO .XLSX CON LA INFORMACIÓN DE LAS BASES DE DATOS DIGITALES</label>
+                        <FormGroup>
+                          <input type='file' onChange={(e) => {
+                            const file = e.target.files[0];
+                            handleReadExcel(file)
+                          }} className="col-sm-12 col-md-8"></input>
+                        </FormGroup>
+                      </Form.Group>
+                    </Col>
+                    <Col className="pr-1" md="2">
+                      <Form.Group>
+                        <label></label>
+                        <Form.Control
+                          defaultValue="INGRESAR"
+                          type="button"
+                          className="btn-outline-success"
+                          onClick={handleIngresarJournals}
+                        ></Form.Control>
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                </Card.Header>
+              </Card>
+            </Col>
+          )}
+          {opcionPantalla === 'jdb' && (
+            <Col md="12">
+              <Card className="strpied-tabled-with-hover">
+                <Card.Header>
+                  <Card.Title as="h4">Base de Datos Digitales</Card.Title>
+                  <p className="card-category">
+                    Universidad de Cuenca
+                  </p>
+                </Card.Header>
+                <Card.Body className="table-full-width table-responsive px-3">
+                  <table className="table table-bordered table-hover" id="dataJournalPorBaseDigital" width="100%" cellSpacing="0">
+                    <thead className="thead-dark">
+                      <tr>
+                        <th>TITULO</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {journalBaseDatosDigital.map(item => (
+                        <tr className="small" key={item.id_base_datos_digital_journal}>
+                          <td >{item.titulo}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </Card.Body>
+              </Card>
+            </Col>
+          )}
+        </Row>
       </Container>
       <Modal
-          className="modal modal-primary"
-          show={modalIsOpen}
-        >
-          <Modal.Header className="justify-content-center">
-            <div className="modal-profile">
-              <i className="nc-icon nc-grid-45"></i>
-            </div>
-          </Modal.Header>
-          <Modal.Body className="text-center">
-            <p>Actualizar Base Datos Digital</p>
-          </Modal.Body>
-          <div className="modal-footer">
-            <Col className="pr-1" md="12">
-              <Form.Group>
-                <label>NOMBRE</label>
-                <Form.Control
-                  id="nombreBaseDatosDigitalActText"
-                  defaultValue={baseDatosDigitalObj.nombre}
-                  type="text"
-                ></Form.Control>
-              </Form.Group>
-            </Col>
-            <Col className="pr-1" md="12">
-              <Form.Group>
-                <label>PROVEEDOR</label>
-                <Form.Control
-                  id="proveedorActText"
-                  defaultValue={baseDatosDigitalObj.proveedor}
-                  type="text"
-                ></Form.Control>
-              </Form.Group>
-            </Col>
-            <Col className="pr-1" md="12">
-              <Form.Group>
-                <label>COSTO ACTUAL</label>
-                <Form.Control
-                  id="costoActualActText"
-                  defaultValue={baseDatosDigitalObj.costo_actual}
-                  type="text"
-                ></Form.Control>
-              </Form.Group>
-            </Col>
-            <Col className="pr-1" md="12">
-              <Form.Group>
-                <label>SUSCRIPCION/DESCRIPCION</label>
-                <Form.Control
-                  id="suscripcionDescripcionActText"
-                  defaultValue={baseDatosDigitalObj.suscripcion_descripcion}
-                  cols="80"
-                  rows="4"
-                  as="textarea"
-                ></Form.Control>
-              </Form.Group>
-            </Col>
-            <Col className="pr-1" md="12">
-              <Form.Group>
-                <label>AREA/SERVICIO</label>
-                <Form.Control
-                  id="areaServicioActText"
-                  defaultValue={baseDatosDigitalObj.area_servicio}
-                  cols="80"
-                  rows="4"
-                  as="textarea"
-                ></Form.Control>
-              </Form.Group>
-            </Col>
-            <Button
-              className="btn-simple"
-              type="button"
-              variant="link"
-              onClick={() => closeModal()}
-            >
-              Regresar
-            </Button>
-            <Button
-              className="btn-simple"
-              type="button"
-              variant="link"
-              onClick={() => actualizarBaseDatosDigital()}
-            >
-              Grabar
-            </Button>
+        className="modal modal-primary"
+        show={modalIsOpen}
+      >
+        <Modal.Header className="justify-content-center">
+          <div className="modal-profile">
+            <i className="nc-icon nc-grid-45"></i>
           </div>
-        </Modal>
+        </Modal.Header>
+        <Modal.Body className="text-center">
+          <p>Actualizar Base Datos Digital</p>
+        </Modal.Body>
+        <div className="modal-footer">
+          <Col className="pr-1" md="12">
+            <Form.Group>
+              <label>NOMBRE</label>
+              <Form.Control
+                id="nombreBaseDatosDigitalActText"
+                defaultValue={baseDatosDigitalObj.nombre}
+                type="text"
+              ></Form.Control>
+            </Form.Group>
+          </Col>
+          <Col className="pr-1" md="12">
+            <Form.Group>
+              <label>PROVEEDOR</label>
+              <Form.Control
+                id="proveedorActText"
+                defaultValue={baseDatosDigitalObj.proveedor}
+                type="text"
+              ></Form.Control>
+            </Form.Group>
+          </Col>
+          <Col className="pr-1" md="12">
+            <Form.Group>
+              <label>COSTO ACTUAL</label>
+              <Form.Control
+                id="costoActualActText"
+                defaultValue={baseDatosDigitalObj.costo_actual}
+                type="text"
+              ></Form.Control>
+            </Form.Group>
+          </Col>
+          <Col className="pr-1" md="12">
+            <Form.Group>
+              <label>SUSCRIPCION/DESCRIPCION</label>
+              <Form.Control
+                id="suscripcionDescripcionActText"
+                defaultValue={baseDatosDigitalObj.suscripcion_descripcion}
+                cols="80"
+                rows="4"
+                as="textarea"
+              ></Form.Control>
+            </Form.Group>
+          </Col>
+          <Col className="pr-1" md="12">
+            <Form.Group>
+              <label>AREA/SERVICIO</label>
+              <Form.Control
+                id="areaServicioActText"
+                defaultValue={baseDatosDigitalObj.area_servicio}
+                cols="80"
+                rows="4"
+                as="textarea"
+              ></Form.Control>
+            </Form.Group>
+          </Col>
+          <Button
+            className="btn-simple"
+            type="button"
+            variant="link"
+            onClick={() => closeModal()}
+          >
+            Regresar
+          </Button>
+          <Button
+            className="btn-simple"
+            type="button"
+            variant="link"
+            onClick={() => actualizarBaseDatosDigital()}
+          >
+            Grabar
+          </Button>
+        </div>
+      </Modal>
     </>
   );
 }
