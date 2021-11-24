@@ -525,7 +525,7 @@ function BaseDatosDigital() {
             <Col md="12">
               <Card className="strpied-tabled-with-hover">
                 <Card.Header>
-                  <Card.Title as="h4">Base de Datos Digitales</Card.Title>
+                  <Card.Title as="h4">Journal - Database</Card.Title>
                   <p className="card-category">
                     Universidad de Cuenca
                   </p>
