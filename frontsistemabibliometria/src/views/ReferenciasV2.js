@@ -376,16 +376,6 @@ function Referencias() {
     }
   }
 
-  async function handleCargarDatosPublicacionesPorFiltro() {
-    let filtroPublicaciones = document.getElementById("filtroPublicaciones").value;
-    setFiltroPublicaciones(filtroPublicaciones);
-    if (filtroPublicaciones == 'PSR') {
-      await handleCargarDatosPublicacionesSinReferencias();
-    } else if (filtroPublicaciones == 'PSCR') {
-      await handleCargarDatosPublicacionesSinCompletarReferencias();
-    }
-  }
-
   async function handleCargarDatosPublicacionesSinReferencias() {
     await tablaPaginacionService.destruirTabla('#dataTablePublicacionesSeccionReferencias');
     setLoading(true)
@@ -419,6 +409,15 @@ function Referencias() {
     })
   }
 
+  async function handleOpcionPantalla(opcion) { // Cargo los datos en Pantalla
+    setFiltroPublicaciones(opcion);
+    if (opcion == 'PSR') {
+      await handleCargarDatosPublicacionesSinReferencias();
+    } else if (opcion == 'PSCR') {
+      await handleCargarDatosPublicacionesSinCompletarReferencias();
+    }
+  }
+
   React.useEffect(() => {
     handleCargarDatosPublicacionesSinReferencias();
     handleAreasFrascati();
@@ -435,24 +434,25 @@ function Referencias() {
         <Row>
           <Col md="12">
             <Card className="strpied-tabled-with-hover">
-              <Card.Header> Referencias
+              <nav className="navbar navbar-expand-sm bg-dark navbar-dark">
+                <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
+                  <div className="navbar-nav">
+                    <a className="nav-item nav-link" onClick={() => handleOpcionPantalla("PSR")}>Publicaciones sin referencias</a>
+                    <a className="nav-item nav-link" onClick={() => handleOpcionPantalla("PSCR")}>Publicaciones sin completar referencias</a>
+                  </div>
+                </div>
+              </nav>
+            </Card>
+          </Col>
+        </Row>
+        <Row>
+          <Col md="12">
+            <Card className="strpied-tabled-with-hover">
+              <Card.Header> Referencias Publicación
                 <Card.Title as="h4"></Card.Title>
                 <p className="card-category">
-                  Gestión Referencias
+                  Extracción y Gestión Referencias
                 </p>
-                <Row>
-                  <Col className="pr-1" md="6">
-                    <Form.Group>
-                      <label></label>
-                      <Form.Row>
-                        <select className="form-control" id="filtroPublicaciones" onChange={handleCargarDatosPublicacionesPorFiltro}>
-                          <option value="PSR">Publicaciones sin referencias</option>
-                          <option value="PSCR">Publicaciones sin completar detalle referencias</option>
-                        </select>
-                      </Form.Row>
-                    </Form.Group>
-                  </Col>
-                </Row>
               </Card.Header>
               <Card.Body className="table-full-width table-responsive px-3">
                 <table className="table table-bordered table-hover" id="dataTablePublicacionesSeccionReferencias" width="100%" cellSpacing="0">
@@ -468,7 +468,7 @@ function Referencias() {
                       <th>FUENTE</th>
                       <th>DOI</th>
                       <th>ACCIONES</th>
-                      
+
                     </tr>
                   </thead>
                   <tbody>
@@ -487,7 +487,7 @@ function Referencias() {
                           <td width="5%">
                             <div class="btn-group-vertical" role="group" aria-label="Basic example">
                               <Button id="obtenerReferencias" className="btn-sm active" type="button" variant="info" onClick={() => openModalReferencias(item.id_articulo, item.titulo, item.nombres, item.anio_publicacion)}>Obtener Detalle Referencias</Button>
-                              <Button id="extraerReferencias" className="btn-sm active" type="button" variant="success" onClick={() => openModalExtraccionReferencias(item.id_articulo, item.titulo, item.nombres, item.anio_publicacion, item.nombre_base_datos_digital, item.enlace_documento != null ? item.enlace_documento : item.url_dspace)}>Ingresar Referencias</Button>
+                              {/*<Button id="extraerReferencias" className="btn-sm active" type="button" variant="success" onClick={() => openModalExtraccionReferencias(item.id_articulo, item.titulo, item.nombres, item.anio_publicacion, item.nombre_base_datos_digital, item.enlace_documento != null ? item.enlace_documento : item.url_dspace)}>Ingresar Referencias</Button>*/}
                             </div>
                           </td>
                         )}
@@ -505,7 +505,7 @@ function Referencias() {
               </Card.Body>
             </Card>
           </Col>
-          <Col md="12">
+          {/*<Col md="12">
             <Card className="strpied-tabled-with-hover">
               <Card.Header>
                 <Card.Title as="h4">Mantenimiento Detalle Referencia</Card.Title>
@@ -603,7 +603,7 @@ function Referencias() {
                 </table>
               </Card.Body>
             </Card>
-          </Col>
+                    </Col>*/}
         </Row>
       </Container>
       <Modal
