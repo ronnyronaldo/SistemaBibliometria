@@ -44,6 +44,7 @@ function Parametro() {
   const [showModal, setShowModal] = React.useState(false);
   const [modalIsOpen, setModalIsOpen] = React.useState(false);
   const [areasUnesco, setAreasUnesco] = React.useState([]);
+  const [opcionPantalla, setOpcionPantalla] = React.useState("p");
   const [areasSJR, setAreasSJR] = React.useState([]);
   const [equivalenciaPorAreaUnesco, setEquivalenciaPorAreaUnesco] = React.useState([]);
   const [parametroObj, setParametroObj] = React.useState({
@@ -252,6 +253,15 @@ function Parametro() {
       }
     })
   }
+  function handleOpcionPantalla(opcion) { // Cargo los datos en Pantalla
+    setOpcionPantalla(opcion);
+    if (opcion == "p") {
+      handleListaParametro();
+    } else {
+      setEquivalenciaPorAreaUnesco([]);
+    }
+  }
+
   React.useEffect(() => {
     handleListaParametro();
     handleAreasUnesco();
@@ -267,92 +277,109 @@ function Parametro() {
         <Row>
           <Col md="12">
             <Card className="strpied-tabled-with-hover">
-              <Card.Header>
-                <Card.Title as="h4">Parámetro</Card.Title>
-                <p className="card-category">
-                  Características Específicas del Sistema
-                </p>
-                <Row>
-                  <Col className="pr-1" md="4">
-                    <Form.Group>
-                      <label>CÓDIGO PARÁMETRO</label>
-                      <Form.Control
-                        id="codigoParametroText"
-                        defaultValue=""
-                        type="text"
-                      ></Form.Control>
-                    </Form.Group>
-                  </Col>
-                  <Col className="pr-1" md="3">
-                    <Form.Group>
-                      <label>NOMBRE</label>
-                      <Form.Control
-                        id="nombreText"
-                        defaultValue=""
-                        type="text"
-                      ></Form.Control>
-                    </Form.Group>
-                  </Col>
-                  <Col className="pr-1" md="3">
-                    <Form.Group>
-                      <label>VALOR</label>
-                      <Form.Control
-                        id="valorText"
-                        defaultValue=""
-                        type="text"
-                      ></Form.Control>
-                    </Form.Group>
-                  </Col>
-                  <Col className="pr-1" md="1">
-                    <Form.Group>
-                      <label></label>
-                      <Form.Control
-                        defaultValue="AGREGAR"
-                        type="button"
-                        className="btn-outline-success"
-                        onClick={handleAgregarParametro}
-                      ></Form.Control>
-                    </Form.Group>
-                  </Col>
-                </Row>
-              </Card.Header>
-              <Card.Body className="table-full-width table-responsive px-3">
-                <table className="table table-bordered table-hover" id="dataTableParametro" width="100%" cellSpacing="0">
-                  <thead className="thead-dark">
-                    <tr>
-                      <th>CÓDIGO PARÁMETRO</th>
-                      <th>NOMBRE</th>
-                      <th>VALOR</th>
-                      <th>ACCIONES</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {parametros.map(item => (
-                      <tr className="small" key={item.id_parametro}>
-                        <td width="25%">{item.codigo_parametro}</td>
-                        <td width="25%">{item.nombre}</td>
-                        <td width="25%">{item.valor}</td>
-                        <td width="5%">
-                          <div className="btn-group-vertical" role="group" aria-label="Basic example" size={10}>
-                            <Button id="actualizarParametro" className="btn btn-sm active" type="button" variant="info" onClick={() => handleCargarDetalleParametro(item.id_parametro, item.nombre, item.valor, item.codigo_parametro)} >Editar</Button>
-                            <Button id="eliminarParametro" className="btn-sm active" type="button" variant="danger" onClick={() => openModalEliminar(item.id_parametro)}>Eliminar</Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </Card.Body>
+              <nav className="navbar navbar-expand-sm bg-dark navbar-dark">
+                <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
+                  <div className="navbar-nav">
+                    <a className="nav-item nav-link" onClick={() => handleOpcionPantalla("p")}>Parámetro</a>
+                    <a className="nav-item nav-link" onClick={() => handleOpcionPantalla("e")}>Equivalencias</a>
+                  </div>
+                </div>
+              </nav>
             </Card>
           </Col>
-          <Col md="12">
-            <Card className="strpied-tabled-with-hover">
-              <Card.Header>
-                <Card.Title as="h4">Equivalencia Area Unesco</Card.Title>
-                <p className="card-category">
-                  Equivalencia Area Unesco y Area SJR
-                </p>
-                <Row>
+        </Row>
+        <Row>
+          {opcionPantalla === 'p' && (
+            <Col md="12">
+              <Card className="strpied-tabled-with-hover">
+                <Card.Header>
+                  <Card.Title as="h4">Parámetro</Card.Title>
+                  <p className="card-category">
+                    Características Específicas del Sistema
+                  </p>
+                  <Row>
+                    <Col className="pr-1" md="4">
+                      <Form.Group>
+                        <label>CÓDIGO PARÁMETRO</label>
+                        <Form.Control
+                          id="codigoParametroText"
+                          defaultValue=""
+                          type="text"
+                        ></Form.Control>
+                      </Form.Group>
+                    </Col>
+                    <Col className="pr-1" md="3">
+                      <Form.Group>
+                        <label>NOMBRE</label>
+                        <Form.Control
+                          id="nombreText"
+                          defaultValue=""
+                          type="text"
+                        ></Form.Control>
+                      </Form.Group>
+                    </Col>
+                    <Col className="pr-1" md="3">
+                      <Form.Group>
+                        <label>VALOR</label>
+                        <Form.Control
+                          id="valorText"
+                          defaultValue=""
+                          type="text"
+                        ></Form.Control>
+                      </Form.Group>
+                    </Col>
+                    <Col className="pr-1" md="1">
+                      <Form.Group>
+                        <label></label>
+                        <Form.Control
+                          defaultValue="AGREGAR"
+                          type="button"
+                          className="btn-outline-success"
+                          onClick={handleAgregarParametro}
+                        ></Form.Control>
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                </Card.Header>
+                <Card.Body className="table-full-width table-responsive px-3">
+                  <table className="table table-bordered table-hover" id="dataTableParametro" width="100%" cellSpacing="0">
+                    <thead className="thead-dark">
+                      <tr>
+                        <th>CÓDIGO PARÁMETRO</th>
+                        <th>NOMBRE</th>
+                        <th>VALOR</th>
+                        <th>ACCIONES</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {parametros.map(item => (
+                        <tr className="small" key={item.id_parametro}>
+                          <td width="25%">{item.codigo_parametro}</td>
+                          <td width="25%">{item.nombre}</td>
+                          <td width="25%">{item.valor}</td>
+                          <td width="5%">
+                            <div className="btn-group-vertical" role="group" aria-label="Basic example" size={10}>
+                              <Button id="actualizarParametro" className="btn btn-sm active" type="button" variant="info" onClick={() => handleCargarDetalleParametro(item.id_parametro, item.nombre, item.valor, item.codigo_parametro)} >Editar</Button>
+                              <Button id="eliminarParametro" className="btn-sm active" type="button" variant="danger" onClick={() => openModalEliminar(item.id_parametro)}>Eliminar</Button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </Card.Body>
+              </Card>
+            </Col>
+          )}
+          {opcionPantalla === 'e' && (
+            <Col md="12">
+              <Card className="strpied-tabled-with-hover">
+                <Card.Header>
+                  <Card.Title as="h4">Equivalencia Area Unesco</Card.Title>
+                  <p className="card-category">
+                    Equivalencia Area Unesco y Area SJR
+                  </p>
+                  <Row>
                     <Col className="pr-1" md="3">
                       <Form.Group>
                         <label></label>
@@ -387,29 +414,30 @@ function Parametro() {
                       </Form.Group>
                     </Col>
                   </Row>
-              </Card.Header>
-              <Card.Body className="table-full-width table-responsive px-3">
-                <table className="table table-bordered table-hover" id="dataEquivalenciaAreaUnesco" width="100%" cellSpacing="0">
-                  <thead className="thead-dark">
-                    <tr>
-                      <th>NOMBRE AREA SJR</th>
-                      <th>ACCIONES</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {equivalenciaPorAreaUnesco.map(item => (
-                      <tr className="small" key={item.id_equivalencia_area}>
-                        <td width="25%">{item.areaSJR}</td>
-                        <td width="5%">
-                          <Button id="eliminarEquivalenciaAreaUnesco" className="btn-sm active" type="button" variant="danger" onClick={()=>handleEliminarEquivalenciaPorAreaUnesco(item.id_equivalencia_area)} >Eliminar</Button>
-                        </td>
+                </Card.Header>
+                <Card.Body className="table-full-width table-responsive px-3">
+                  <table className="table table-bordered table-hover" id="dataEquivalenciaAreaUnesco" width="100%" cellSpacing="0">
+                    <thead className="thead-dark">
+                      <tr>
+                        <th>NOMBRE AREA SJR</th>
+                        <th>ACCIONES</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </Card.Body>
-            </Card>
-          </Col>
+                    </thead>
+                    <tbody>
+                      {equivalenciaPorAreaUnesco.map(item => (
+                        <tr className="small" key={item.id_equivalencia_area}>
+                          <td width="25%">{item.areaSJR}</td>
+                          <td width="5%">
+                            <Button id="eliminarEquivalenciaAreaUnesco" className="btn-sm active" type="button" variant="danger" onClick={() => handleEliminarEquivalenciaPorAreaUnesco(item.id_equivalencia_area)} >Eliminar</Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </Card.Body>
+              </Card>
+            </Col>
+          )}
         </Row>
       </Container>
       <Modal
