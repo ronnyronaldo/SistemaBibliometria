@@ -466,7 +466,9 @@ function Referencias() {
                       <th>AREA UNESCO</th>
                       <th>AREA FRASCATI</th>
                       <th>FUENTE</th>
+                      <th>DOI</th>
                       <th>ACCIONES</th>
+                      
                     </tr>
                   </thead>
                   <tbody>
@@ -480,6 +482,7 @@ function Referencias() {
                         <td width="5%">{item.descripcion_unesco}</td>
                         <td width="5%">{item.descripcion}</td>
                         <td width="5%">{item.nombre_base_datos_digital}</td>
+                        <td width="5%">{item.doi}</td>
                         {filtroPublicaciones === 'PSCR' && (
                           <td width="5%">
                             <div class="btn-group-vertical" role="group" aria-label="Basic example">
