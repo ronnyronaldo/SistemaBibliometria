@@ -188,19 +188,6 @@ function MedioPublicacion() {
       console.log(value)
     })
   }
-  async function handleCargarDatosPublicacionesPorFiltro() {
-    let filtroPublicaciones = document.getElementById("filtroPublicaciones").value;
-    setFiltroPublicaciones(filtroPublicaciones);
-    if (filtroPublicaciones == 'P') {
-      await handleCargarMediosPublicacionPublicacion();
-    } else if (filtroPublicaciones == 'C') {
-      await handleCargarMediosPublicacionCitacion();
-    } else if (filtroPublicaciones == 'SJR') {
-      await handleCargarSJR();
-    } else if (filtroPublicaciones == 'I') {
-      await handleCargarMediosPublicacion();
-    }
-  }
 
   function closeModal() {
     setModalIsOpen(false);
@@ -246,6 +233,20 @@ function MedioPublicacion() {
     }
   }
 
+  async function handleOpcionPantalla(opcion) { // Cargo los datos en Pantalla
+    setFiltroPublicaciones(opcion);
+    if (opcion == 'P') {
+      await handleCargarMediosPublicacionPublicacion();
+    } else if (opcion == 'C') {
+      await handleCargarMediosPublicacionCitacion();
+    } else if (opcion == 'SJR') {
+      await handleCargarSJR();
+    } else if (opcion == 'I') {
+      await handleCargarMediosPublicacion();
+    }
+  }
+
+
   React.useEffect(() => {
     handleCargarMediosPublicacion();
   }, []);
@@ -259,25 +260,20 @@ function MedioPublicacion() {
         <Row>
           <Col md="12">
             <Card className="strpied-tabled-with-hover">
-              <Card.Body className="table-full-width table-responsive px-3">
-                <Row>
-                  <Col className="pr-1" md="6">
-                    <Form.Group>
-                      <label>Medios de Publicación</label>
-                      <Form.Row>
-                        <select className="form-control" id="filtroPublicaciones" onChange={handleCargarDatosPublicacionesPorFiltro}>
-                          <option value="I">Ingreso medios de publicación</option>
-                          <option value="P">Ranking Medio Publicación</option>
-                          <option value="C">Ranking Medio Citación</option>
-                          <option value="SJR">Factor de Impacto SJR</option>
-                        </select>
-                      </Form.Row>
-                    </Form.Group>
-                  </Col>
-                </Row>
-              </Card.Body>
+              <nav className="navbar navbar-expand-sm bg-dark navbar-dark">
+                <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
+                  <div className="navbar-nav">
+                    <a className="nav-item nav-link" onClick={() => handleOpcionPantalla("I")}>Medios de Publicación</a>
+                    <a className="nav-item nav-link" onClick={() => handleOpcionPantalla("P")}>Ranking Medios Publicación</a>
+                    <a className="nav-item nav-link" onClick={() => handleOpcionPantalla("C")}>Ranking Medios de Citación</a>
+                    <a className="nav-item nav-link" onClick={() => handleOpcionPantalla("SJR")}>Factor de Impacto SJR</a>
+                  </div>
+                </div>
+              </nav>
             </Card>
           </Col>
+        </Row>
+        <Row>
           {filtroPublicaciones === 'I' && (
             <Col md="12">
               <Card className="strpied-tabled-with-hover">
