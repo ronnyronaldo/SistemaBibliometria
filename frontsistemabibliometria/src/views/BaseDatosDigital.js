@@ -461,8 +461,12 @@ function BaseDatosDigital() {
                           <td >{item.costo_actual}</td>
                           <td >{item.suscripcion_descripcion}</td>
                           <td >{item.area_servicio}</td>
-                          <td width="5%"><Link to="#" id="actualizarPublicacion" className="link col-sm-12 col-md-3" onClick={() => handleCargarDetalleBaseDatosDigital(item.id_base_datos_digital, item.nombre_base_datos_digital, item.proveedor, item.costo_actual, item.suscripcion_descripcion, item.area_servicio)} ><i className="fas fa-pen-square fa-2x"></i></Link>
-                            <Link to="#" id="eliminarBaseDatosDigital" className="link col-sm-12 col-md-3" onClick={() => handleEliminarBaseDatosDigital(item.id_base_datos_digital)}><i className="fas fa-trash-alt fa-2x"></i></Link></td>
+                          <td width="5%">
+                            <div class="btn-group-vertical" role="group" aria-label="Basic example">
+                              <Button id="actualizarBaseDatosDigital" className="btn btn-sm active" type="button" variant="info" onClick={() => handleCargarDetalleBaseDatosDigital(item.id_base_datos_digital, item.nombre_base_datos_digital, item.proveedor, item.costo_actual, item.suscripcion_descripcion, item.area_servicio)} >Editar</Button>
+                              <Button id="eliminarBaseDatosDigital" className="btn btn-sm active" type="button" variant="danger" onClick={() => handleEliminarBaseDatosDigital(item.id_base_datos_digital)}>Eliminar</Button>
+                            </div>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -615,17 +619,19 @@ function BaseDatosDigital() {
             </Form.Group>
           </Col>
           <Button
-            className="btn-simple"
+            id="regresar"
+            className="btn active"
             type="button"
-            variant="link"
+            variant="secondary"
             onClick={() => closeModal()}
           >
             Regresar
           </Button>
           <Button
-            className="btn-simple"
+            id="grabar"
+            className="btn active"
             type="button"
-            variant="link"
+            variant="secondary"
             onClick={() => actualizarBaseDatosDigital()}
           >
             Grabar
