@@ -338,7 +338,7 @@ function BaseDatosDigital() {
     if (opcion == "bd") {
       handleCargarBaseDatosDigitales();
     } else {
-      handleCargarJournalPorBaseDatosDigital();
+      setJournalBaseDatosDigital([]);
     }
   }
 
