@@ -6,6 +6,7 @@ import { validacionInputService } from '../_services/validacionInput.service';
 import { FormGroup } from "reactstrap";
 import *as XLSX from 'xlsx';
 import * as FileSaver from "file-saver";
+import { clusteringService } from '../_services/clustering.service';
 
 // react plugin for creating notifications over the dashboard
 import NotificationAlert from "react-notification-alert";
@@ -20,6 +21,36 @@ const override = css`
   border-color: #212F3C;
 `;
 /**Spinner */
+// * libreria highcharts
+// * libreria
+import * as Highcharts from 'highcharts';
+// * mensaje de visualizacion cuando no existe la data
+import noData from 'highcharts/modules/no-data-to-display';
+// * para exportar como imagenes
+import exporting from 'highcharts/modules/exporting';
+import exportData from 'highcharts/modules/export-data.js';
+import more from 'highcharts/highcharts-more.js'
+noData(Highcharts);
+exporting(Highcharts);
+exportData(Highcharts);
+more(Highcharts);
+
+Highcharts.setOptions({
+  lang: {
+    downloadJPEG: 'Descargar como JPEG',
+    downloadPDF: 'Descargar como PDF',
+    downloadPNG: 'Descargar como PNG',
+    downloadSVG: 'Descargar como SVG',
+    viewFullscreen: 'Ver pantalla completa',
+    printChart: 'Imprimir',
+    exitFullscreen: 'Salir de pantalla completa',
+    downloadCSV: 'Descargar como csv',
+    downloadXLS: 'Descargar como xlsx',
+    viewData: 'Mostrar datos',
+    hideData: 'Ocultar datos'
+  }
+});
+// ! fin libreria highcharts
 // react-bootstrap components
 import {
   Badge,
@@ -44,6 +75,7 @@ function Autores() {
   const [nuevosAutores, setNuevosAutores] = React.useState([]);
   const [modalIsOpenPublicaciones, setModalIsOpenPublicaciones] = React.useState(false);
   const [modalIsOpen, setModalIsOpen] = React.useState(false);
+  const [opcionPantalla, setOpcionPantalla] = React.useState("tabla");
   const [autorObj, setAutorObj] = React.useState({
     id_autor: 0,
     nombre: ""
@@ -69,6 +101,7 @@ function Autores() {
   const [autores, setAutores] = React.useState([]);
   const [nombreAutor, setNombreAutor] = React.useState("");
   const [publicaciones, setPublicaciones] = React.useState([]);
+  const [opcionGrafico, setOpcionGrafico] = React.useState('OA');
   async function handleCargarAutores() {
     setLoading(true);
     await tablaPaginacionService.destruirTabla('#dataAutores');
@@ -177,21 +210,254 @@ function Autores() {
 
   function actualizarAutor() {
     let id_autor = document.getElementById("idAutorText").value;
-    let nombre_autor =  document.getElementById("nombreAutorText").value;
-    if(validacionInputService.campoVacio(id_autor) && validacionInputService.campoVacio(nombre_autor)){
+    let nombre_autor = document.getElementById("nombreAutorText").value;
+    if (validacionInputService.campoVacio(id_autor) && validacionInputService.campoVacio(nombre_autor)) {
       autorService.actualizar({
-        id_autor : id_autor,
-        nombre : nombre_autor
+        id_autor: id_autor,
+        nombre: nombre_autor
       }).then(value => {
-        if(value.respuesta.error== "False"){
+        if (value.respuesta.error == "False") {
           notify("tr", value.respuesta.valor, "primary");
           handleCargarAutores();
         }
         closeModal();
       })
-    }else{
+    } else {
       notify("tr", 'Existen campos sin llenar.', "danger");
     }
+  }
+  async function handleOpcionPantalla(opcion) { // Cargo los datos en Pantalla
+    if (opcionPantalla == "grafico") {
+      await handleGrafoOrdenAutor();
+    } else if ((opcionPantalla == "tabla")) {
+      await handleCargarAutores();
+    }
+    await setOpcionPantalla(opcion);
+  }
+
+  async function handleCargarDatosGraficosBurbujas() {
+    let opcionGraficoBurbujas = document.getElementById("OpcionesGarficoBurbujas").value;
+    if (opcionGraficoBurbujas == 'OA') {
+      setOpcionGrafico('OA');
+      handleGrafoOrdenAutor();
+    }
+
+    if (opcionGraficoBurbujas == 'NP') {
+      setOpcionGrafico('NP');
+      handleGrafoTotalPublicaciones();
+    }
+  }
+
+  /**Carga los datos para la red de autores */
+  async function handleGrafoTotalPublicaciones() {
+    setLoading(true);
+    await clusteringService.ejecutarDatosChartTotalAutores().then(value => {
+      let objeto = JSON.parse(value);
+      let nombres = objeto.nombre;
+      let numeros = objeto.total_pub;
+      let listaAutores = Object.values(nombres)
+      let listaTotalPub = Object.values(numeros)
+      let muyBaja = [];
+      let baja = [];
+      let moderada = [];
+      let alta = [];
+
+      // Aqui se cambia la longitud de los autores para no tener delay en la vista
+      let longitud = (listaAutores.length);
+      for (let i = 0; i < longitud; i++) {
+        if (listaTotalPub[i] >= 2 && listaTotalPub[i] <= 5) {
+          let muyBajoAutor = { "name": listaAutores[i], "value": listaTotalPub[i] }
+          muyBaja.push(muyBajoAutor);
+        }
+        if (listaTotalPub[i] >= 6 && listaTotalPub[i] <= 10) {
+          let bajoAutor = { "name": listaAutores[i], "value": listaTotalPub[i] }
+          baja.push(bajoAutor);
+        }
+        if (listaTotalPub[i] >= 11 && listaTotalPub[i] <= 16) {
+          let moderadoAutor = { "name": listaAutores[i], "value": listaTotalPub[i] }
+          moderada.push(moderadoAutor);
+        }
+        if (listaTotalPub[i] >= 17) {
+          let altoAutor = { "name": listaAutores[i], "value": listaTotalPub[i] }
+          alta.push(altoAutor);
+        }
+      }
+
+      // setNombreCluster(nombre_cluster);
+      // setTotalClusterCuartilFI(totales);
+      // setDetalleDatosClusterCuartilFI(value)
+
+      // setGrafo(listaPrimerAutor);
+      graficarGrafoT(muyBaja, baja, moderada, alta);
+      setLoading(false);
+    });
+  }
+
+  /**Carga los datos para la red de autores */
+  async function handleGrafoOrdenAutor() {
+    setLoading(true);
+
+    await clusteringService.ejecutarDatosChart().then(value => {
+      let objeto = JSON.parse(value);
+      let nombres = objeto.nombre;
+      let orden = objeto.orden_autor;
+      let numeros = objeto.num_pub;
+      let listaAutores = Object.values(nombres)
+      let listaOrdenAutores = Object.values(orden)
+      let listaNumPub = Object.values(numeros)
+      let listaPrimerAutor = [];
+      let listaSegundoAutor = [];
+      let listaTercerAutor = [];
+      let listaCuartoAutor = [];
+      let listaQuintoAutor = [];
+      // Aqui se cambia la longitud de los autores para no tener delay en la vista
+      let longitud = (listaAutores.length) / 4;
+      for (let i = 0; i < longitud; i++) {
+        if (listaOrdenAutores[i] == 1) {
+          let primerAutor = { "name": listaAutores[i], "value": listaNumPub[i] }
+          listaPrimerAutor.push(primerAutor);
+        }
+        if (listaOrdenAutores[i] == 2) {
+          let segundoAutor = { "name": listaAutores[i], "value": listaNumPub[i] }
+          listaSegundoAutor.push(segundoAutor);
+        }
+        if (listaOrdenAutores[i] == 3) {
+          let tercerAutor = { "name": listaAutores[i], "value": listaNumPub[i] }
+          listaTercerAutor.push(tercerAutor);
+        }
+        if (listaOrdenAutores[i] == 4) {
+          let cuartoAutor = { "name": listaAutores[i], "value": listaNumPub[i] }
+          listaCuartoAutor.push(cuartoAutor);
+        }
+        if (listaOrdenAutores[i] == 5) {
+          let quintoAutor = { "name": listaAutores[i], "value": listaNumPub[i] }
+          listaQuintoAutor.push(quintoAutor);
+        }
+
+      }
+
+      // setNombreCluster(nombre_cluster);
+      // setTotalClusterCuartilFI(totales);
+      // setDetalleDatosClusterCuartilFI(value)
+
+      // setGrafo(listaPrimerAutor);
+      graficarGrafo(listaPrimerAutor, listaSegundoAutor, listaTercerAutor, listaCuartoAutor, listaQuintoAutor);
+      setLoading(false);
+    });
+  }
+
+  function graficarGrafo(primerAutor, segundoAutor, tercerAutor, cuartoAutor, quintoAutor) {
+    Highcharts.charts.map(value => { if (value != undefined) { value.destroy(); } console.log(value); });
+
+    Highcharts.chart( {
+      chart: {
+        type: 'packedbubble',
+        height: '100%',
+        renderTo: "redes-autores-grafo",
+
+      },
+      title: {
+        text: 'Número de publicaciones por autor distribuidos por orden de autor'
+      },
+      tooltip: {
+        useHTML: true,
+        pointFormat: '<b>{point.name}:</b> {point.value} Pub'
+      },
+      plotOptions: {
+        packedbubble: {
+          minSize: '30%',
+          maxSize: '120%',
+          zMin: 0,
+          zMax: 10,
+          layoutAlgorithm: {
+            splitSeries: false,
+            gravitationalConstant: 0.02
+          },
+          dataLabels: {
+            enabled: true,
+            format: '{point.name}',
+            filter: {
+              property: 'y',
+              operator: '>',
+              value: 3
+            },
+            style: {
+              color: 'black',
+              textOutline: 'none',
+              fontWeight: 'normal'
+            }
+          }
+        }
+      },
+      credits: {
+        enabled: false
+      },
+      series: [{ name: 'Pimer Autor', data: primerAutor },
+      { name: 'Segundo Autor', data: segundoAutor },
+      { name: 'Tercer Autor', data: tercerAutor },
+      { name: 'Cuarto Autor', data: cuartoAutor },
+      { name: 'Quinto Autor', data: quintoAutor }
+
+      ]
+    });
+
+  }
+
+
+  function graficarGrafoT(muyBaja, baja, moderada, alta) {
+    Highcharts.charts.map(value => { if (value != undefined) { value.destroy(); } console.log(value); });
+
+    Highcharts.chart({
+      chart: {
+        type: 'packedbubble',
+        height: '70%',
+        renderTo: "redes-autores-grafo"
+      },
+      title: {
+        text: 'Número de publicaciones totales por autor'
+      },
+      tooltip: {
+        useHTML: true,
+        pointFormat: '<b>{point.name}:</b> {point.value} Pub'
+      },
+      plotOptions: {
+        packedbubble: {
+          minSize: '30%',
+          maxSize: '120%',
+          zMin: 0,
+          zMax: 30,
+          layoutAlgorithm: {
+            gravitationalConstant: 0.00,
+            splitSeries: false/*,
+                seriesInteraction: false,
+                dragBetweenSeries: true,
+                parentNodeLimit: true*/
+          },
+          dataLabels: {
+            enabled: true,
+            format: '{point.name}',
+            filter: {
+              property: 'y',
+              operator: '>',
+              value: 7
+            },
+            style: {
+              color: 'black',
+              textOutline: 'none',
+              fontWeight: 'normal'
+            }
+          }
+        }
+      },
+      credits: {
+        enabled: false
+      },
+      series: [{ name: 'Entre 1 y 5 Pub', data: muyBaja },
+      { name: 'Entre 6 y 10 Pub', data: baja },
+      { name: 'Entre 11 y 16 Pub', data: moderada },
+      { name: 'De 17 Pub en adelante', data: alta }]
+    });
+
   }
 
   React.useEffect(() => {
@@ -205,6 +471,20 @@ function Autores() {
       </div>
       <Container fluid>
         <Row>
+          <Col md="12">
+            <Card className="strpied-tabled-with-hover">
+              <nav className="navbar navbar-expand-sm bg-dark navbar-dark">
+                <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
+                  <div className="navbar-nav">
+                    <a className="nav-item nav-link" onClick={() => handleOpcionPantalla("tabla")}>Datos</a>
+                    <a className="nav-item nav-link" onClick={() => handleOpcionPantalla("grafico")}>Gráfico de Burbuja</a>
+                  </div>
+                </div>
+              </nav>
+            </Card>
+          </Col>
+        </Row>
+        <Row hidden={opcionPantalla === 'tabla' ? false : true}>
           <Col md="12">
             <Card className="strpied-tabled-with-hover">
               <Card.Header>
@@ -247,7 +527,7 @@ function Autores() {
                         <td width="20%"><i className="fas fa-user"></i> {item.id_autor}</td>
                         <td width="70%">{item.nombre}</td>
                         <td width="10%">
-                          <div class="btn-group-vertical" role="group" aria-label="Basic example">
+                          <div className="btn-group-vertical" role="group" aria-label="Basic example">
                             <Button id="verPublicacionesAutor" className="btn-sm active" type="button" variant="success" onClick={() => openModalPublicaciones(item.id_autor, item.nombre)}>Ver Publicaciones</Button>
                             <Button id="actualizarAutor" className="btn-sm active" type="button" variant="info" onClick={() => handleCargarDetalleAutor(item.id_autor, item.nombre)} >Editar</Button>
                           </div>
@@ -260,6 +540,27 @@ function Autores() {
             </Card>
           </Col>
         </Row>
+        <Row hidden={opcionPantalla === 'grafico' ? false : true}>
+          <Col md="12">
+            <Card>
+              <Col className="pr-1" md="6">
+                <Form.Group>
+                  <label>Opciones de Gráfico de Burbujas</label>
+                  <Form.Row>
+                    <select className="form-control" id="OpcionesGarficoBurbujas" onChange={handleCargarDatosGraficosBurbujas}>
+                      <option value="OA">Gráfico de Búrbujas por Orden de Autor</option>
+                      <option value="NP">Gráfico por Número de Publicaciones por Autor</option>
+                    </select>
+                  </Form.Row>
+                </Form.Group>
+              </Col>
+                <Card.Header>
+                  <div id="redes-autores-grafo"></div>
+                </Card.Header>
+            </Card>
+          </Col>
+        </Row>
+
       </Container>
       <Modal
         size="xl"

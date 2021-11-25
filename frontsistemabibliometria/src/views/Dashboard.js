@@ -4,7 +4,6 @@ import { publicacionService } from '../_services/publicacion.service';
 import { referenciaService } from '../_services/referencia.service';
 import { leyBradfordService } from '../_services/ley_bradford.service';
 import { detalleReferenciaService } from '../_services/detalle_referencia.service';
-import { clusteringService } from '../_services/clustering.service';
 import { tablaPaginacionService } from '../utils/tablaPaginacion.service';
 import { areaFrascatiService } from "_services/areaFrascati.service";
 import { areaUnescoService } from "_services/areaUnesco.service";
@@ -21,37 +20,6 @@ const override = css`
   border-color: #212F3C;
 `;
 /**Spinner */
-
-// * libreria highcharts
-// * libreria
-import * as Highcharts from 'highcharts';
-// * mensaje de visualizacion cuando no existe la data
-import noData from 'highcharts/modules/no-data-to-display';
-// * para exportar como imagenes
-import exporting from 'highcharts/modules/exporting';
-import exportData from 'highcharts/modules/export-data.js';
-import more from 'highcharts/highcharts-more.js'
-noData(Highcharts);
-exporting(Highcharts);
-exportData(Highcharts);
-more(Highcharts);
-
-Highcharts.setOptions({
-  lang: {
-    downloadJPEG: 'Descargar como JPEG',
-    downloadPDF: 'Descargar como PDF',
-    downloadPNG: 'Descargar como PNG',
-    downloadSVG: 'Descargar como SVG',
-    viewFullscreen: 'Ver pantalla completa',
-    printChart: 'Imprimir',
-    exitFullscreen: 'Salir de pantalla completa',
-    downloadCSV: 'Descargar como csv',
-    downloadXLS: 'Descargar como xlsx',
-    viewData: 'Mostrar datos',
-    hideData: 'Ocultar datos'
-  }
-});
-// ! fin libreria highcharts
 
 // react-bootstrap components
 import {
@@ -82,7 +50,6 @@ function Dashboard() {
     idArticulo: 0,
     referencia: ""
   });
-  const [opcionGrafico, setOpcionGrafico] = React.useState('OA');
   const notify = (place, mensaje, type) => {
     var options = {};
     options = {
@@ -155,115 +122,7 @@ function Dashboard() {
       setLoading(false)
     });
   }
-
-  function graficarGrafo(primerAutor, segundoAutor, tercerAutor, cuartoAutor, quintoAutor) {
-
-    Highcharts.chart('redes-autores-grafo', {
-      chart: {
-        type: 'packedbubble',
-        height: '100%'
-      },
-      title: {
-        text: 'Número de publicaciones por autor distribuidos por orden de autor'
-      },
-      tooltip: {
-        useHTML: true,
-        pointFormat: '<b>{point.name}:</b> {point.value} Pub'
-      },
-      plotOptions: {
-        packedbubble: {
-          minSize: '30%',
-          maxSize: '120%',
-          zMin: 0,
-          zMax: 10,
-          layoutAlgorithm: {
-            splitSeries: false,
-            gravitationalConstant: 0.02
-          },
-          dataLabels: {
-            enabled: true,
-            format: '{point.name}',
-            filter: {
-              property: 'y',
-              operator: '>',
-              value: 3
-            },
-            style: {
-              color: 'black',
-              textOutline: 'none',
-              fontWeight: 'normal'
-            }
-          }
-        }
-      },
-      credits: {
-        enabled: false
-      },
-      series: [{ name: 'Pimer Autor', data: primerAutor },
-      { name: 'Segundo Autor', data: segundoAutor },
-      { name: 'Tercer Autor', data: tercerAutor },
-      { name: 'Cuarto Autor', data: cuartoAutor },
-      { name: 'Quinto Autor', data: quintoAutor }
-
-      ]
-    });
-
-  }
-
-  function graficarGrafoT(muyBaja, baja, moderada, alta) {
-
-    Highcharts.chart('redes-autores-grafo-total', {
-      chart: {
-        type: 'packedbubble',
-        height: '70%'
-      },
-      title: {
-        text: 'Número de publicaciones totales por autor'
-      },
-      tooltip: {
-        useHTML: true,
-        pointFormat: '<b>{point.name}:</b> {point.value} Pub'
-      },
-      plotOptions: {
-        packedbubble: {
-          minSize: '30%',
-          maxSize: '120%',
-          zMin: 0,
-          zMax: 30,
-          layoutAlgorithm: {
-            gravitationalConstant: 0.00,
-            splitSeries: false/*,
-                seriesInteraction: false,
-                dragBetweenSeries: true,
-                parentNodeLimit: true*/
-          },
-          dataLabels: {
-            enabled: true,
-            format: '{point.name}',
-            filter: {
-              property: 'y',
-              operator: '>',
-              value: 7
-            },
-            style: {
-              color: 'black',
-              textOutline: 'none',
-              fontWeight: 'normal'
-            }
-          }
-        }
-      },
-      credits: {
-        enabled: false
-      },
-      series: [{ name: 'Entre 1 y 5 Pub', data: muyBaja },
-      { name: 'Entre 6 y 10 Pub', data: baja },
-      { name: 'Entre 11 y 16 Pub', data: moderada },
-      { name: 'De 17 Pub en adelante', data: alta }]
-    });
-
-  }
-
+  
   async function handleCargarRedesDeAutoresAreasOrden() {
     setLoading(true)
     let orden_autor = document.getElementById("idOrdenAutor").value;
@@ -273,104 +132,6 @@ function Dashboard() {
       setLoading(false)
     });
 
-  }
-
-  /**Carga los datos para la red de autores */
-  async function handleGrafoOrdenAutor() {
-    setLoading(true);
-
-    await clusteringService.ejecutarDatosChart().then(value => {
-      let objeto = JSON.parse(value);
-      let nombres = objeto.nombre;
-      let orden = objeto.orden_autor;
-      let numeros = objeto.num_pub;
-      let listaAutores = Object.values(nombres)
-      let listaOrdenAutores = Object.values(orden)
-      let listaNumPub = Object.values(numeros)
-      let listaPrimerAutor = [];
-      let listaSegundoAutor = [];
-      let listaTercerAutor = [];
-      let listaCuartoAutor = [];
-      let listaQuintoAutor = [];
-      // Aqui se cambia la longitud de los autores para no tener delay en la vista
-      let longitud = (listaAutores.length) / 4;
-      for (let i = 0; i < longitud; i++) {
-        if (listaOrdenAutores[i] == 1) {
-          let primerAutor = { "name": listaAutores[i], "value": listaNumPub[i] }
-          listaPrimerAutor.push(primerAutor);
-        }
-        if (listaOrdenAutores[i] == 2) {
-          let segundoAutor = { "name": listaAutores[i], "value": listaNumPub[i] }
-          listaSegundoAutor.push(segundoAutor);
-        }
-        if (listaOrdenAutores[i] == 3) {
-          let tercerAutor = { "name": listaAutores[i], "value": listaNumPub[i] }
-          listaTercerAutor.push(tercerAutor);
-        }
-        if (listaOrdenAutores[i] == 4) {
-          let cuartoAutor = { "name": listaAutores[i], "value": listaNumPub[i] }
-          listaCuartoAutor.push(cuartoAutor);
-        }
-        if (listaOrdenAutores[i] == 5) {
-          let quintoAutor = { "name": listaAutores[i], "value": listaNumPub[i] }
-          listaQuintoAutor.push(quintoAutor);
-        }
-
-      }
-
-      // setNombreCluster(nombre_cluster);
-      // setTotalClusterCuartilFI(totales);
-      // setDetalleDatosClusterCuartilFI(value)
-
-      // setGrafo(listaPrimerAutor);
-      graficarGrafo(listaPrimerAutor, listaSegundoAutor, listaTercerAutor, listaCuartoAutor, listaQuintoAutor);
-      setLoading(false);
-    });
-  }
-
-  /**Carga los datos para la red de autores */
-  async function handleGrafoTotalPublicaciones() {
-    setLoading(true);
-    await clusteringService.ejecutarDatosChartTotalAutores().then(value => {
-      let objeto = JSON.parse(value);
-      let nombres = objeto.nombre;
-      let numeros = objeto.total_pub;
-      let listaAutores = Object.values(nombres)
-      let listaTotalPub = Object.values(numeros)
-      let muyBaja = [];
-      let baja = [];
-      let moderada = [];
-      let alta = [];
-
-      // Aqui se cambia la longitud de los autores para no tener delay en la vista
-      let longitud = (listaAutores.length);
-      for (let i = 0; i < longitud; i++) {
-        if (listaTotalPub[i] >= 2 && listaTotalPub[i] <= 5) {
-          let muyBajoAutor = { "name": listaAutores[i], "value": listaTotalPub[i] }
-          muyBaja.push(muyBajoAutor);
-        }
-        if (listaTotalPub[i] >= 6 && listaTotalPub[i] <= 10) {
-          let bajoAutor = { "name": listaAutores[i], "value": listaTotalPub[i] }
-          baja.push(bajoAutor);
-        }
-        if (listaTotalPub[i] >= 11 && listaTotalPub[i] <= 16) {
-          let moderadoAutor = { "name": listaAutores[i], "value": listaTotalPub[i] }
-          moderada.push(moderadoAutor);
-        }
-        if (listaTotalPub[i] >= 17) {
-          let altoAutor = { "name": listaAutores[i], "value": listaTotalPub[i] }
-          alta.push(altoAutor);
-        }
-      }
-
-      // setNombreCluster(nombre_cluster);
-      // setTotalClusterCuartilFI(totales);
-      // setDetalleDatosClusterCuartilFI(value)
-
-      // setGrafo(listaPrimerAutor);
-      graficarGrafoT(muyBaja, baja, moderada, alta);
-      setLoading(false);
-    });
   }
 
   async function handleCalcularPrcentajesLeyBradford(datos) {
@@ -496,22 +257,8 @@ function Dashboard() {
     }
   }
 
-  async function handleCargarDatosGraficosBurbujas() {
-    let opcionGraficoBurbujas = document.getElementById("OpcionesGarficoBurbujas").value;
-    if (opcionGraficoBurbujas == 'OA') {
-      setOpcionGrafico('OA');
-      handleGrafoOrdenAutor();
-    }
-
-    if (opcionGraficoBurbujas == 'NP') {
-      setOpcionGrafico('NP');
-      handleGrafoTotalPublicaciones();
-    }
-  }
-
   React.useEffect(() => {
     handleCargarTotalesArticulosReferencias();
-    handleGrafoOrdenAutor();
   }, []);
   return (
     <>
@@ -594,81 +341,6 @@ function Dashboard() {
                     </div>
                   </Col>
                 </Row>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-        <Row>
-          <Col md="12">
-            <Card>
-              <Col className="pr-1" md="6">
-                <Form.Group>
-                  <label>Opciones de Gráfico de Burbujas</label>
-                  <Form.Row>
-                    <select className="form-control" id="OpcionesGarficoBurbujas" onChange={handleCargarDatosGraficosBurbujas}>
-                      <option value="OA">Gráfico de Búrbujas por Orden de Autor</option>
-                      <option value="NP">Gráfico por Número de Publicaciones por Autor</option>
-                    </select>
-                  </Form.Row>
-                </Form.Group>
-              </Col>
-              {opcionGrafico == 'OA' && (
-                <Card.Header>
-                  <div id="redes-autores-grafo" ></div>
-                </Card.Header>
-              )}
-              {opcionGrafico == 'NP' && (
-                <Card.Header>
-                  <div id="redes-autores-grafo-total" ></div>
-                </Card.Header>
-              )}
-              <Card.Body>
-                <Row>
-                  <Col className="pr-1" md="4">
-                    {/* <Form.Group>
-                    <label>Orden de Autores</label>
-                    <Form.Row>
-                      <select className="form-control" id="idOrdenAutor" onChange={handleCargarRedesDeAutoresAreasOrden}>
-                        <option value="0">Seleccione</option>
-                        <option value="1">Primer Autor</option>
-                        <option value="2">Segundo Autor</option>
-                        <option value="3">Tercer Autor</option>
-                        <option value="4">Cuarto Autor</option>
-                        <option value="5">Quinto Autor</option>
-                        <option value="6">Sexto Autor</option>
-                        <option value="7">Septimo Autor</option>
-                        <option value="8">Octavo Autor</option>
-                        <option value="9">Noveno Autor</option>
-                        <option value="10">Decimo Autor</option>
-                        <option value="11">Undecimo Autor</option>
-                        <option value="12">Duodecimo Autor</option>
-                        <option value="13">Decimo Tercero Autor</option>
-                        <option value="19">Decimo Noveno Autor</option>
-                      </select>
-                    </Form.Row>
-                  </Form.Group> */}
-                  </Col>
-                  <Col className="pr-1" md="3">
-                    {/* <Form.Group>
-                      <label>Area Unesco</label>
-                      <Form.Row>
-                        <select className="form-control" id="idAreaUnescoGrafo" onChange={handleCargarRedesDeAutoresAreasOrden}>
-                          <option value="0">Seleccione</option>
-                          {areasUnesco.map(item => (
-                            <option value={item.id_area_unesco} key={item.id_area_unesco}>{item.descripcion_unesco}</option>
-                          ))}
-                        </select>
-                      </Form.Row>
-                    </Form.Group> */}
-                  </Col>
-
-                </Row>
-                {/* <div>
-                <img src={"data:image/png;base64,"+ redesAreasOrden} width="100%" height="100%" alt="Grafo Autores" />
-              </div> */}
-                {/* <div>
-                <img src={"data:image/png;base64,"+ redesAreas} width="100%" height="100%" alt="Red dot" />
-              </div> */}
               </Card.Body>
             </Card>
           </Col>
