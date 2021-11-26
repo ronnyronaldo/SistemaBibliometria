@@ -67,6 +67,7 @@ function MedioPublicacion() {
   const [mediosPublicacion, setMediosPublicacion] = React.useState([]);
   const [mediosPublicacionPublicacion, setMediosPublicacionPublicacion] = React.useState([]);
   const [mediosPublicacionCitacion, setMediosPublicacionCitacion] = React.useState([]);
+  const [mediosPublicacionBusqueda, setMediosPublicacionBusqueda] = React.useState([]);
   const [mediosPublicacionSJR, setMediosPublicacionSJR] = React.useState([]);
   const [filtroPublicaciones, setFiltroPublicaciones] = React.useState('I');
   const [medioPublicacionObj, setMedioPublicacionObj] = React.useState({
@@ -91,6 +92,16 @@ function MedioPublicacion() {
       setLoading(false);
     });
     await tablaPaginacionService.paginacion('#dataTableMediosPublicacionPublicacion');
+  }
+
+  async function handleCargarMediosPublicacionBusqueda() {
+    setLoading(true);
+    await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionBusqueda');
+    await medioPublicacionService.listarMediosPublicacionBusqueda().then(value => {
+      setMediosPublicacionBusqueda(value.mediosPublicacionBusqueda);
+      setLoading(false);
+    });
+    await tablaPaginacionService.paginacion('#dataTableMediosPublicacionBusqueda');
   }
 
   async function handleCargarMediosPublicacionCitacion() {
@@ -243,6 +254,8 @@ function MedioPublicacion() {
       await handleCargarSJR();
     } else if (opcion == 'I') {
       await handleCargarMediosPublicacion();
+    } else if (opcion == 'B') {
+      await handleCargarMediosPublicacionBusqueda();
     }
   }
 
@@ -266,6 +279,7 @@ function MedioPublicacion() {
                     <a className="nav-item nav-link" onClick={() => handleOpcionPantalla("I")}>Medios de Publicación</a>
                     <a className="nav-item nav-link" onClick={() => handleOpcionPantalla("P")}>Ranking Medios Publicación</a>
                     <a className="nav-item nav-link" onClick={() => handleOpcionPantalla("C")}>Ranking Medios de Citación</a>
+                    <a className="nav-item nav-link" onClick={() => handleOpcionPantalla("B")}>Ranking Número Búsquedas Journal - DataBase </a>
                     <a className="nav-item nav-link" onClick={() => handleOpcionPantalla("SJR")}>Factor de Impacto SJR</a>
                   </div>
                 </div>
@@ -321,7 +335,7 @@ function MedioPublicacion() {
                           <td>{item.id_medio_publicacion}</td>
                           <td>{item.nombre}</td>
                           <td width="5%">
-                            <div class="btn-group-vertical" role="group" aria-label="Basic example">
+                            <div className="btn-group-vertical" role="group" aria-label="Basic example">
                               <Button id="actualizarMedioPublicacion" className="btn-sm active" type="button" variant="info" onClick={() => handleCargarDetalleMedioPublicacion(item.id_medio_publicacion, item.nombre)} >Editar</Button>
                               <Button id="eliminarMedioPublicacion" className="btn-sm active" type="button" variant="danger" onClick={() => openModalEliminar(item.id_medio_publicacion)} >Eliminar</Button>
                             </div>
@@ -442,6 +456,36 @@ function MedioPublicacion() {
                           <td width="10%">{item.isnn}</td>
                           <td width="10%">{item.sjr}</td>
                           <td width="10%">{item.quartil}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </Card.Body>
+              </Card>
+            </Col>
+          )}
+          {filtroPublicaciones === 'B' && (
+            <Col md="12">
+              <Card className="strpied-tabled-with-hover">
+                <Card.Header>
+                  <Card.Title as="h4">Ranking Número Búsquedas Base Datos Digital</Card.Title>
+                  <p className="card-category">
+                    Número de búsquedas database - journal por base de datos digital
+                  </p>
+                </Card.Header>
+                <Card.Body className="table-full-width table-responsive px-3">
+                  <table className="table table-bordered table-hover" id="dataTableMediosPublicacionBusqueda" width="100%" cellSpacing="0">
+                    <thead className="thead-dark">
+                      <tr>
+                        <th>NOMBRE</th>
+                        <th>NUMERO BÚSQUEDAS</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {mediosPublicacionBusqueda.map(item => (
+                        <tr className="small" key={item.id_medio_publicacion}>
+                          <td>{item.nombre}</td>
+                          <td>{item.numero_busquedas}</td>
                         </tr>
                       ))}
                     </tbody>

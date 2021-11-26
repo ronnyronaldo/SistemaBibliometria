@@ -3,6 +3,7 @@ const endpoints = {
     baseUrlReferencia: `http://localhost:5000/referencia`,
     baseUrlBaseDatosDigital: `http://localhost:5000/baseDatosDigital`,
     baseUrlMedioPublicacion: `http://localhost:5000/medioPublicacion`,
+    baseUrlMedioPublicacionBusqueda: `http://localhost:5000/medioPublicacionBusqueda`,
     baseUrlEstadisticasUso: `http://localhost:5000/estadisticasUso`,
     baseUrlEstadisticasJournal: `http://localhost:5000/estadisticasJournal`,
     baseUrlAreaUnesco: `http://localhost:5000/areaUnesco`,
