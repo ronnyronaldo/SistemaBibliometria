@@ -78,7 +78,14 @@ function LeyBradford() {
     });
   }
   async function handleCargarDatosLeyBradford() {
-    setDatosLeyBradford([]);
+    // Cargando numero de busquedas de las estadisticas de los proveedores
+    await medioPublicacionService.actualizarMediosPublicacionBusqueda().then(value => {
+      console.log("Cargando datos de las estadisticas de los proveedores");
+      console.log(value);
+    });
+
+    console.log("Cargar Datos Ley de Bradford..!!");
+    //setDatosLeyBradford([]);
     let idAnioDesde = parseInt(document.getElementById("idAnioDesde").value);
     let idAnioHasta = parseInt(document.getElementById("idAnioHasta").value);
     let idAreaUnesco = parseInt(document.getElementById("idAreaUnesco").value);
@@ -149,7 +156,7 @@ function LeyBradford() {
     else if (idAreaUnesco != 0 && idAreaFrascati != 0) {
       notify("tr", 'Solo puede seleccionar un filtro de área (Frascati o Unesco).', "danger");
     }
-    await handleListarDatosLeyBradford();
+    //await handleListarDatosLeyBradford();
   }
   async function handleListarDatosLeyBradford() {
     await tablaPaginacionService.destruirTabla('#dataTableLeyBradford');
@@ -269,9 +276,9 @@ function LeyBradford() {
                     {datosLeyBradford.map((item, index, elements) => (
                       <tr className="small" key={item.nombre}>
                         <td>{item.nombre}</td>
-                        <td>{'P1 ('+item.pesoPublicacion +'%) * P ('+item.numero_publicaciones+')'}</td>
-                        <td>{'P2 ('+item.pesoCitacion +'%) * C ('+item.numero_citas+')'}</td>
-                        <td>{'P5 ('+item.pesoSJR +'%) * SJR ('+item.sjr+')'}</td>
+                        <td>{'P1 (' + item.pesoPublicacion + '%) * P (' + item.numero_publicaciones + ')'}</td>
+                        <td>{'P2 (' + item.pesoCitacion + '%) * C (' + item.numero_citas + ')'}</td>
+                        <td>{'P5 (' + item.pesoSJR + '%) * SJR (' + item.sjr + ')'}</td>
                       </tr>
                     ))}
                   </tbody>
