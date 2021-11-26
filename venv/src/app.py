@@ -79,6 +79,10 @@ from rutas.servicio_medio_publicacion_citacion import servicio_medio_publicacion
 from modelos.MedioPublicacionPublicacion import db
 from rutas.servicio_medio_publicacion_publicacion import servicio_medio_publicacion_publicacion
 #Objeto Medio Publicacion Publicacion
+#Objeto Medio Publicacion Busqueda
+from modelos.MedioPublicacionBusqueda import db
+from rutas.servicio_medio_publicacion_busqueda import servicio_medio_publicacion_busqueda
+#Objeto Medio Publicacion Busqueda
 #Objeto Parametro
 from modelos.Parametro import db
 from rutas.servicio_parametro import servicio_parametro
@@ -130,6 +134,7 @@ app.register_blueprint(servicio_ley_bradford, url_prefix='/leyBradford')
 app.register_blueprint(servicio_analisis_estadistico, url_prefix='/analisisEstadistico')
 app.register_blueprint(servicio_medio_publicacion_citacion, url_prefix='/medioPublicacionCitacion')
 app.register_blueprint(servicio_medio_publicacion_publicacion, url_prefix='/medioPublicacionPublicacion')
+app.register_blueprint(servicio_medio_publicacion_busqueda, url_prefix='/medioPublicacionBusqueda')
 app.register_blueprint(servicio_parametro, url_prefix='/parametro')
 app.register_blueprint(servicio_sjr, url_prefix='/sjr')
 app.register_blueprint(servicio_journal, url_prefix='/journal')
