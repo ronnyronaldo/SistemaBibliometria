@@ -16,6 +16,7 @@ class MedioPublicacionBusquedaSchema(ModelSchema):
     id_medio_publicacion = fields.Number(dump_only=True)
     nombre = fields.String(required=True)
     numero_busquedas = fields.Number(required=True)
+    estado = fields.String(required=True)
 
 
 def listaMedioPublicacionBusqueda():
@@ -43,7 +44,7 @@ def conteoMediosPublicacionBusqueda():
     .group_by(EstadisticasJournal.id_journal)
     .order_by(func.sum(EstadisticasJournal.numero_busquedas).desc())).all()
     for detalleReferencia in referenciaRespuesta:
-        MedioPublicacionBusqueda(detalleReferencia[2], detalleReferencia[1]).create()
+        MedioPublicacionBusqueda(detalleReferencia[2], detalleReferencia[1], 0).create()
     return make_response(jsonify({"error": "False"}))
 
 
@@ -59,7 +60,7 @@ def conteoMediosPublicacionBusquedaPorAnio(anio_desde, anio_hasta):
     .group_by(EstadisticasJournal.id_journal)
     .order_by(func.sum(EstadisticasJournal.numero_busquedas).desc())).all()
     for detalleReferencia in referenciaRespuesta:
-        MedioPublicacionBusqueda(detalleReferencia[2], detalleReferencia[1]).create()
+        MedioPublicacionBusqueda(detalleReferencia[2], detalleReferencia[1], 0).create()
     return make_response(jsonify({"error": "False"}))
 
 

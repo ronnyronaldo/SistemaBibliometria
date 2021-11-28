@@ -14,15 +14,17 @@ class MedioPublicacionBusqueda(db.Model):
     id_medio_publicacion = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(150))
     numero_busquedas = db.Column(db.Integer)
+    estado = db.Column(db.String(1))
     
     def create(self):
       db.session.add(self)
       db.session.commit()
       return self
 
-    def __init__(self, nombre, numero_busquedas):
+    def __init__(self, nombre, numero_busquedas, estado):
       self.nombre = nombre
       self.numero_busquedas = numero_busquedas
+      self.estado = estado
 
     def __repr__(self):
         return '' % self.id_medio_publicacion

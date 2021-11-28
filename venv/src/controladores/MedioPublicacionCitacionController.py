@@ -17,6 +17,7 @@ class MedioPublicacionCitacionSchema(ModelSchema):
     id_medio_publicacion = fields.Number(dump_only=True)
     nombre = fields.String(required=True)
     numero_citas = fields.Number(required=True)
+    estado = fields.String(required=True)
 
 # Coincidencia con los nombres de los medios de citacion
 def matchMediosPublicacionCitacion(nombre):
@@ -44,7 +45,7 @@ def conteoMediosPublicacionCitacion():
     .order_by(count_.desc())).all()
 
     for detalleReferencia in referenciaRespuesta:
-        MedioPublicacionCitacion(detalleReferencia[0], detalleReferencia[1]).create()
+        MedioPublicacionCitacion(detalleReferencia[0], detalleReferencia[1], 0).create()
     return make_response(jsonify({"error": "False"}))
 
 def eliminarMediosPublicacionCitacion():
@@ -66,7 +67,7 @@ def conteoMediosPublicacionCitacionPorAnio(anio_publicacion_desde, anio_publicac
     .order_by(count_.desc())).all()
 
     for detalleReferencia in referenciaRespuesta:
-        MedioPublicacionCitacion(detalleReferencia[0], detalleReferencia[1]).create()
+        MedioPublicacionCitacion(detalleReferencia[0], detalleReferencia[1], 0).create()
     return make_response(jsonify({"error": "False"}))
 
 def conteoMediosPublicacionCitacionPorAreaFrascati(id_area_frascati):
@@ -80,7 +81,7 @@ def conteoMediosPublicacionCitacionPorAreaFrascati(id_area_frascati):
     .order_by(count_.desc())).all()
 
     for detalleReferencia in referenciaRespuesta:
-        MedioPublicacionCitacion(detalleReferencia[0], detalleReferencia[1]).create()
+        MedioPublicacionCitacion(detalleReferencia[0], detalleReferencia[1], 0).create()
     return make_response(jsonify({"error": "False"}))
 
 def conteoMediosPublicacionCitacionPorAreaUnesco(id_area_unesco):
@@ -94,7 +95,7 @@ def conteoMediosPublicacionCitacionPorAreaUnesco(id_area_unesco):
     .order_by(count_.desc())).all()
 
     for detalleReferencia in referenciaRespuesta:
-        MedioPublicacionCitacion(detalleReferencia[0], detalleReferencia[1]).create()
+        MedioPublicacionCitacion(detalleReferencia[0], detalleReferencia[1], 0).create()
     return make_response(jsonify({"error": "False"}))
 
 def conteoMediosPublicacionCitacionPorAreaFrascatiPorAnio(anio_publicacion_desde, anio_publicacion_hasta, id_area_frascati):
@@ -108,7 +109,7 @@ def conteoMediosPublicacionCitacionPorAreaFrascatiPorAnio(anio_publicacion_desde
     .order_by(count_.desc())).all()
 
     for detalleReferencia in referenciaRespuesta:
-        MedioPublicacionCitacion(detalleReferencia[0], detalleReferencia[1]).create()
+        MedioPublicacionCitacion(detalleReferencia[0], detalleReferencia[1], 0).create()
     return make_response(jsonify({"error": "False"}))
 
 def conteoMediosPublicacionCitacionPorAreaUnescoPorAnio(anio_publicacion_desde, anio_publicacion_hasta, id_area_unesco):
@@ -122,7 +123,7 @@ def conteoMediosPublicacionCitacionPorAreaUnescoPorAnio(anio_publicacion_desde, 
     .order_by(count_.desc())).all()
 
     for detalleReferencia in referenciaRespuesta:
-        MedioPublicacionCitacion(detalleReferencia[0], detalleReferencia[1]).create()
+        MedioPublicacionCitacion(detalleReferencia[0], detalleReferencia[1], 0).create()
     return make_response(jsonify({"error": "False"}))
 
 
