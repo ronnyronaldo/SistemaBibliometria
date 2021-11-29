@@ -98,6 +98,9 @@ from rutas.servicio_journal import servicio_journal
 #Objeto Estadisticas Journal
 from modelos.EstadisticasJournal import db
 #Objeto Estadisticas Journal
+#Objeto Resumen Medios Publicacion
+from modelos.ResumenMediosPublicacion import db
+#Objeto Resumen Medios Publicacion
 #Objeto Base Datos Digital Journal
 from modelos. BaseDatosDigitalJournal import db
 from rutas.servicio_estadisticas_journal import servicio_estadisticas_journal

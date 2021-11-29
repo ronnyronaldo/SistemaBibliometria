@@ -135,6 +135,18 @@ def conteoMediosPublicacionPublicacionPorAreaUnescoPorAnio(anio_publicacion_desd
         MedioPublicacionPublicacion(detalleReferencia[3], detalleReferencia[1], 0).create()
     return make_response(jsonify({"error": "False"}))
 
+def actualizarMedioPublicacionPublicacion(idMedioPublicacion, estado):
+    medioPublicacion = MedioPublicacionPublicacion.query.get_or_404(idMedioPublicacion)
+    medioPublicacion.estado  = estado
+    MedioPublicacionPublicacion.create(medioPublicacion)
+
+
+def listaMedioPublicacionPublicacionEstado():
+    get_medio_publicacion_publicacion = MedioPublicacionPublicacion.query.filter(MedioPublicacionPublicacion.estado == '0')
+    medio_publicacion_publicacion_schema = MedioPublicacionPublicacionSchema(many=True)
+    medios_publicacion_publicacion = medio_publicacion_publicacion_schema.dump(get_medio_publicacion_publicacion)
+    return make_response(jsonify({"mediosPublicacionPublicacion": medios_publicacion_publicacion}))
+
 
 
 

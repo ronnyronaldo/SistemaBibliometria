@@ -18,6 +18,12 @@ class MedioPublicacionBusquedaSchema(ModelSchema):
     numero_busquedas = fields.Number(required=True)
     estado = fields.String(required=True)
 
+# Coincidencia con los nombres de los medios de publicacion
+def matchMediosPublicacionBusqueda(nombre):
+    get_medio_publicacion_busqueda = MedioPublicacionBusqueda.query.filter(MedioPublicacionBusqueda.nombre.match(nombre))
+    medio_publicacion_busqueda_schema = MedioPublicacionBusquedaSchema(many=True)
+    medios_publicacion_busqueda = medio_publicacion_busqueda_schema.dump(get_medio_publicacion_busqueda)
+    return make_response(jsonify({"mediosPublicacionBusqueda": medios_publicacion_busqueda}))
 
 def listaMedioPublicacionBusqueda():
     #conteoMediosPublicacionPublicacion()
@@ -62,6 +68,17 @@ def conteoMediosPublicacionBusquedaPorAnio(anio_desde, anio_hasta):
     for detalleReferencia in referenciaRespuesta:
         MedioPublicacionBusqueda(detalleReferencia[2], detalleReferencia[1], 0).create()
     return make_response(jsonify({"error": "False"}))
+
+def actualizarMedioPublicacionBusqueda(idMedioPublicacion, estado):
+    medioPublicacion = MedioPublicacionBusqueda.query.get_or_404(idMedioPublicacion)
+    medioPublicacion.estado  = estado
+    MedioPublicacionBusqueda.create(medioPublicacion)
+
+def listaMedioPublicacionBusquedaEstado():
+    get_medio_publicacion_busqueda = MedioPublicacionBusqueda.query.filter(MedioPublicacionBusqueda.estado == '0')
+    medio_publicacion_busqueda_schema = MedioPublicacionBusquedaSchema(many=True)
+    medios_publicacion_busqueda = medio_publicacion_busqueda_schema.dump(get_medio_publicacion_busqueda)
+    return make_response(jsonify({"mediosPublicacionBusqueda": medios_publicacion_busqueda}))
 
 
 

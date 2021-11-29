@@ -21,6 +21,12 @@ class SJRSchema(ModelSchema):
     sjr = fields.Number(required=True)
     quartil = fields.String(required=True)
 
+# Coincidencia con los nombres de los medios de publicacion
+def matchMediosPublicacionSJR(nombre):
+    get_medio_publicacion_sjr = SJR.query.filter(SJR.titulo.match(nombre))
+    medio_publicacion_sjr_schema = SJRSchema(many=True)
+    medios_publicacion_sjr = medio_publicacion_sjr_schema.dump(get_medio_publicacion_sjr)
+    return make_response(jsonify({"mediosPublicacionSJR": medios_publicacion_sjr}))
 
 def listaSJR():
     get_sjr = SJR.query.all()

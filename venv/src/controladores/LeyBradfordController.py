@@ -5,6 +5,7 @@ from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
 from modelos.DetalleReferencia import DetalleReferencia 
 from modelos.MedioPublicacion import MedioPublicacion 
+from modelos.ResumenMediosPublicacion import ResumenMediosPublicacion 
 from modelos.MedioPublicacionPublicacion import MedioPublicacionPublicacion
 from modelos.MedioPublicacionCitacion import MedioPublicacionCitacion
 from modelos.SJR import SJR
@@ -12,7 +13,11 @@ from modelos.Articulo import Articulo
 from modelos.Referencia import Referencia
 from controladores.ParametrosController import buscarParametroPorCodigoParametro 
 from controladores.SJRController import listaSJR
-from controladores.MedioPublicacionPublicacionController import matchMediosPublicacionPublicacion
+from controladores.MedioPublicacionPublicacionController import matchMediosPublicacionPublicacion, listaMedioPublicacionPublicacionEstado, actualizarMedioPublicacionPublicacion
+from controladores.MedioPublicacionCitacionController import matchMediosPublicacionCitacion, listaMedioPublicacionCitacionEstado, actualizarMedioPublicacionCitacion
+from controladores.MedioPublicacionBusquedaController import matchMediosPublicacionBusqueda, listaMedioPublicacionBusquedaEstado, actualizarMedioPublicacionBusqueda
+from controladores.SJRController import matchMediosPublicacionSJR, listaSJR
+from controladores.ResumenMedioPublicacionController import eliminarResumenMediosPublicacion
 from difflib import SequenceMatcher as SM
 
 db = SQLAlchemy()
@@ -47,21 +52,73 @@ def listarDatosLeyBradford():
     return make_response(jsonify({"respuesta": {"valor":"Datos procesados exitosamente.", "error":"False"}, "datos": datos}))
 
 def coincidenciasNombreRevistas():
-    listadoSJR = listaSJR().json['sjr']
-    datos = []
-    for sjr in listadoSJR:
+    #eliminarResumenMediosPublicacion()
+    listadoMediosPublicacionPublicacion = listaMedioPublicacionPublicacionEstado().json['mediosPublicacionPublicacion']
+    for item in listadoMediosPublicacionPublicacion:
+        id_medio_publicacion = int(item['id_medio_publicacion'])
+        actualizarMedioPublicacionPublicacion(id_medio_publicacion, 1)
+        idMediosCitacion = ""
+        idMediosBusqueda = ""
+        idMediosSJR = ""
         try:
-            listadoPublicacion = matchMediosPublicacionPublicacion(sjr['titulo']).json['mediosPublicacionPublicacion']
+            listadoMediosCitacionCoincidentes = matchMediosPublicacionCitacion(item['nombre']).json['mediosPublicacionCitacion']
+            for itemMC in listadoMediosCitacionCoincidentes:
+                idMediosCitacion = idMediosCitacion + str(int(itemMC['id_medio_publicacion'])) + ","
+                actualizarMedioPublicacionCitacion(int(itemMC['id_medio_publicacion']), 1)
         except:
             pass
-        for publicacion in listadoPublicacion:
-            dato = {
-                'medioSJR': sjr['titulo'],
-                'medioPublicacion': publicacion['nombre'],
-                'valorCoincidencia': SM(None, sjr['titulo'], publicacion['nombre']).ratio()
-            }
-            datos.append(dict(dato))
-    return make_response(jsonify({"respuesta": {"valor":"Datos procesados exitosamente.", "error":"False"}, "datos": datos}))
+        try:
+            listadoMediosBusquedaCoincidentes = matchMediosPublicacionBusqueda(item['nombre']).json['mediosPublicacionBusqueda']
+            for itemMB in listadoMediosBusquedaCoincidentes:
+                idMediosBusqueda = idMediosBusqueda + str(int(itemMB['id_medio_publicacion'])) + ','
+                actualizarMedioPublicacionBusqueda(int(itemMB['id_medio_publicacion']), 1)
+        except:
+            pass
+        try:
+            listadoMediosSJRCoincidentes = matchMediosPublicacionSJR(item['nombre']).json['mediosPublicacionSJR']
+            for itemSJR in listadoMediosSJRCoincidentes:
+                idMediosSJR = idMediosSJR + str(int(itemSJR['id_medio_publicacion'])) + ','
+        except:
+            pass
+        ResumenMediosPublicacion(id_medio_publicacion, idMediosCitacion, idMediosBusqueda, idMediosSJR).create()
+        
+    listadoMediosPublicacionCitacion = listaMedioPublicacionCitacionEstado().json['mediosPublicacionCitacion']
+    for item in listadoMediosPublicacionCitacion:
+        id_medio_publicacion = int(item['id_medio_publicacion'])
+        actualizarMedioPublicacionCitacion(id_medio_publicacion, 1)
+        idMediosPublicacion = ""
+        idMediosBusqueda = ""
+        idMediosSJR = ""
+        try:
+            listadoMediosBusquedaCoincidentes = matchMediosPublicacionBusqueda(item['nombre']).json['mediosPublicacionBusqueda']
+            for itemMB in listadoMediosBusquedaCoincidentes:
+                idMediosBusqueda = idMediosBusqueda + str(int(itemMB['id_medio_publicacion'])) + ','
+                actualizarMedioPublicacionBusqueda(int(itemMB['id_medio_publicacion']), 1)
+        except:
+            pass
+        try:
+            listadoMediosSJRCoincidentes = matchMediosPublicacionSJR(item['nombre']).json['mediosPublicacionSJR']
+            for itemSJR in listadoMediosSJRCoincidentes:
+                idMediosSJR = idMediosSJR + str(int(itemSJR['id_medio_publicacion'])) + ','
+        except:
+            pass
+        ResumenMediosPublicacion(idMediosPublicacion, id_medio_publicacion, idMediosBusqueda, idMediosSJR).create()
+    
+    listadoMediosPublicacionBusqueda = listaMedioPublicacionBusquedaEstado().json['mediosPublicacionBusqueda']
+    for item in listadoMediosPublicacionBusqueda:
+        id_medio_publicacion = int(item['id_medio_publicacion'])
+        actualizarMedioPublicacionBusqueda(id_medio_publicacion, 1)
+        idMediosPublicacion = ""
+        idMediosCitacion = ""
+        idMediosSJR = ""
+        try:
+            listadoMediosSJRCoincidentes = matchMediosPublicacionSJR(item['nombre']).json['mediosPublicacionSJR']
+            for itemSJR in listadoMediosSJRCoincidentes:
+                idMediosSJR = idMediosSJR + str(int(itemSJR['id_medio_publicacion'])) + ','
+        except:
+            pass
+        ResumenMediosPublicacion(idMediosPublicacion, idMediosCitacion, id_medio_publicacion, idMediosSJR).create()
+    return make_response(jsonify({"respuesta": {"valor":"Datos procesados exitosamente.", "error":"False"}}))
 
 # Medios de Publicacion de los autores de la Universidad de Cuenca
 def numeroMediosPublicacionPropiasPorAnio(anio_publicacion_desde, anio_publicacion_hasta):
