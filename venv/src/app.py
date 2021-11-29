@@ -58,6 +58,10 @@ from modelos.CategoriaJournalSJR import db
 from modelos. EquivalenciaAreaUnesco import db
 from rutas.servicio_equivalencia_area_unesco import servicio_equivalencia_area_unesco
 #Objeto Equivalencia Area Unesco
+#Objeto Equivalencia Area Unesco Frascati
+from modelos. EquivalenciaAreaUnescoFrascati import db
+from rutas.servicio_equivalencia_area_unesco_frascati import servicio_equivalencia_area_unesco_frascati
+#Objeto Equivalencia Area Unesco Frascati
 #Objeto DetalleReferencia
 from modelos.DetalleReferencia import db
 from rutas.servicio_detalle_referencia import servicio_detalle_referencia
@@ -130,6 +134,7 @@ app.register_blueprint(servicio_area_sjr, url_prefix='/areaSJR')
 app.register_blueprint(servicio_categorias_sjr, url_prefix='/categoriasSJR') 
 app.register_blueprint(servicio_area_categoria_sjr, url_prefix='/areaCategoriaSJR') 
 app.register_blueprint(servicio_equivalencia_area_unesco, url_prefix='/equivalenciaAreaUnesco') 
+app.register_blueprint(servicio_equivalencia_area_unesco_frascati, url_prefix='/equivalenciaAreaUnescoFrascati') 
 app.register_blueprint(servicio_articulo_scopus, url_prefix='/articuloScopus')
 app.register_blueprint(servicio_clustering, url_prefix='/cluster')
 app.register_blueprint(servicio_detalle_referencia, url_prefix='/detalleReferencia')

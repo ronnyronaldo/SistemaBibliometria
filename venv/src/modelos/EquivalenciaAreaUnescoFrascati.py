@@ -9,11 +9,11 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 ###Models####
-class EquivalenciaAreaUnesco(db.Model):
-    __tablename__ = "equivalencia_area_unesco_sjr"
+class EquivalenciaAreaUnescoFrascati(db.Model):
+    __tablename__ = "equivalencia_area_unesco_frascati"
     id_equivalencia_area = db.Column(db.Integer, primary_key=True)
     id_area_unesco = db.Column(db.Integer)
-    id_area_sjr = db.Column(db.Integer)
+    id_area_frascati = db.Column(db.Integer)
 
     def create(self):
       db.session.add(self)
@@ -25,9 +25,9 @@ class EquivalenciaAreaUnesco(db.Model):
       db.session.commit()
       return equivalenciaAreas
       
-    def __init__(self, id_area_unesco, id_area_sjr):
+    def __init__(self, id_area_unesco, id_area_frascati):
       self.id_area_unesco = id_area_unesco
-      self.id_area_sjr = id_area_sjr
+      self.id_area_frascati = id_area_frascati
 
     def __repr__(self):
         return '' % self.id_equivalencia_area
