@@ -6,6 +6,7 @@ import { areaSJRService } from "_services/areaSJR.service";
 import { parametroService } from "_services/parametro.service";
 import { validacionInputService } from '../_services/validacionInput.service';
 import { equivalenciaAreaUnescoService } from "_services/equivalenciaAreaUnesco.service";
+import { equivalenciaAreaUnescoFrascatiService } from "_services/equivalenciaAreaUnescoFrascati.service";
 import { Link } from "react-router-dom";
 
 
@@ -46,7 +47,9 @@ function Parametro() {
   const [areasUnesco, setAreasUnesco] = React.useState([]);
   const [opcionPantalla, setOpcionPantalla] = React.useState("p");
   const [areasSJR, setAreasSJR] = React.useState([]);
+  const [areasFracati, setAreasFrascati] = React.useState([]);
   const [equivalenciaPorAreaUnesco, setEquivalenciaPorAreaUnesco] = React.useState([]);
+  const [equivalenciaPorAreaUnescoFrascati, setEquivalenciaPorAreaUnescoFrascati] = React.useState([]);
   const [parametroObj, setParametroObj] = React.useState({
     id_parametro: 0,
     nombre: "",
@@ -194,6 +197,15 @@ function Parametro() {
     });
   }
 
+  async function handleAreasFrascati() {
+    setLoading(true);
+    await areaFrascatiService.listaAreasFrascati().then(value => {
+      setAreasFrascati(value.area_frascati);
+      setLoading(false);
+    });
+  }
+
+
   async function handleAreasSJR() {
     setLoading(true);
     await areaSJRService.listaAreasSJR().then(value => {
@@ -211,6 +223,17 @@ function Parametro() {
       setLoading(false);
     });
     await tablaPaginacionService.paginacion('#dataEquivalenciaAreaUnesco');
+  }
+
+  async function handleEquivalenciaPorAreaUnescoFrascati() {
+    let idAreaUnesco = parseInt(document.getElementById("idAreaUnesco").value);
+    setLoading(true);
+    await tablaPaginacionService.destruirTabla('#dataEquivalenciaAreaUnescoFrascati');
+    await equivalenciaAreaUnescoFrascatiService.listaEquivalenciaAreaUnesco(idAreaUnesco).then(value => {
+      setEquivalenciaPorAreaUnescoFrascati(value.datos);
+      setLoading(false);
+    });
+    await tablaPaginacionService.paginacion('#dataEquivalenciaAreaUnescoFrascati');
   }
 
   const handleAgregarEquivalenciaAreaUnesco = (event) => {
@@ -241,6 +264,33 @@ function Parametro() {
 
   }
 
+  const handleAgregarEquivalenciaAreaUnescoFrascati = (event) => {
+    let idAreaUnesco = parseInt(document.getElementById("idAreaUnesco").value);
+    let idAreaFrascati = parseInt(document.getElementById("idAreaFrascati").value);
+
+    if (idAreaUnesco != "0") {
+      if (idAreaFrascati != "0") {
+        setLoading(true);
+        equivalenciaAreaUnescoFrascatiService.insertar({
+          "id_area_unesco": idAreaUnesco,
+          "id_area_frascati": idAreaFrascati,
+        }).then(value => {
+          setLoading(false);
+          if (value.respuesta.error == "False") {
+            handleEquivalenciaPorAreaUnescoFrascati();
+            notify("tr", value.respuesta.valor, "primary");
+          } else {
+            notify("tr", value.respuesta.valor, "danger");
+          }
+        })
+      } else {
+        notify("tr", "No ha seleccionado el área frascati", "danger");
+      }
+    } else {
+      notify("tr", "No ha seleccionado el área unesco", "danger");
+    }
+  }
+
   const handleEliminarEquivalenciaPorAreaUnesco = (id_equivalencia_area_unesco) => {
     setLoading(true);
     equivalenciaAreaUnescoService.eliminar(id_equivalencia_area_unesco).then(value => {
@@ -253,12 +303,28 @@ function Parametro() {
       }
     })
   }
+
+  const handleEliminarEquivalenciaPorAreaUnescoFrascati = (id_equivalencia_area_unesco) => {
+    setLoading(true);
+    equivalenciaAreaUnescoFrascatiService.eliminar(id_equivalencia_area_unesco).then(value => {
+      setLoading(false);
+      if (value.respuesta.error == "False") {
+        handleEquivalenciaPorAreaUnescoFrascati();
+        notify("tr", value.respuesta.valor, "primary");
+      } else {
+        notify("tr", value.respuesta.valor, "danger");
+      }
+    })
+  }
+
   function handleOpcionPantalla(opcion) { // Cargo los datos en Pantalla
     setOpcionPantalla(opcion);
     if (opcion == "p") {
       handleListaParametro();
-    } else {
+    } else if (opcion == "e") {
       setEquivalenciaPorAreaUnesco([]);
+    } else {
+      setEquivalenciaPorAreaUnescoFrascati([]);
     }
   }
 
@@ -266,6 +332,7 @@ function Parametro() {
     handleListaParametro();
     handleAreasUnesco();
     handleAreasSJR();
+    handleAreasFrascati();
   }, []);
   return (
     <>
@@ -281,7 +348,8 @@ function Parametro() {
                 <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
                   <div className="navbar-nav">
                     <a className="nav-item nav-link" onClick={() => handleOpcionPantalla("p")}>Parámetro</a>
-                    <a className="nav-item nav-link" onClick={() => handleOpcionPantalla("e")}>Equivalencias</a>
+                    <a className="nav-item nav-link" onClick={() => handleOpcionPantalla("e")}>Equivalencias Unesco - SJR</a>
+                    <a className="nav-item nav-link" onClick={() => handleOpcionPantalla("ef")}>Equivalencias Unesco - Frascati</a>
                   </div>
                 </div>
               </nav>
@@ -429,6 +497,73 @@ function Parametro() {
                           <td width="25%">{item.areaSJR}</td>
                           <td width="5%">
                             <Button id="eliminarEquivalenciaAreaUnesco" className="btn-sm active" type="button" variant="danger" onClick={() => handleEliminarEquivalenciaPorAreaUnesco(item.id_equivalencia_area)} >Eliminar</Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </Card.Body>
+              </Card>
+            </Col>
+          )}
+          {opcionPantalla === 'ef' && (
+            <Col md="12">
+              <Card className="strpied-tabled-with-hover">
+                <Card.Header>
+                  <Card.Title as="h4">Equivalencia Area Unesco</Card.Title>
+                  <p className="card-category">
+                    Equivalencia Area Unesco y Area Frascati
+                  </p>
+                  <Row>
+                    <Col className="pr-1" md="3">
+                      <Form.Group>
+                        <label></label>
+                        <select className="form-control" id="idAreaUnesco" onClick={handleEquivalenciaPorAreaUnescoFrascati}>
+                          <option value="0">Seleccione el área unesco</option>
+                          {areasUnesco.map(item => (
+                            <option value={item.id_area_unesco} key={item.id_area_unesco}>{item.descripcion_unesco}</option>
+                          ))}
+                        </select>
+                      </Form.Group>
+                    </Col>
+                    <Col className="pr-1" md="3">
+                      <Form.Group>
+                        <label></label>
+                        <select className="form-control" id="idAreaFrascati">
+                          <option value="0">Seleccione el área frascati</option>
+                          {areasFracati.map(item => (
+                            <option value={item.id_area_frascati} key={item.id_area_frascati}>{item.descripcion}</option>
+                          ))}
+                        </select>
+                      </Form.Group>
+                    </Col>
+                    <Col className="pr-1" md="3">
+                      <Form.Group>
+                        <label></label>
+                        <Form.Control
+                          defaultValue="AGREGAR"
+                          type="button"
+                          className="btn-outline-success"
+                          onClick={handleAgregarEquivalenciaAreaUnescoFrascati}
+                        ></Form.Control>
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                </Card.Header>
+                <Card.Body className="table-full-width table-responsive px-3">
+                  <table className="table table-bordered table-hover" id="dataEquivalenciaAreaUnescoFrascati" width="100%" cellSpacing="0">
+                    <thead className="thead-dark">
+                      <tr>
+                        <th>NOMBRE AREA FRASCATI</th>
+                        <th>ACCIONES</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {equivalenciaPorAreaUnescoFrascati.map(item => (
+                        <tr className="small" key={item.id_equivalencia_area}>
+                          <td width="25%">{item.areaFrascati}</td>
+                          <td width="5%">
+                            <Button id="eliminarEquivalenciaAreaUnescoFrascati" className="btn-sm active" type="button" variant="danger" onClick={() => handleEliminarEquivalenciaPorAreaUnescoFrascati(item.id_equivalencia_area)} >Eliminar</Button>
                           </td>
                         </tr>
                       ))}
