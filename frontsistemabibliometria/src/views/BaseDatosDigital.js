@@ -261,6 +261,19 @@ function BaseDatosDigital() {
               handleCargarJournalPorBaseDatosDigital();
             }
           })
+        } else if (idBaseDatosDigital == 1) {
+          setLoading(true)
+          JournalService.insertarScopus({ "nuevasJournal": nuevosJournal, "idBaseDatosDigital": idBaseDatosDigital }).then(value => {
+            setLoading(false);
+            if (value.respuesta.error == "False") {
+              notify("tc", "Proceso terminado.", "primary");
+              if (value.respuesta.mensajes.length > 0) {
+                exportToCSV(value.respuesta.mensajes, "observacionesIngresoJournalBD");
+                notify("tc", "Revise las observaciones colocadas en el archivo de excel del ingreso de journal por base de datos digital.", "primary");
+              }
+              handleCargarJournalPorBaseDatosDigital();
+            }
+          })
         } else {
           notify("tr", 'No es posible ingresar datos correspondientes a la base de datos seleccionada.', "danger");
         }
@@ -319,6 +332,8 @@ function BaseDatosDigital() {
     if (idBaseDatosDigital == 11) {
       handleReadExcelScienceDirect(file);
     } else if (idBaseDatosDigital == 3) {
+      handleReadExcelEbsco(file);
+    } else if(idBaseDatosDigital == 1){
       handleReadExcelEbsco(file);
     }
   }
@@ -462,7 +477,7 @@ function BaseDatosDigital() {
                           <td >{item.suscripcion_descripcion}</td>
                           <td >{item.area_servicio}</td>
                           <td width="5%">
-                            <div class="btn-group-vertical" role="group" aria-label="Basic example">
+                            <div className="btn-group-vertical" role="group" aria-label="Basic example">
                               <Button id="actualizarBaseDatosDigital" className="btn btn-sm active" type="button" variant="info" onClick={() => handleCargarDetalleBaseDatosDigital(item.id_base_datos_digital, item.nombre_base_datos_digital, item.proveedor, item.costo_actual, item.suscripcion_descripcion, item.area_servicio)} >Editar</Button>
                               <Button id="eliminarBaseDatosDigital" className="btn btn-sm active" type="button" variant="danger" onClick={() => handleEliminarBaseDatosDigital(item.id_base_datos_digital)}>Eliminar</Button>
                             </div>

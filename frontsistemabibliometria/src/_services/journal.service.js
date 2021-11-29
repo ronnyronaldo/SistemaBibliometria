@@ -5,6 +5,7 @@ export const JournalService = {
     listarJournalPorBaseDatosDigital,
     insertarScienceDirect,
     insertarEbsco,
+    insertarScopus,
     insertarEstadisticasScienceDirect
 
 };
@@ -19,6 +20,10 @@ async function insertarScienceDirect(params) {
 
 async function insertarEbsco(params) {
     return fetchWrapper.post(`${endpoints.baseUrlJournal}/insertarEbsco`, params);
+}
+
+async function insertarScopus(params) {
+    return fetchWrapper.post(`${endpoints.baseUrlJournal}/insertarScopus`, params);
 }
 
 async function insertarEstadisticasScienceDirect(params) {
