@@ -19,6 +19,7 @@ from controladores.MedioPublicacionBusquedaController import matchMediosPublicac
 from controladores.SJRController import matchMediosPublicacionSJR, listaSJR
 from controladores.ResumenMedioPublicacionController import eliminarResumenMediosPublicacion
 from difflib import SequenceMatcher as SM
+from hermetrics.levenshtein import Levenshtein
 
 db = SQLAlchemy()
 
@@ -52,6 +53,7 @@ def listarDatosLeyBradford():
     return make_response(jsonify({"respuesta": {"valor":"Datos procesados exitosamente.", "error":"False"}, "datos": datos}))
 
 def coincidenciasNombreRevistas():
+    lev = Levenshtein()
     #eliminarResumenMediosPublicacion()
     listadoMediosPublicacionPublicacion = listaMedioPublicacionPublicacionEstado().json['mediosPublicacionPublicacion']
     for item in listadoMediosPublicacionPublicacion:
@@ -63,25 +65,30 @@ def coincidenciasNombreRevistas():
         try:
             listadoMediosCitacionCoincidentes = matchMediosPublicacionCitacion(item['nombre']).json['mediosPublicacionCitacion']
             for itemMC in listadoMediosCitacionCoincidentes:
-                idMediosCitacion = idMediosCitacion + str(int(itemMC['id_medio_publicacion'])) + ","
-                actualizarMedioPublicacionCitacion(int(itemMC['id_medio_publicacion']), 1)
+                valor = lev.similarity(item['nombre'].lower(), itemMC['nombre'].lower())
+                if(valor >= 0.5 or (item['nombre'].lower() in itemMC['nombre'].lower())):
+                    idMediosCitacion = idMediosCitacion + str(int(itemMC['id_medio_publicacion'])) + ","
+                    actualizarMedioPublicacionCitacion(int(itemMC['id_medio_publicacion']), 1)
         except:
             pass
         try:
             listadoMediosBusquedaCoincidentes = matchMediosPublicacionBusqueda(item['nombre']).json['mediosPublicacionBusqueda']
             for itemMB in listadoMediosBusquedaCoincidentes:
-                idMediosBusqueda = idMediosBusqueda + str(int(itemMB['id_medio_publicacion'])) + ','
-                actualizarMedioPublicacionBusqueda(int(itemMB['id_medio_publicacion']), 1)
+                valor = lev.similarity(item['nombre'].lower(), itemMB['nombre'].lower())
+                if(valor >= 0.5 or (item['nombre'].lower() in itemMB['nombre'].lower())):
+                    idMediosBusqueda = idMediosBusqueda + str(int(itemMB['id_medio_publicacion'])) + ','
+                    actualizarMedioPublicacionBusqueda(int(itemMB['id_medio_publicacion']), 1)
         except:
             pass
         try:
             listadoMediosSJRCoincidentes = matchMediosPublicacionSJR(item['nombre']).json['mediosPublicacionSJR']
             for itemSJR in listadoMediosSJRCoincidentes:
-                idMediosSJR = idMediosSJR + str(int(itemSJR['id_medio_publicacion'])) + ','
+                valor = lev.similarity(item['nombre'].lower(), itemSJR['nombre'].lower())
+                if(valor >= 0.5 or (item['nombre'].lower() in itemSJR['nombre'].lower())):
+                    idMediosSJR = idMediosSJR + str(int(itemSJR['id_medio_publicacion'])) + ','
         except:
             pass
         ResumenMediosPublicacion(id_medio_publicacion, idMediosCitacion, idMediosBusqueda, idMediosSJR).create()
-        
     listadoMediosPublicacionCitacion = listaMedioPublicacionCitacionEstado().json['mediosPublicacionCitacion']
     for item in listadoMediosPublicacionCitacion:
         id_medio_publicacion = int(item['id_medio_publicacion'])
@@ -92,14 +99,18 @@ def coincidenciasNombreRevistas():
         try:
             listadoMediosBusquedaCoincidentes = matchMediosPublicacionBusqueda(item['nombre']).json['mediosPublicacionBusqueda']
             for itemMB in listadoMediosBusquedaCoincidentes:
-                idMediosBusqueda = idMediosBusqueda + str(int(itemMB['id_medio_publicacion'])) + ','
-                actualizarMedioPublicacionBusqueda(int(itemMB['id_medio_publicacion']), 1)
+                valor = lev.similarity(item['nombre'].lower(), itemMB['nombre'].lower())
+                if(valor >= 0.5 or (item['nombre'].lower() in itemMB['nombre'].lower())):
+                    idMediosBusqueda = idMediosBusqueda + str(int(itemMB['id_medio_publicacion'])) + ','
+                    actualizarMedioPublicacionBusqueda(int(itemMB['id_medio_publicacion']), 1)
         except:
             pass
         try:
             listadoMediosSJRCoincidentes = matchMediosPublicacionSJR(item['nombre']).json['mediosPublicacionSJR']
             for itemSJR in listadoMediosSJRCoincidentes:
-                idMediosSJR = idMediosSJR + str(int(itemSJR['id_medio_publicacion'])) + ','
+                valor = lev.similarity(item['nombre'].lower(), itemSJR['nombre'].lower())
+                if(valor >= 0.5 or (item['nombre'].lower() in itemSJR['nombre'].lower())):
+                    idMediosSJR = idMediosSJR + str(int(itemSJR['id_medio_publicacion'])) + ','
         except:
             pass
         ResumenMediosPublicacion(idMediosPublicacion, id_medio_publicacion, idMediosBusqueda, idMediosSJR).create()
@@ -114,7 +125,9 @@ def coincidenciasNombreRevistas():
         try:
             listadoMediosSJRCoincidentes = matchMediosPublicacionSJR(item['nombre']).json['mediosPublicacionSJR']
             for itemSJR in listadoMediosSJRCoincidentes:
-                idMediosSJR = idMediosSJR + str(int(itemSJR['id_medio_publicacion'])) + ','
+                valor = lev.similarity(item['nombre'].lower(), itemSJR['nombre'].lower())
+                if(valor >= 0.5 or (item['nombre'].lower() in itemSJR['nombre'].lower())):
+                    idMediosSJR = idMediosSJR + str(int(itemSJR['id_medio_publicacion'])) + ','
         except:
             pass
         ResumenMediosPublicacion(idMediosPublicacion, idMediosCitacion, id_medio_publicacion, idMediosSJR).create()
