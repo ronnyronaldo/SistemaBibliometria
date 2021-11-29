@@ -12,7 +12,7 @@ db = SQLAlchemy()
 class Journal(db.Model):
     __tablename__ = "journal"
     id_journal = db.Column(db.Integer, primary_key=True)
-    titulo = db.Column(db.String(200))
+    titulo = db.Column(db.String(1000))
 
     def create(self):
       db.session.add(self)

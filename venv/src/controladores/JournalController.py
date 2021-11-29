@@ -92,6 +92,44 @@ def insertarJournalEbsco(registrosJournal):
         return make_response(jsonify({"respuesta": {"mensajes":mensajesRespuesta, "error":"True"}}))
     return make_response(jsonify({"respuesta": {"mensajes":mensajesRespuesta, "error":"False"}}))
 
+def insertarJournalScopus(registrosJournal):
+    mensajesRespuesta = []
+    journals = registrosJournal['nuevasJournal']
+    idBaseDatosDigital = registrosJournal['idBaseDatosDigital']
+    id_journal = 0
+    try: 
+        for i in range(len(journals)):
+            nombreJournal = journals[i]['Source Title (Medline-sourced journals are indicated in Green)']
+            active = journals[i]['Active or Inactive']
+            descontinuado = extraerDatosString(journals[i], 'Titles discontinued by Scopus due to quality issues') 
+            if(active == "Active" and descontinuado == ""):
+                print(nombreJournal)
+                journalRespuesta = encontrarPorNombre(nombreJournal)
+                numeroJournal = len(journalRespuesta)
+                if(numeroJournal == 0):
+                    Journal(nombreJournal).create()
+                    journalRespuesta = encontrarPorNombre(nombreJournal)
+                    id_journal = journalRespuesta[0]['id_journal']
+                else:
+                    journalRespuesta = encontrarPorNombre(nombreJournal)
+                    id_journal = journalRespuesta[0]['id_journal']
+
+                bd_journal = existeRelacion(idBaseDatosDigital, id_journal)
+                numero_bd_journal = len(bd_journal)
+                if(numero_bd_journal == 0):
+                    BaseDatosDigitalJournal(idBaseDatosDigital,id_journal).create()
+                else:
+                    mensaje = {
+                        "error": "True",
+                        "mensaje": "El journal "+ nombreJournal + " ya está asignada a la base de datos seleccionada",
+                        "estado": "Ingresada"
+                    }
+                    mensajesRespuesta.append(mensaje)
+    except Exception as e:   
+        print(e)
+        return make_response(jsonify({"respuesta": {"mensajes":mensajesRespuesta, "error":"True"}}))
+    return make_response(jsonify({"respuesta": {"mensajes":mensajesRespuesta, "error":"False"}}))
+
 def extraerDatosString(registroSJR, campo):
     try:
         return registroSJR[campo]
