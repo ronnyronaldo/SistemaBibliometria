@@ -295,34 +295,46 @@ function LeyBradford() {
                   <tbody>
                     {datosLeyBradford.map((item, index, elements) => (
                       <tr className="small" key={item.idResumen}>
-                        <table>
-                          {item.publicacion.map((itemPublicacion, index, elements) => (
-                            <tr>
-                              <td>{itemPublicacion.nombre}</td>
-                            </tr>
-                          ))}
-                        </table>
-                        <table>
-                          {item.citacion.map((itemCitacion, index, elements) => (
-                            <tr>
-                              <td>{itemCitacion.nombre}</td>
-                            </tr>
-                          ))}
-                        </table>
-                        <table>
-                          {item.busqueda.map((itemBusqueda, index, elements) => (
-                            <tr>
-                              <td>{itemBusqueda.nombre}</td>
-                            </tr>
-                          ))}
-                        </table>
-                        <table>
-                          {item.sjr.map((itemSJR, index, elements) => (
-                            <tr>
-                              <td>{itemSJR.titulo}</td>
-                            </tr>
-                          ))}
-                        </table>
+                        <td>
+                          <table>
+                            {item.publicacion.map((itemPublicacion, index, elements) => (
+                              <tr>
+                                <td>{itemPublicacion.nombre}</td>
+                                <td>{itemPublicacion.numero_publicaciones}</td>
+                              </tr>
+                            ))}
+                          </table>
+                        </td>
+                        <td>
+                          <table>
+                            {item.citacion.map((itemCitacion, index, elements) => (
+                              <tr>
+                                <td>{itemCitacion.nombre}</td>
+                                <td>{itemCitacion.numero_citas}</td>
+                              </tr>
+                            ))}
+                          </table>
+                        </td>
+                        <td>
+                          <table>
+                            {item.busqueda.map((itemBusqueda, index, elements) => (
+                              <tr>
+                                <td>{itemBusqueda.nombre}</td>
+                                <td>{itemBusqueda.numero_busquedas}</td>
+                              </tr>
+                            ))}
+                          </table>
+                        </td>
+                        <td>
+                          <table>
+                            {item.sjr.map((itemSJR, index, elements) => (
+                              <tr>
+                                <td>{itemSJR.titulo}</td>
+                                <td>{itemSJR.sjr}</td>
+                              </tr>
+                            ))}
+                          </table>
+                        </td>
                         <td>{item.indexado}</td>
                       </tr>
                     ))}
