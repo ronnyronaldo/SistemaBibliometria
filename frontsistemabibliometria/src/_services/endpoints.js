@@ -21,6 +21,7 @@ const endpoints = {
     baseUrlAnalisisEstadistico: `http://localhost:5000/analisisEstadistico`,
     baseUrlMedioPublicacionPublicacion: `http://localhost:5000/medioPublicacionPublicacion`,
     baseUrlMedioPublicacionCitacion: `http://localhost:5000/medioPublicacionCitacion`,
+    baseUrlResumenMedioPublicacion: `http://localhost:5000/resumenMediosPublicacion`,
     baseUrlSJR: `http://localhost:5000/sjr`,
     baseUrlJournal: `http://localhost:5000/journal`,
     baseUrlParametro: `http://localhost:5000/parametro`

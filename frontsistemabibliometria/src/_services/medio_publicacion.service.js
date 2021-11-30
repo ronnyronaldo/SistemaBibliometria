@@ -4,6 +4,7 @@ import endpoints from "./endpoints";
 export const medioPublicacionService = {
     listar,
     listarMediosPublicacionPublicacion,
+    listarMediosPublicacionResumen,
     listarMediosPublicacionCitacion,
     listarMediosPublicacionBusqueda,
     actualizarMediosPublicacionPublicacion,
@@ -33,6 +34,7 @@ async function actualizar(params) {
 async function listar() {
     return fetchWrapper.get(`${endpoints.baseUrlMedioPublicacion}/listar`);
 }
+
 async function validarMedioPublicacionPorNombre(nombre) {
     return fetchWrapper.get(`${endpoints.baseUrlMedioPublicacion}/verificaMedioPublicacionPorNombre/`+ nombre);
 }
@@ -107,7 +109,10 @@ async function actualizarMediosPublicacionBusqueda() {
 async function actualizarMediosPublicacionBusquedaPorAnio(anio_publicacion_desde, anio_publicacion_hasta) {
     return fetchWrapper.get(`${endpoints.baseUrlMedioPublicacionBusqueda}/conteoMediosPublicacionBusquedaPorAnio/`+anio_publicacion_desde+"/"+anio_publicacion_hasta);
 }
-
+// Lista Medios de Publicacion Resumen
+async function listarMediosPublicacionResumen() {
+    return fetchWrapper.get(`${endpoints.baseUrlResumenMedioPublicacion}/listar`);
+}
 
 
 

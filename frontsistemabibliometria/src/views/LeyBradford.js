@@ -7,6 +7,7 @@ import { medioPublicacionService } from '../_services/medio_publicacion.service'
 import { leyBradfordService } from '../_services/ley_bradford.service';
 import { Link } from "react-router-dom";
 import logo from '../images/formula.PNG';
+
 // react plugin for creating notifications over the dashboard
 import NotificationAlert from "react-notification-alert";
 
@@ -170,8 +171,26 @@ function LeyBradford() {
     })
     await tablaPaginacionService.paginacion('#dataTableLeyBradford');
   }
+
+  async function handleListarResumenMediosPublicacion() {
+    setLoading(true);
+    await tablaPaginacionService.destruirTabla('#dataTableLeyBradford');
+    await medioPublicacionService.listarMediosPublicacionResumen().then(value => {
+      if (value.respuesta.error == "False") {
+        setLoading(false);
+        //notify("tr", value.respuesta.valor, "primary");
+        console.log(value.datos);
+        setDatosLeyBradford(value.datos);
+      } else {
+        setLoading(false);
+        notify("tr", value.respuesta.valor, "danger");
+      }
+
+    })
+    await tablaPaginacionService.paginacion('#dataTableLeyBradford');
+  }
   React.useEffect(() => {
-    handleListarDatosLeyBradford();
+    handleListarResumenMediosPublicacion();
     handleAreasUnesco();
     handleAreasFrascati();
   }, []);
@@ -266,19 +285,45 @@ function LeyBradford() {
                 <table className="table table-bordered table-hover" id="dataTableLeyBradford" width="100%" cellSpacing="0">
                   <thead className="thead-dark">
                     <tr>
-                      <th>MEDIO PUBLICACION</th>
-                      <th>NUMERO PUBLICACIONES</th>
-                      <th>NUMERO CITAS</th>
+                      <th>PUBLICACION</th>
+                      <th>CITACION</th>
+                      <th>BUSQUEDA</th>
                       <th>SJR</th>
+                      <th>INDEXADO</th>
                     </tr>
                   </thead>
                   <tbody>
                     {datosLeyBradford.map((item, index, elements) => (
-                      <tr className="small" key={item.nombre}>
-                        <td>{item.nombre}</td>
-                        <td>{'P1 (' + item.pesoPublicacion + '%) * P (' + item.numero_publicaciones + ')'}</td>
-                        <td>{'P2 (' + item.pesoCitacion + '%) * C (' + item.numero_citas + ')'}</td>
-                        <td>{'P5 (' + item.pesoSJR + '%) * SJR (' + item.sjr + ')'}</td>
+                      <tr className="small" key={item.idResumen}>
+                        <table>
+                          {item.publicacion.map((itemPublicacion, index, elements) => (
+                            <tr>
+                              <td>{itemPublicacion.nombre}</td>
+                            </tr>
+                          ))}
+                        </table>
+                        <table>
+                          {item.citacion.map((itemCitacion, index, elements) => (
+                            <tr>
+                              <td>{itemCitacion.nombre}</td>
+                            </tr>
+                          ))}
+                        </table>
+                        <table>
+                          {item.busqueda.map((itemBusqueda, index, elements) => (
+                            <tr>
+                              <td>{itemBusqueda.nombre}</td>
+                            </tr>
+                          ))}
+                        </table>
+                        <table>
+                          {item.sjr.map((itemSJR, index, elements) => (
+                            <tr>
+                              <td>{itemSJR.titulo}</td>
+                            </tr>
+                          ))}
+                        </table>
+                        <td>{item.indexado}</td>
                       </tr>
                     ))}
                   </tbody>
