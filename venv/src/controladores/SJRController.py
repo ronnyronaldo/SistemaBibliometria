@@ -34,6 +34,12 @@ def listaSJR():
     sjr = sjr_schema.dump(get_sjr)
     return make_response(jsonify({"sjr": sjr}))
 
+def listaSJRPorId(id_sjr):
+    get_sjr = SJR.query.filter(SJR.id_sjr == id_sjr)
+    sjr_schema = SJRSchema(many=True)
+    sjr = sjr_schema.dump(get_sjr)
+    return sjr
+
 # Coincidencia con los nombres de los medios de publicacion SJR
 def matchSJR(nombre):
     get_sjr = SJR.query.filter(SJR.titulo.match(nombre))

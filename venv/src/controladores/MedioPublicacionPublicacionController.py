@@ -33,6 +33,12 @@ def listaMedioPublicacionPublicacion():
     medios_publicacion_publicacion = medio_publicacion_publicacion_schema.dump(get_medio_publicacion_publicacion)
     return make_response(jsonify({"mediosPublicacionPublicacion": medios_publicacion_publicacion}))
 
+def listaMedioPublicacionPublicacionPorId(id_medio_publicacion):
+    get_medio_publicacion_publicacion = MedioPublicacionPublicacion.query.filter(MedioPublicacionPublicacion.id_medio_publicacion == id_medio_publicacion)
+    medio_publicacion_publicacion_schema = MedioPublicacionPublicacionSchema(many=True)
+    medios_publicacion_publicacion = medio_publicacion_publicacion_schema.dump(get_medio_publicacion_publicacion)
+    return medios_publicacion_publicacion
+
 def conteoMediosPublicacionPublicacion():
     # Eliminamos todos los medios de publicación publicación para cargar de nuevo en el caso de que haya habido cambios
     eliminarMediosPublicacionPublicacion()

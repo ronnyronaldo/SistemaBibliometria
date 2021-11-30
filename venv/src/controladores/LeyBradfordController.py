@@ -87,16 +87,16 @@ def coincidenciasNombreRevistas():
         try:
             listadoMediosSJRCoincidentes = matchMediosPublicacionSJR(item['nombre']).json['mediosPublicacionSJR']
             for itemSJR in listadoMediosSJRCoincidentes:
-                valor = lev.similarity(item['nombre'].lower(), itemSJR['nombre'].lower())
-                if(valor >= valorSimilaridad or (item['nombre'].lower() in itemSJR['nombre'].lower())):
-                    idMediosSJR = idMediosSJR + str(int(itemSJR['id_medio_publicacion'])) + ','
+                valor = lev.similarity(item['nombre'].lower(), itemSJR['titulo'].lower())
+                if(valor >= valorSimilaridad or (item['nombre'].lower() in itemSJR['titulo'].lower())):
+                    idMediosSJR = idMediosSJR + str(int(itemSJR['id_sjr'])) + ','
         except:
             pass
         try:
             listadoJournalBaseDatosDigital = matchJournalBaseDatosDigital(item['nombre']).json['journalBaseDatosDigital']
             for itemJBD in listadoJournalBaseDatosDigital:
-                valor = lev.similarity(item['nombre'].lower(), itemJBD['nombre'].lower())
-                if(valor >= valorSimilaridadJournal or (item['nombre'].lower() in itemJBD['nombre'].lower())):
+                valor = lev.similarity(item['nombre'].lower(), itemJBD['titulo'].lower())
+                if(valor >= valorSimilaridadJournal or (item['nombre'].lower() in itemJBD['titulo'].lower())):
                     indexado = "1"
         except:
             pass
@@ -121,16 +121,16 @@ def coincidenciasNombreRevistas():
         try:
             listadoMediosSJRCoincidentes = matchMediosPublicacionSJR(item['nombre']).json['mediosPublicacionSJR']
             for itemSJR in listadoMediosSJRCoincidentes:
-                valor = lev.similarity(item['nombre'].lower(), itemSJR['nombre'].lower())
-                if(valor >= valorSimilaridad or (item['nombre'].lower() in itemSJR['nombre'].lower())):
-                    idMediosSJR = idMediosSJR + str(int(itemSJR['id_medio_publicacion'])) + ','
+                valor = lev.similarity(item['nombre'].lower(), itemSJR['titulo'].lower())
+                if(valor >= valorSimilaridad or (item['nombre'].lower() in itemSJR['titulo'].lower())):
+                    idMediosSJR = idMediosSJR + str(int(itemSJR['id_sjr'])) + ','
         except:
             pass
         try:
             listadoJournalBaseDatosDigital = matchJournalBaseDatosDigital(item['nombre']).json['journalBaseDatosDigital']
             for itemJBD in listadoJournalBaseDatosDigital:
-                valor = lev.similarity(item['nombre'].lower(), itemJBD['nombre'].lower())
-                if(valor >= valorSimilaridadJournal or (item['nombre'].lower() in itemJBD['nombre'].lower())):
+                valor = lev.similarity(item['nombre'].lower(), itemJBD['titulo'].lower())
+                if(valor >= valorSimilaridadJournal or (item['nombre'].lower() in itemJBD['titulo'].lower())):
                     indexado = "1"
         except:
             pass
@@ -147,16 +147,17 @@ def coincidenciasNombreRevistas():
         try:
             listadoMediosSJRCoincidentes = matchMediosPublicacionSJR(item['nombre']).json['mediosPublicacionSJR']
             for itemSJR in listadoMediosSJRCoincidentes:
-                valor = lev.similarity(item['nombre'].lower(), itemSJR['nombre'].lower())
-                if(valor >= valorSimilaridad or (item['nombre'].lower() in itemSJR['nombre'].lower())):
-                    idMediosSJR = idMediosSJR + str(int(itemSJR['id_medio_publicacion'])) + ','
+                valor = lev.similarity(item['nombre'].lower(), itemSJR['titulo'].lower())
+                if(valor >= valorSimilaridad or (item['nombre'].lower() in itemSJR['titulo'].lower())):
+                    idMediosSJR = idMediosSJR + str(int(itemSJR['id_sjr'])) + ','
         except:
             pass
         try:
             listadoJournalBaseDatosDigital = matchJournalBaseDatosDigital(item['nombre']).json['journalBaseDatosDigital']
             for itemJBD in listadoJournalBaseDatosDigital:
-                valor = lev.similarity(item['nombre'].lower(), itemJBD['nombre'].lower())
-                if(valor >= valorSimilaridadJournal or (item['nombre'].lower() in itemJBD['nombre'].lower())):
+                print(itemJBD)
+                valor = lev.similarity(item['nombre'].lower(), itemJBD['titulo'].lower())
+                if(valor >= valorSimilaridadJournal or (item['nombre'].lower() in itemJBD['titulo'].lower())):
                     indexado = "1"
         except:
             pass

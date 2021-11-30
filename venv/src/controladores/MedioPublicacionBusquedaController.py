@@ -32,6 +32,12 @@ def listaMedioPublicacionBusqueda():
     medios_publicacion_busqueda = medio_publicacion_busqueda_schema.dump(get_medio_publicacion_busqueda)
     return make_response(jsonify({"mediosPublicacionBusqueda": medios_publicacion_busqueda}))
 
+def listaMedioPublicacionBusquedaPorId(id_medio_publicacion):
+    get_medio_publicacion_busqueda = MedioPublicacionBusqueda.query.filter(MedioPublicacionBusqueda.id_medio_publicacion == id_medio_publicacion)
+    medio_publicacion_busqueda_schema = MedioPublicacionBusquedaSchema(many=True)
+    medios_publicacion_busqueda = medio_publicacion_busqueda_schema.dump(get_medio_publicacion_busqueda)
+    return medios_publicacion_busqueda
+
 def eliminarMediosPublicacionBusqueda():
     try:
         num_rows_deleted = db.session.query(MedioPublicacionBusqueda).delete()

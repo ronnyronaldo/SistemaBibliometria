@@ -104,6 +104,7 @@ from modelos.EstadisticasJournal import db
 #Objeto Estadisticas Journal
 #Objeto Resumen Medios Publicacion
 from modelos.ResumenMediosPublicacion import db
+from rutas.servicio_resumen_medios_publicacion import servicio_resumen_medios_publicacion
 #Objeto Resumen Medios Publicacion
 #Objeto Base Datos Digital Journal
 from modelos. BaseDatosDigitalJournal import db
@@ -143,6 +144,7 @@ app.register_blueprint(servicio_analisis_estadistico, url_prefix='/analisisEstad
 app.register_blueprint(servicio_medio_publicacion_citacion, url_prefix='/medioPublicacionCitacion')
 app.register_blueprint(servicio_medio_publicacion_publicacion, url_prefix='/medioPublicacionPublicacion')
 app.register_blueprint(servicio_medio_publicacion_busqueda, url_prefix='/medioPublicacionBusqueda')
+app.register_blueprint(servicio_resumen_medios_publicacion, url_prefix='/resumenMediosPublicacion')
 app.register_blueprint(servicio_parametro, url_prefix='/parametro')
 app.register_blueprint(servicio_sjr, url_prefix='/sjr')
 app.register_blueprint(servicio_journal, url_prefix='/journal')
