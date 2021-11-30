@@ -16,6 +16,7 @@ class ResumenMediosPublicacion(db.Model):
     id_medio_citacion = db.Column(db.String(1000))
     id_medio_busqueda = db.Column(db.String(1000))
     id_medio_sjr = db.Column(db.String(1000))
+    indexado = db.Column(db.String(1))
     
     def create(self):
       db.session.add(self)
@@ -27,11 +28,12 @@ class ResumenMediosPublicacion(db.Model):
       db.session.commit()
       return resumenMedioPublicacion
 
-    def __init__(self, id_medio_publicacion, id_medio_citacion, id_medio_busqueda, id_medio_sjr):
+    def __init__(self, id_medio_publicacion, id_medio_citacion, id_medio_busqueda, id_medio_sjr, indexado):
       self.id_medio_publicacion = id_medio_publicacion
       self.id_medio_citacion = id_medio_citacion
       self.id_medio_busqueda = id_medio_busqueda
       self.id_medio_sjr = id_medio_sjr
+      self.indexado = indexado
     def __repr__(self):
         return '' % self.id_resumen
 #db.create_all() # Para crear la tabla

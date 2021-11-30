@@ -15,6 +15,12 @@ class JournalSchema(ModelSchema):
     id_journal = fields.Number(dump_only=True)
     titulo = fields.String(required=True)
 
+# Coincidencia con los nombres de los journal de las base de datos digitales
+def matchJournalBaseDatosDigital(nombre):
+    get_journal= Journal.query.filter(Journal.titulo.match(nombre))
+    journal_schema = JournalSchema(many=True)
+    journal = journal_schema.dump(get_journal)
+    return make_response(jsonify({"journalBaseDatosDigital": journal}))
 
 
 def listaJournalPorBaseDatosDigital(id_base_datos_digital):
