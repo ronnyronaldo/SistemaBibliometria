@@ -53,14 +53,15 @@ def listaResumenMediosPublicacion():
                 sjr = listaSJRPorId(itemSJR)[0]
                 listadoMediosSJR.append(sjr)
         respuesta = {
+            "idResumen" : item['id_resumen'],
             "publicacion": listadoMediosPublicacion,
             "citacion": listadoMediosCitacion,
-            "busquedaResult": listadoMediosBusqueda,
-            "sjrResult" : listadoMediosSJR,
+            "busqueda": listadoMediosBusqueda,
+            "sjr" : listadoMediosSJR,
             "indexado" : item['indexado']
         }
         respuestaFinal.append(respuesta)
-    return make_response(jsonify({"resumen_medios_publicacion": respuestaFinal}))
+    return make_response(jsonify({"respuesta": {"valor":"Datos procesados exitosamente.", "error":"False"}, "datos": respuestaFinal}))
 
 def eliminarResumenMediosPublicacion():
     try:
