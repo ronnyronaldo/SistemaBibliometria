@@ -54,8 +54,9 @@ def listarDatosLeyBradford():
     return make_response(jsonify({"respuesta": {"valor":"Datos procesados exitosamente.", "error":"False"}, "datos": datos}))
 
 def coincidenciasNombreRevistas():
+    eliminarResumenMediosPublicacion()
     lev = Levenshtein()
-    valorSimilaridad = 0.7
+    valorSimilaridad = 0.9
     valorSimilaridadJournal = 0.9
     #eliminarResumenMediosPublicacion()
     listadoMediosPublicacionPublicacion = listaMedioPublicacionPublicacionEstado().json['mediosPublicacionPublicacion']
@@ -95,6 +96,7 @@ def coincidenciasNombreRevistas():
         try:
             listadoJournalBaseDatosDigital = matchJournalBaseDatosDigital(item['nombre']).json['journalBaseDatosDigital']
             for itemJBD in listadoJournalBaseDatosDigital:
+                print(itemJBD)
                 valor = lev.similarity(item['nombre'].lower(), itemJBD['titulo'].lower())
                 if(valor >= valorSimilaridadJournal or (item['nombre'].lower() in itemJBD['titulo'].lower())):
                     indexado = "1"
@@ -129,6 +131,7 @@ def coincidenciasNombreRevistas():
         try:
             listadoJournalBaseDatosDigital = matchJournalBaseDatosDigital(item['nombre']).json['journalBaseDatosDigital']
             for itemJBD in listadoJournalBaseDatosDigital:
+                print(itemJBD)
                 valor = lev.similarity(item['nombre'].lower(), itemJBD['titulo'].lower())
                 if(valor >= valorSimilaridadJournal or (item['nombre'].lower() in itemJBD['titulo'].lower())):
                     indexado = "1"
