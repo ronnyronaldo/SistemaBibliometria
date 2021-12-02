@@ -19,7 +19,7 @@ class ParametroSchema(ModelSchema):
 
 
 def listarParametros():
-    get_parametro = Parametro.query.all()
+    get_parametro = Parametro.query.order_by(Parametro.codigo_parametro.asc()).all()
     parametro_schema = ParametroSchema(many=True)
     parametros = parametro_schema.dump(get_parametro)
     return make_response(jsonify({"parametro":parametros}))
