@@ -7,6 +7,7 @@ import { medioPublicacionService } from '../_services/medio_publicacion.service'
 import { leyBradfordService } from '../_services/ley_bradford.service';
 import { Link } from "react-router-dom";
 import logo from '../images/formula.PNG';
+import { parametroService } from "_services/parametro.service";
 
 // react plugin for creating notifications over the dashboard
 import NotificationAlert from "react-notification-alert";
@@ -41,6 +42,15 @@ function LeyBradford() {
   const [areasFracati, setAreasFrascati] = React.useState([]);
   const [areasUnesco, setAreasUnesco] = React.useState([]);
   const [datosLeyBradford, setDatosLeyBradford] = React.useState([]);
+
+  const [pesos, setPesos] = React.useState({
+    pesoPublicacion: 0,
+    pesoCitacion: 0,
+    pesoBusqueda: 0,
+    pesoSJR: 0,
+    pesoIndexado: 0
+  });
+
   const notify = (place, mensaje, type) => {
     var options = {};
     options = {
@@ -61,7 +71,23 @@ function LeyBradford() {
 
   /**Spinner */
   let [loading, setLoading] = React.useState(false);
-  /**Spinner */
+
+  /**Cargar Parámetros */
+  async function handleListaParametro() {
+    setLoading(true);
+    await parametroService.listaParametro().then(value => {
+      setPesos({
+        ...pesos,
+        pesoPublicacion: parseFloat(value.parametro[0].valor),
+        pesoCitacion: parseFloat(value.parametro[1].valor),
+        pesoBusqueda: parseFloat(value.parametro[2].valor),
+        pesoSJR: parseFloat(value.parametro[3].valor),
+        pesoIndexado: parseFloat(value.parametro[4].valor)
+      })
+      setLoading(false);
+    });
+  }
+
   /** Carga las areas frascati para el filtro*/
   async function handleAreasFrascati() {
     setLoading(true);
@@ -85,7 +111,7 @@ function LeyBradford() {
       console.log(value);
     });
 
-    console.log("Cargar Datos Ley de Bradford..!!");
+    //console.log("Cargar Datos Ley de Bradford..!!");
     //setDatosLeyBradford([]);
     let idAnioDesde = parseInt(document.getElementById("idAnioDesde").value);
     let idAnioHasta = parseInt(document.getElementById("idAnioHasta").value);
@@ -96,9 +122,11 @@ function LeyBradford() {
       setLoading(true)
       await medioPublicacionService.actualizarMediosPublicacionCitacion().then(async (value) => {
         console.log(value);
-        await medioPublicacionService.actualizarMediosPublicacionPublicacion().then(value => {
-          console.log(value);
-          setLoading(false);
+        await medioPublicacionService.actualizarMediosPublicacionPublicacion().then(async (value) => {
+          await leyBradfordService.coincidenciaRevistas().then(async(value) => {
+            await handleListarResumenMediosPublicacion();
+            setLoading(false);
+          });
         });
       });
 
@@ -107,9 +135,11 @@ function LeyBradford() {
       setLoading(true)
       await medioPublicacionService.actualizarMediosPublicacionCitacionPorAnio(idAnioDesde, idAnioHasta).then(async (value) => {
         console.log(value);
-        await medioPublicacionService.actualizarMediosPublicacionPublicacionPorAnio(idAnioDesde, idAnioHasta).then(value => {
-          console.log(value);
-          setLoading(false);
+        await medioPublicacionService.actualizarMediosPublicacionPublicacionPorAnio(idAnioDesde, idAnioHasta).then(async (value) => {
+          await leyBradfordService.coincidenciaRevistas().then(async(value) => {
+            await handleListarResumenMediosPublicacion();
+            setLoading(false);
+          });
         });
       });
 
@@ -118,9 +148,11 @@ function LeyBradford() {
       setLoading(true)
       await medioPublicacionService.actualizarMediosPublicacionCitacionPorAreaFrascati(idAreaFrascati).then(async (value) => {
         console.log(value);
-        await medioPublicacionService.actualizarMediosPublicacionPublicacionPorAreaFrascati(idAreaFrascati).then(value => {
-          console.log(value);
-          setLoading(false);
+        await medioPublicacionService.actualizarMediosPublicacionPublicacionPorAreaFrascati(idAreaFrascati).then(async (value) => {
+          await leyBradfordService.coincidenciaRevistas().then(async(value) => {
+            await handleListarResumenMediosPublicacion();
+            setLoading(false);
+          });
         });
       });
     }
@@ -128,9 +160,11 @@ function LeyBradford() {
       setLoading(true)
       await medioPublicacionService.actualizarMediosPublicacionCitacionPorAreaUnesco(idAreaUnesco).then(async (value) => {
         console.log(value);
-        await medioPublicacionService.actualizarMediosPublicacionPublicacionPorAreaUnesco(idAreaUnesco).then(value => {
-          console.log(value);
-          setLoading(false);
+        await medioPublicacionService.actualizarMediosPublicacionPublicacionPorAreaUnesco(idAreaUnesco).then(async (value) => {
+          await leyBradfordService.coincidenciaRevistas().then(async(value) => {
+            await handleListarResumenMediosPublicacion();
+            setLoading(false);
+          });
         });
       });
     }
@@ -138,9 +172,11 @@ function LeyBradford() {
       setLoading(true)
       await medioPublicacionService.actualizarMediosPublicacionCitacionPorAreaFrascatiPorAnio(idAnioDesde, idAnioHasta, idAreaFrascati).then(async (value) => {
         console.log(value);
-        await medioPublicacionService.actualizarMediosPublicacionPublicacionPorAreaFrascatiPorAnio(idAnioDesde, idAnioHasta, idAreaFrascati).then(value => {
-          console.log(value);
-          setLoading(false);
+        await medioPublicacionService.actualizarMediosPublicacionPublicacionPorAreaFrascatiPorAnio(idAnioDesde, idAnioHasta, idAreaFrascati).then(async (value) => {
+          await leyBradfordService.coincidenciaRevistas().then(async(value) => {
+            await handleListarResumenMediosPublicacion();
+            setLoading(false);
+          });
         });
       });
     }
@@ -148,9 +184,11 @@ function LeyBradford() {
       setLoading(true)
       await medioPublicacionService.actualizarMediosPublicacionCitacionPorAreaUnescoPorAnio(idAnioDesde, idAnioHasta, idAreaUnesco).then(async (value) => {
         console.log(value);
-        await medioPublicacionService.actualizarMediosPublicacionPublicacionPorAreaUnescoPorAnio(idAnioDesde, idAnioHasta, idAreaUnesco).then(value => {
-          console.log(value);
-          setLoading(false);
+        await medioPublicacionService.actualizarMediosPublicacionPublicacionPorAreaUnescoPorAnio(idAnioDesde, idAnioHasta, idAreaUnesco).then(async (value) => {
+          await leyBradfordService.coincidenciaRevistas().then(async(value) => {
+            await handleListarResumenMediosPublicacion();
+            setLoading(false);
+          });
         });
       });
     }
@@ -179,8 +217,54 @@ function LeyBradford() {
       if (value.respuesta.error == "False") {
         setLoading(false);
         //notify("tr", value.respuesta.valor, "primary");
-        console.log(value.datos);
-        setDatosLeyBradford(value.datos);
+        var datosMediosPublicacion = value.datos;
+        var datosMediosPublicacionConteo = [];
+        for (var i = 0; i < datosMediosPublicacion.length; i++) {
+          var idResumen = datosMediosPublicacion[i].idResumen;
+          var indexado = parseInt(datosMediosPublicacion[i].indexado);
+          var datosPublicacion = datosMediosPublicacion[i].publicacion;
+          var datosCitacion = datosMediosPublicacion[i].citacion;
+          var datosBusqueda = datosMediosPublicacion[i].busqueda;
+          var datosSJR = datosMediosPublicacion[i].sjr;
+
+          var numeroPublicaciones = 0;
+          var numeroCitas = 0;
+          var numeroBusquedas = 0;
+          var numeroSjr = 0;
+
+          for (var j = 0; j < datosPublicacion.length; j++) {
+            numeroPublicaciones = numeroPublicaciones + datosPublicacion[j].numero_publicaciones;
+          }
+
+          for (var x = 0; x < datosCitacion.length; x++) {
+            numeroCitas = numeroCitas + datosCitacion[x].numero_citas;
+          }
+
+          for (var y = 0; y < datosBusqueda.length; y++) {
+            numeroBusquedas = numeroBusquedas + datosBusqueda[y].numero_busquedas;
+          }
+
+          for (var z = 0; z < datosSJR.length; z++) {
+            numeroSjr = numeroSjr + datosSJR[z].sjr;
+          }
+
+          var dato = {
+            busqueda: datosMediosPublicacion[i].busqueda,
+            citacion: datosMediosPublicacion[i].citacion,
+            idResumen: idResumen,
+            indexado: indexado,
+            publicacion: datosMediosPublicacion[i].publicacion,
+            sjr: datosMediosPublicacion[i].sjr,
+            totalPublicaciones: numeroPublicaciones,
+            totalCitas: numeroCitas,
+            totalBusquedas: numeroBusquedas,
+            totalSjr: numeroSjr,
+            total: parseFloat((parseFloat(numeroPublicaciones * pesos.pesoPublicacion) + parseFloat(numeroCitas * pesos.pesoCitacion) + parseFloat(numeroBusquedas * pesos.pesoBusqueda) + parseFloat(numeroSjr * pesos.pesoSJR) + parseFloat(indexado * pesos.pesoIndexado)).toFixed(2))
+          }
+          datosMediosPublicacionConteo.push(dato);
+        }
+        datosMediosPublicacionConteo.sort((a, b) => (a.total < b.total ? 1 : a.total > b.total ? -1 : 0))
+        setDatosLeyBradford(datosMediosPublicacionConteo);
       } else {
         setLoading(false);
         notify("tr", value.respuesta.valor, "danger");
@@ -190,9 +274,10 @@ function LeyBradford() {
     await tablaPaginacionService.paginacion('#dataTableLeyBradford');
   }
   React.useEffect(() => {
-    handleListarResumenMediosPublicacion();
     handleAreasUnesco();
     handleAreasFrascati();
+    handleListaParametro();
+
   }, []);
   return (
     <>
@@ -290,6 +375,7 @@ function LeyBradford() {
                       <th>BUSQUEDA</th>
                       <th>SJR</th>
                       <th>INDEXADO</th>
+                      <th>TOTAL</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -302,7 +388,9 @@ function LeyBradford() {
                                 <td>{itemPublicacion.nombre}</td>
                                 <td>{itemPublicacion.numero_publicaciones}</td>
                               </tr>
+
                             ))}
+                            <tr> <td>{'P1(' + pesos.pesoPublicacion + ')*P(' + item.totalPublicaciones + ')'}</td></tr>
                           </table>
                         </td>
                         <td>
@@ -313,6 +401,7 @@ function LeyBradford() {
                                 <td>{itemCitacion.numero_citas}</td>
                               </tr>
                             ))}
+                            <tr><td>{'P2(' + pesos.pesoCitacion + ')*C(' + item.totalCitas + ')'}</td></tr>
                           </table>
                         </td>
                         <td>
@@ -323,6 +412,7 @@ function LeyBradford() {
                                 <td>{itemBusqueda.numero_busquedas}</td>
                               </tr>
                             ))}
+                            <tr><td>{'P3(' + pesos.pesoBusqueda + ')*V(' + item.totalBusquedas + ')'}</td></tr>
                           </table>
                         </td>
                         <td>
@@ -333,9 +423,11 @@ function LeyBradford() {
                                 <td>{itemSJR.sjr}</td>
                               </tr>
                             ))}
+                            <tr><td>{'P4(' + pesos.pesoSJR + ')*V(' + item.totalSjr + ')'}</td></tr>
                           </table>
                         </td>
-                        <td>{item.indexado}</td>
+                        <td>{'P5(' + pesos.pesoIndexado + ')*I(' + item.indexado + ')'}</td>
+                        <td>{item.total}</td>
                       </tr>
                     ))}
                   </tbody>

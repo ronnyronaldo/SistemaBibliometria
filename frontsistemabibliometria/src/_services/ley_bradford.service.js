@@ -14,11 +14,17 @@ export const leyBradfordService = {
     numeroMediosPublicacionPropiosPorAreaUnesco,
     numeroMediosPublicacionPropiosPorAreaUnescoPorAnio,
     numeroMediosPublicacionPropiosPorAreaFrascatiPorAnio,
-    listar
+    listar,
+    coincidenciaRevistas
 };
 async function listar() {
     return fetchWrapper.get(`${endpoints.baseUrlLeyBradford}/listar`);
 }
+
+async function coincidenciaRevistas() {
+    return fetchWrapper.get(`${endpoints.baseUrlLeyBradford}/coincidencia`);
+}
+
 // Medios de Publicacion de las Referencias
 async function numeroMediosPublicacionesReferencias() {
     return fetchWrapper.get(`${endpoints.baseUrlLeyBradford}/numeroMediosPublicacion`);
