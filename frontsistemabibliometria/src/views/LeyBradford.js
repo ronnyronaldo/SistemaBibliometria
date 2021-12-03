@@ -403,14 +403,14 @@ function LeyBradford() {
                 <table className="table table-bordered table-hover" id="dataTableLeyBradford" width="100%" cellSpacing="0">
                   <thead className="thead-dark">
                     <tr>
-                      <th>PUBLICACION</th>
-                      <th>CITACION</th>
-                      <th>BUSQUEDA</th>
+                      <th>PUBLICACIÓN</th>
+                      <th>CITACIÓN</th>
+                      <th>BÚSQUEDA</th>
                       <th>SJR</th>
                       <th>INDEXADO</th>
                       <th>TOTAL</th>
                       <th>TOTAL ACUMULADO</th>
-                      <th>PORCENTAJE ACUMULADO</th> 
+                      <th>PORCENTAJE ACUMULADO %</th> 
                     </tr>
                   </thead>
                   <tbody>
@@ -447,7 +447,7 @@ function LeyBradford() {
                                 <td>{itemBusqueda.numero_busquedas}</td>
                               </tr>
                             ))}
-                            <tr><td>{'P3(' + pesos.pesoBusqueda + ')*V(' + item.totalBusquedas + ')'}</td></tr>
+                            <tr><td>{'P3(' + pesos.pesoBusqueda + ')*B(' + item.totalBusquedas + ')'}</td></tr>
                           </table>
                         </td>
                         <td>
@@ -458,7 +458,7 @@ function LeyBradford() {
                                 <td>{itemSJR.sjr}</td>
                               </tr>
                             ))}
-                            <tr><td>{'P4(' + pesos.pesoSJR + ')*V(' + item.totalSjr + ')'}</td></tr>
+                            <tr><td>{'P4(' + pesos.pesoSJR + ')*SJR(' + item.totalSjr + ')'}</td></tr>
                           </table>
                         </td>
                         <td>{'P5(' + pesos.pesoIndexado + ')*I(' + item.indexado + ')'}</td>
