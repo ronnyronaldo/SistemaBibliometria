@@ -56,9 +56,8 @@ def listarDatosLeyBradford():
 def coincidenciasNombreRevistas():
     eliminarResumenMediosPublicacion()
     lev = Levenshtein()
-    valorSimilaridad = 0.9
-    valorSimilaridadJournal = 0.9
-    #eliminarResumenMediosPublicacion()
+    valorSimilaridad = 0.95
+    valorSimilaridadJournal = 0.95
     listadoMediosPublicacionPublicacion = listaMedioPublicacionPublicacionEstado().json['mediosPublicacionPublicacion']
     for item in listadoMediosPublicacionPublicacion:
         id_medio_publicacion = int(item['id_medio_publicacion'])
@@ -71,7 +70,7 @@ def coincidenciasNombreRevistas():
             listadoMediosCitacionCoincidentes = matchMediosPublicacionCitacion(item['nombre']).json['mediosPublicacionCitacion']
             for itemMC in listadoMediosCitacionCoincidentes:
                 valor = lev.similarity(item['nombre'].lower(), itemMC['nombre'].lower())
-                if(valor >= valorSimilaridad or (item['nombre'].lower() in itemMC['nombre'].lower())):
+                if(valor >= valorSimilaridad):
                     idMediosCitacion = idMediosCitacion + str(int(itemMC['id_medio_publicacion'])) + ","
                     actualizarMedioPublicacionCitacion(int(itemMC['id_medio_publicacion']), 1)
         except:
@@ -80,7 +79,7 @@ def coincidenciasNombreRevistas():
             listadoMediosBusquedaCoincidentes = matchMediosPublicacionBusqueda(item['nombre']).json['mediosPublicacionBusqueda']
             for itemMB in listadoMediosBusquedaCoincidentes:
                 valor = lev.similarity(item['nombre'].lower(), itemMB['nombre'].lower())
-                if(valor >= valorSimilaridad or (item['nombre'].lower() in itemMB['nombre'].lower())):
+                if(valor >= valorSimilaridad):
                     idMediosBusqueda = idMediosBusqueda + str(int(itemMB['id_medio_publicacion'])) + ','
                     actualizarMedioPublicacionBusqueda(int(itemMB['id_medio_publicacion']), 1)
         except:
@@ -89,16 +88,15 @@ def coincidenciasNombreRevistas():
             listadoMediosSJRCoincidentes = matchMediosPublicacionSJR(item['nombre']).json['mediosPublicacionSJR']
             for itemSJR in listadoMediosSJRCoincidentes:
                 valor = lev.similarity(item['nombre'].lower(), itemSJR['titulo'].lower())
-                if(valor >= valorSimilaridad or (item['nombre'].lower() in itemSJR['titulo'].lower())):
+                if(valor >= valorSimilaridad):
                     idMediosSJR = idMediosSJR + str(int(itemSJR['id_sjr'])) + ','
         except:
             pass
         try:
             listadoJournalBaseDatosDigital = matchJournalBaseDatosDigital(item['nombre']).json['journalBaseDatosDigital']
             for itemJBD in listadoJournalBaseDatosDigital:
-                print(itemJBD)
                 valor = lev.similarity(item['nombre'].lower(), itemJBD['titulo'].lower())
-                if(valor >= valorSimilaridadJournal or (item['nombre'].lower() in itemJBD['titulo'].lower())):
+                if(valor >= valorSimilaridadJournal):
                     indexado = "1"
         except:
             pass
@@ -115,7 +113,7 @@ def coincidenciasNombreRevistas():
             listadoMediosBusquedaCoincidentes = matchMediosPublicacionBusqueda(item['nombre']).json['mediosPublicacionBusqueda']
             for itemMB in listadoMediosBusquedaCoincidentes:
                 valor = lev.similarity(item['nombre'].lower(), itemMB['nombre'].lower())
-                if(valor >= valorSimilaridad or (item['nombre'].lower() in itemMB['nombre'].lower())):
+                if(valor >= valorSimilaridad):
                     idMediosBusqueda = idMediosBusqueda + str(int(itemMB['id_medio_publicacion'])) + ','
                     actualizarMedioPublicacionBusqueda(int(itemMB['id_medio_publicacion']), 1)
         except:
@@ -124,47 +122,19 @@ def coincidenciasNombreRevistas():
             listadoMediosSJRCoincidentes = matchMediosPublicacionSJR(item['nombre']).json['mediosPublicacionSJR']
             for itemSJR in listadoMediosSJRCoincidentes:
                 valor = lev.similarity(item['nombre'].lower(), itemSJR['titulo'].lower())
-                if(valor >= valorSimilaridad or (item['nombre'].lower() in itemSJR['titulo'].lower())):
+                if(valor >= valorSimilaridad):
                     idMediosSJR = idMediosSJR + str(int(itemSJR['id_sjr'])) + ','
         except:
             pass
         try:
             listadoJournalBaseDatosDigital = matchJournalBaseDatosDigital(item['nombre']).json['journalBaseDatosDigital']
             for itemJBD in listadoJournalBaseDatosDigital:
-                print(itemJBD)
                 valor = lev.similarity(item['nombre'].lower(), itemJBD['titulo'].lower())
-                if(valor >= valorSimilaridadJournal or (item['nombre'].lower() in itemJBD['titulo'].lower())):
+                if(valor >= valorSimilaridadJournal):
                     indexado = "1"
         except:
             pass
         ResumenMediosPublicacion(idMediosPublicacion, id_medio_publicacion, idMediosBusqueda, idMediosSJR, indexado).create()
-    
-    listadoMediosPublicacionBusqueda = listaMedioPublicacionBusquedaEstado().json['mediosPublicacionBusqueda']
-    for item in listadoMediosPublicacionBusqueda:
-        id_medio_publicacion = int(item['id_medio_publicacion'])
-        actualizarMedioPublicacionBusqueda(id_medio_publicacion, 1)
-        idMediosPublicacion = ""
-        idMediosCitacion = ""
-        idMediosSJR = ""
-        indexado = "0"
-        try:
-            listadoMediosSJRCoincidentes = matchMediosPublicacionSJR(item['nombre']).json['mediosPublicacionSJR']
-            for itemSJR in listadoMediosSJRCoincidentes:
-                valor = lev.similarity(item['nombre'].lower(), itemSJR['titulo'].lower())
-                if(valor >= valorSimilaridad or (item['nombre'].lower() in itemSJR['titulo'].lower())):
-                    idMediosSJR = idMediosSJR + str(int(itemSJR['id_sjr'])) + ','
-        except:
-            pass
-        try:
-            listadoJournalBaseDatosDigital = matchJournalBaseDatosDigital(item['nombre']).json['journalBaseDatosDigital']
-            for itemJBD in listadoJournalBaseDatosDigital:
-                print(itemJBD)
-                valor = lev.similarity(item['nombre'].lower(), itemJBD['titulo'].lower())
-                if(valor >= valorSimilaridadJournal or (item['nombre'].lower() in itemJBD['titulo'].lower())):
-                    indexado = "1"
-        except:
-            pass
-        ResumenMediosPublicacion(idMediosPublicacion, idMediosCitacion, id_medio_publicacion, idMediosSJR, indexado).create()
     return make_response(jsonify({"respuesta": {"valor":"Datos procesados exitosamente.", "error":"False"}}))
 
 # Medios de Publicacion de los autores de la Universidad de Cuenca
