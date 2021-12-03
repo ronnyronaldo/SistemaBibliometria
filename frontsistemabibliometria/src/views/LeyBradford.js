@@ -105,6 +105,8 @@ function LeyBradford() {
     });
   }
   async function handleCargarDatosLeyBradford() {
+    //handleListarResumenMediosPublicacion();
+
     // Cargando numero de busquedas de las estadisticas de los proveedores
     await medioPublicacionService.actualizarMediosPublicacionBusqueda().then(value => {
       console.log("Cargando datos de las estadisticas de los proveedores");
@@ -264,7 +266,7 @@ function LeyBradford() {
           datosMediosPublicacionConteo.push(dato);
         }
         datosMediosPublicacionConteo.sort((a, b) => (a.total < b.total ? 1 : a.total > b.total ? -1 : 0))
-        setDatosLeyBradford(datosMediosPublicacionConteo);
+        handleCalcularPrcentajesLeyBradford(datosMediosPublicacionConteo);
       } else {
         setLoading(false);
         notify("tr", value.respuesta.valor, "danger");
@@ -273,6 +275,37 @@ function LeyBradford() {
     })
     await tablaPaginacionService.paginacion('#dataTableLeyBradford');
   }
+
+  async function handleCalcularPrcentajesLeyBradford(datos) {
+    let datosYPorcentajes = [];
+    let suma = 0;
+    let totalCalculado = 0;
+    for (var i = 0; i < datos.length; i++) {
+      totalCalculado = totalCalculado + datos[i].total;
+    }
+
+    for (var i = 0; i < datos.length; i++) {
+      suma = suma + datos[i].total;
+      let datoFinal={
+        busqueda: datos[i].busqueda,
+        citacion: datos[i].citacion,
+        idResumen: datos[i].idResumen,
+        indexado: datos[i].indexado,
+        publicacion: datos[i].publicacion,
+        sjr: datos[i].sjr,
+        totalPublicaciones: datos[i].totalPublicaciones,
+        totalCitas: datos[i].totalCitas,
+        totalBusquedas: datos[i].totalBusquedas,
+        totalSjr: datos[i].totalSjr,
+        total: datos[i].total,
+        numeroAcumulado: suma.toFixed(2),
+        procentajeAcumulado: (suma / totalCalculado * 100).toFixed(2)
+      }
+      datosYPorcentajes.push(datoFinal);
+    }
+    setDatosLeyBradford(datosYPorcentajes);
+  }
+
   React.useEffect(() => {
     handleAreasUnesco();
     handleAreasFrascati();
@@ -376,6 +409,8 @@ function LeyBradford() {
                       <th>SJR</th>
                       <th>INDEXADO</th>
                       <th>TOTAL</th>
+                      <th>TOTAL ACUMULADO</th>
+                      <th>PORCENTAJE ACUMULADO</th> 
                     </tr>
                   </thead>
                   <tbody>
@@ -428,6 +463,8 @@ function LeyBradford() {
                         </td>
                         <td>{'P5(' + pesos.pesoIndexado + ')*I(' + item.indexado + ')'}</td>
                         <td>{item.total}</td>
+                        <td>{item.numeroAcumulado}</td>
+                        <td>{item.procentajeAcumulado+' %'}</td>
                       </tr>
                     ))}
                   </tbody>
