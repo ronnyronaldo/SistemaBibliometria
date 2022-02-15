@@ -324,11 +324,11 @@ function EstadisticasProveedores() {
           <Col md="12">
             <Card className="strpied-tabled-with-hover">
               <Card.Header>
-                <Card.Title as="h4">Ingreso Estadísticas Base Datos Digital</Card.Title>
+                <Card.Title as="h4">Ingreso Estadísticas Base Datos Bibliográfica</Card.Title>
                 <Row>
                   <Col className="pr-1" md="3">
                     <Form.Group>
-                      <label>BASE DATOS DIGITAL</label>
+                      <label>BASE DATOS BIBLIOGRÁFICA</label>
                       <Form.Row>
                         <select className="form-control" onChange={handleCargarEstadisticasUso} id="idBaseDatosDigital">
                           <option value="0">Seleccione</option>
@@ -341,7 +341,7 @@ function EstadisticasProveedores() {
                   </Col>
                   <Col className="pr-1" md="3">
                     <Form.Group>
-                      <label>JOURNAL</label>
+                      <label>FUENTE - JOURNAL</label>
                       <Form.Row>
                         <select className="form-control" id="idJournal" onChange={handleCargarEstadisticasJournal}>
                           <option value="0">Seleccione</option>
@@ -412,7 +412,7 @@ function EstadisticasProveedores() {
             <Col md="12">
               <Card className="strpied-tabled-with-hover">
                 <Card.Header>
-                  <Card.Title as="h4">Base de Datos Digitales</Card.Title>
+                  <Card.Title as="h4">Base de Datos Bibliográficas</Card.Title>
                   <p className="card-category">
                     Universidad de Cuenca
                   </p>

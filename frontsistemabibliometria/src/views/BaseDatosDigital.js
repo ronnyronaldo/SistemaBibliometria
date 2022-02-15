@@ -373,7 +373,7 @@ function BaseDatosDigital() {
               <nav className="navbar navbar-expand-sm bg-dark navbar-dark">
                 <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
                   <div className="navbar-nav">
-                    <a className="nav-item nav-link" onClick={() => handleOpcionPantallaBD("bd")}>Base Datos Digital</a>
+                    <a className="nav-item nav-link" onClick={() => handleOpcionPantallaBD("bd")}>Base Datos Bibliográfica</a>
                     <a className="nav-item nav-link" onClick={() => handleOpcionPantallaBD("jdb")}>Journal - Database</a>
                   </div>
                 </div>
@@ -386,12 +386,12 @@ function BaseDatosDigital() {
             <Col md="12">
               <Card className="strpied-tabled-with-hover">
                 <Card.Header>
-                  <Card.Title as="h4">Ingreso Base Datos Digital</Card.Title>
+                  <Card.Title as="h4">Ingreso Base Datos Bibliográfica</Card.Title>
                   <Row>
 
                     <Col className="pr-1" md="3">
                       <Form.Group>
-                        <label>NOMBRE BASE DATOS DIGITAL</label>
+                        <label>NOMBRE BASE DATOS BIBLIOGRÁFICA</label>
                         <Form.Control
                           id="nombreBaseDatosText"
                           defaultValue=""
@@ -449,7 +449,7 @@ function BaseDatosDigital() {
             <Col md="12">
               <Card className="strpied-tabled-with-hover">
                 <Card.Header>
-                  <Card.Title as="h4">Base de Datos Digitales</Card.Title>
+                  <Card.Title as="h4">Base de Datos Bibliográficas</Card.Title>
                   <p className="card-category">
                     Universidad de Cuenca
                   </p>
@@ -494,11 +494,11 @@ function BaseDatosDigital() {
             <Col md="12">
               <Card className="strpied-tabled-with-hover">
                 <Card.Header>
-                  <Card.Title as="h4">Ingreso Base Datos Digital - Journal</Card.Title>
+                  <Card.Title as="h4">Ingreso Base Datos Bibliográfica - Journal</Card.Title>
                   <Row>
                     <Col className="pr-1" md="3">
                       <Form.Group>
-                        <label>BASE DATOS DIGITAL</label>
+                        <label>BASE DATOS BIBLIOGRÁFICA</label>
                         <Form.Row>
                           <select className="form-control" id="idBaseDatosDigitalIngresoJournal" onChange={handleCargarJournalPorBaseDatosDigital}>
                             <option value="0">Seleccione</option>
@@ -511,7 +511,7 @@ function BaseDatosDigital() {
                     </Col>
                     <Col className="pr-1" md="5">
                       <Form.Group>
-                        <label>INGRESE EL ARCHIVO .XLSX CON LA INFORMACIÓN DE LAS BASES DE DATOS DIGITALES</label>
+                        <label>INGRESE EL ARCHIVO .XLSX CON LA INFORMACIÓN DE LAS BASES DE DATOS BIBLIOGRÁFICAS</label>
                         <FormGroup>
                           <input type='file' onChange={(e) => {
                             const file = e.target.files[0];
@@ -576,7 +576,7 @@ function BaseDatosDigital() {
           </div>
         </Modal.Header>
         <Modal.Body className="text-center">
-          <p>Actualizar Base Datos Digital</p>
+          <p>Actualizar Base Datos Bibliográfica</p>
         </Modal.Body>
         <div className="modal-footer">
           <Col className="pr-1" md="12">

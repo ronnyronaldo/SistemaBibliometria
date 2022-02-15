@@ -673,7 +673,7 @@ function Referencias() {
             variant="success"
             onClick={() => handleBuscar()}
           >
-            Buscar Google Scholar
+            Buscar Google Académico
           </Button>
         </div>
       </Modal>

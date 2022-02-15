@@ -94,7 +94,7 @@ async function actualizarMediosPublicacionCitacionPorAreaUnescoPorAnio(anio_publ
 }
 
 async function actualizarMediosPublicacionCitacionPorAreaFrascatiPorAnio(anio_publicacion_desde, anio_publicacion_hasta, id_area_frascati) {
-    return fetchWrapper.get(`${endpoints.baseUrlMedioPublicacionCitacion}/conteoMediosPublicacionPublicacionPorAreaFrascatiPorAnio/`+anio_publicacion_desde+"/"+anio_publicacion_hasta+"/"+ id_area_frascati);
+    return fetchWrapper.get(`${endpoints.baseUrlMedioPublicacionCitacion}/conteoMediosPublicacionCitacionPorAreaFrascatiPorAnio/`+anio_publicacion_desde+"/"+anio_publicacion_hasta+"/"+ id_area_frascati);
 }
 
 // Medios de Publicacion Busqueda

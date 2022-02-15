@@ -78,7 +78,7 @@ const dashboardRoutes = [
   },
   {
     path: "/baseDatosDigital",
-    name: "Base Datos Digital",
+    name: "Base Datos Biblio.",
     icon: "nc-icon nc-grid-45",
     component: BaseDatosDigital,
     layout: "/admin",

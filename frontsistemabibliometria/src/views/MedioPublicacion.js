@@ -12,6 +12,7 @@ import { css } from "@emotion/react";
 import FadeLoader from "react-spinners/FadeLoader";
 import { Link } from "react-router-dom";
 import *as XLSX from 'xlsx';
+import * as FileSaver from "file-saver";
 const override = css`
   display: block;
   margin: 0 auto;
@@ -89,6 +90,7 @@ function MedioPublicacion() {
     await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionPublicacion');
     await medioPublicacionService.listarMediosPublicacionPublicacion().then(value => {
       setMediosPublicacionPublicacion(value.mediosPublicacionPublicacion);
+      exportToCSV(value.mediosPublicacionPublicacion, "rankingMediosPublicacionPublicacion");
       setLoading(false);
     });
     await tablaPaginacionService.paginacion('#dataTableMediosPublicacionPublicacion');
@@ -99,6 +101,7 @@ function MedioPublicacion() {
     await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionBusqueda');
     await medioPublicacionService.listarMediosPublicacionBusqueda().then(value => {
       setMediosPublicacionBusqueda(value.mediosPublicacionBusqueda);
+      exportToCSV(value.mediosPublicacionBusqueda, "rankingMediosPublicacionBusqueda");
       setLoading(false);
     });
     await tablaPaginacionService.paginacion('#dataTableMediosPublicacionBusqueda');
@@ -109,6 +112,7 @@ function MedioPublicacion() {
     await tablaPaginacionService.destruirTabla('#dataTableMediosPublicacionCitacion');
     await medioPublicacionService.listarMediosPublicacionCitacion().then(value => {
       setMediosPublicacionCitacion(value.mediosPublicacionCitacion);
+      exportToCSV(value.mediosPublicacionCitacion, "rankingMediosPublicacionCitacion");
       setLoading(false);
     });
     await tablaPaginacionService.paginacion('#dataTableMediosPublicacionCitacion');
@@ -259,6 +263,17 @@ function MedioPublicacion() {
     }
   }
 
+  const fileType =
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+  const fileExtension = ".xlsx";
+
+  const exportToCSV = (apiData, fileName) => {
+    const ws = XLSX.utils.json_to_sheet(apiData);
+    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const data = new Blob([excelBuffer], { type: fileType });
+    FileSaver.saveAs(data, fileName + fileExtension);
+  };
 
   React.useEffect(() => {
     handleCargarMediosPublicacion();

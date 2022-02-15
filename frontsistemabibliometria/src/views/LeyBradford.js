@@ -37,6 +37,10 @@ import {
   Form,
   Modal
 } from "react-bootstrap";
+
+import * as FileSaver from "file-saver";
+import *as XLSX from 'xlsx';
+
 function LeyBradford() {
   const notificationAlertRef = React.useRef(null);
   const [areasFracati, setAreasFrascati] = React.useState([]);
@@ -105,17 +109,17 @@ function LeyBradford() {
     });
   }
   async function handleCargarDatosLeyBradford() {
-    //handleListarResumenMediosPublicacion();
+    handleListarResumenMediosPublicacion();
 
     // Cargando numero de busquedas de las estadisticas de los proveedores
-    await medioPublicacionService.actualizarMediosPublicacionBusqueda().then(value => {
+    /*await medioPublicacionService.actualizarMediosPublicacionBusqueda().then(value => {
       console.log("Cargando datos de las estadisticas de los proveedores");
       console.log(value);
-    });
+    });*/
 
     //console.log("Cargar Datos Ley de Bradford..!!");
     //setDatosLeyBradford([]);
-    let idAnioDesde = parseInt(document.getElementById("idAnioDesde").value);
+    /*let idAnioDesde = parseInt(document.getElementById("idAnioDesde").value);
     let idAnioHasta = parseInt(document.getElementById("idAnioHasta").value);
     let idAreaUnesco = parseInt(document.getElementById("idAreaUnesco").value);
     let idAreaFrascati = parseInt(document.getElementById("idAreaFrascati").value);
@@ -196,7 +200,7 @@ function LeyBradford() {
     }
     else if (idAreaUnesco != 0 && idAreaFrascati != 0) {
       notify("tr", 'Solo puede seleccionar un filtro de área (Frascati o Unesco).', "danger");
-    }
+    }*/
     //await handleListarDatosLeyBradford();
   }
   async function handleListarDatosLeyBradford() {
@@ -251,6 +255,7 @@ function LeyBradford() {
           }
 
           var dato = {
+            basesDatosDigital : datosMediosPublicacion[i].bases_datos_digital,
             busqueda: datosMediosPublicacion[i].busqueda,
             citacion: datosMediosPublicacion[i].citacion,
             idResumen: idResumen,
@@ -261,7 +266,7 @@ function LeyBradford() {
             totalCitas: numeroCitas,
             totalBusquedas: numeroBusquedas,
             totalSjr: numeroSjr,
-            total: parseFloat((parseFloat(numeroPublicaciones * pesos.pesoPublicacion) + parseFloat(numeroCitas * pesos.pesoCitacion) + parseFloat(numeroBusquedas * pesos.pesoBusqueda) + parseFloat(numeroSjr * pesos.pesoSJR) + parseFloat(indexado * pesos.pesoIndexado)).toFixed(2))
+            total: parseFloat((parseFloat(numeroPublicaciones * pesos.pesoPublicacion) + parseFloat(numeroCitas * pesos.pesoCitacion) + parseFloat(numeroBusquedas * pesos.pesoBusqueda) + parseFloat(numeroSjr * pesos.pesoSJR) + parseFloat((indexado !==0 ? 1:0) * pesos.pesoIndexado)).toFixed(2))
           }
           datosMediosPublicacionConteo.push(dato);
         }
@@ -286,7 +291,10 @@ function LeyBradford() {
 
     for (var i = 0; i < datos.length; i++) {
       suma = suma + datos[i].total;
+      let nombreRecurso = datos[i].publicacion.length !== 0 ? (datos[i].publicacion)[0].nombre: datos[i].citacion.length !== 0 ? (datos[i].citacion)[0].nombre: datos[i].busqueda.length !== 0 ? (datos[i].busqueda)[0].nombre : "SIN NOMBRE DE LA REVISTA";
       let datoFinal={
+        basesDatosDigital : datos[i].basesDatosDigital,
+        revistaRecurso: nombreRecurso,
         busqueda: datos[i].busqueda,
         citacion: datos[i].citacion,
         idResumen: datos[i].idResumen,
@@ -304,7 +312,20 @@ function LeyBradford() {
       datosYPorcentajes.push(datoFinal);
     }
     setDatosLeyBradford(datosYPorcentajes);
+    exportToCSV(datosYPorcentajes, "resultadoLeyBradford");
   }
+
+  const fileType =
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+  const fileExtension = ".xlsx";
+
+  const exportToCSV = (apiData, fileName) => {
+    const ws = XLSX.utils.json_to_sheet(apiData);
+    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const data = new Blob([excelBuffer], { type: fileType });
+    FileSaver.saveAs(data, fileName + fileExtension);
+  };
 
   React.useEffect(() => {
     handleAreasUnesco();
@@ -425,7 +446,7 @@ function LeyBradford() {
                               </tr>
 
                             ))}
-                            <tr> <td>{'P1(' + pesos.pesoPublicacion + ')*P(' + item.totalPublicaciones + ')'}</td></tr>
+                            {/*<tr> <td>{'P1(' + pesos.pesoPublicacion + ')*P(' + item.totalPublicaciones + ')'}</td></tr>*/}
                           </table>
                         </td>
                         <td>
@@ -436,7 +457,7 @@ function LeyBradford() {
                                 <td>{itemCitacion.numero_citas}</td>
                               </tr>
                             ))}
-                            <tr><td>{'P2(' + pesos.pesoCitacion + ')*C(' + item.totalCitas + ')'}</td></tr>
+                            {/*<tr><td>{'P2(' + pesos.pesoCitacion + ')*C(' + item.totalCitas + ')'}</td></tr>*/}
                           </table>
                         </td>
                         <td>
@@ -447,7 +468,7 @@ function LeyBradford() {
                                 <td>{itemBusqueda.numero_busquedas}</td>
                               </tr>
                             ))}
-                            <tr><td>{'P3(' + pesos.pesoBusqueda + ')*B(' + item.totalBusquedas + ')'}</td></tr>
+                            {/*<tr><td>{'P3(' + pesos.pesoBusqueda + ')*B(' + item.totalBusquedas + ')'}</td></tr>*/}
                           </table>
                         </td>
                         <td>
@@ -458,10 +479,10 @@ function LeyBradford() {
                                 <td>{itemSJR.sjr}</td>
                               </tr>
                             ))}
-                            <tr><td>{'P4(' + pesos.pesoSJR + ')*SJR(' + item.totalSjr + ')'}</td></tr>
+                            {/*<tr><td>{'P4(' + pesos.pesoSJR + ')*SJR(' + item.totalSjr + ')'}</td></tr>*/}
                           </table>
                         </td>
-                        <td>{'P5(' + pesos.pesoIndexado + ')*I(' + item.indexado + ')'}</td>
+                        <td>{item.indexado !== 0 ? "SI":"NO"}</td>
                         <td>{item.total}</td>
                         <td>{item.numeroAcumulado}</td>
                         <td>{item.procentajeAcumulado+' %'}</td>
