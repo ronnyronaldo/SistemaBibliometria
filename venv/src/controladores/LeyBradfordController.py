@@ -97,7 +97,7 @@ def coincidenciasNombreRevistas():
             for itemJBD in listadoJournalBaseDatosDigital:
                 valor = lev.similarity(item['nombre'].lower(), itemJBD['titulo'].lower())
                 if(valor >= valorSimilaridadJournal):
-                    indexado = "1"
+                    indexado = str(int(itemJBD['id_journal']))
         except:
             pass
         ResumenMediosPublicacion(id_medio_publicacion, idMediosCitacion, idMediosBusqueda, idMediosSJR, indexado).create()
@@ -131,7 +131,7 @@ def coincidenciasNombreRevistas():
             for itemJBD in listadoJournalBaseDatosDigital:
                 valor = lev.similarity(item['nombre'].lower(), itemJBD['titulo'].lower())
                 if(valor >= valorSimilaridadJournal):
-                    indexado = "1"
+                    indexado = str(int(itemJBD['id_journal']))
         except:
             pass
         ResumenMediosPublicacion(idMediosPublicacion, id_medio_publicacion, idMediosBusqueda, idMediosSJR, indexado).create()

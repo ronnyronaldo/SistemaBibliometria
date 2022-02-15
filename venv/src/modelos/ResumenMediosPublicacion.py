@@ -16,7 +16,7 @@ class ResumenMediosPublicacion(db.Model):
     id_medio_citacion = db.Column(db.String(1000))
     id_medio_busqueda = db.Column(db.String(1000))
     id_medio_sjr = db.Column(db.String(1000))
-    indexado = db.Column(db.String(1))
+    indexado = db.Column(db.String(1000))
     
     def create(self):
       db.session.add(self)

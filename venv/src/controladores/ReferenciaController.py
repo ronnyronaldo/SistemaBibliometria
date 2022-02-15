@@ -149,10 +149,13 @@ def insertarReferenciaAutomaticoScopus(nuevaReferencia):
                 doi = respuestaArticulo.json['articulo'][0]['doi']
                 print(doi)
                 ab = AbstractRetrieval(doi, view='FULL')
+                print(ab)
                 refs = ab.references
+                print(refs)
+
                 df = pd.DataFrame(refs)
                 numeroReferenciasAPI = len(df.index)
-                if(numeroReferenciasAPI > 0):
+                if(numeroReferenciasAPI > 0 ):
                     get_referencia = Referencia.query.filter((Referencia.id_articulo == nuevaReferencia['id_articulo']))
                     referencia_schema = ReferenciaSchema(many=True)
                     referencia = referencia_schema.dump(get_referencia)

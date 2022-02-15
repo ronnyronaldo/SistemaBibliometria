@@ -39,6 +39,6 @@ def contarMediosPublicacionCitacionPorAreaUnescoPorAnio(anio_publicacion_desde, 
     return conteoMediosPublicacionCitacionPorAreaUnescoPorAnio(anio_publicacion_desde,anio_publicacion_hasta, id_area_unesco)
 
 # Medio de Publicacion Area Frascati y Año
-@servicio_medio_publicacion_citacion.route('/conteoMediosPublicacionPublicacionPorAreaFrascatiPorAnio/<int:anio_publicacion_desde>/<int:anio_publicacion_hasta>/<int:id_area_frascati>', methods=['GET']) 
+@servicio_medio_publicacion_citacion.route('/conteoMediosPublicacionCitacionPorAreaFrascatiPorAnio/<int:anio_publicacion_desde>/<int:anio_publicacion_hasta>/<int:id_area_frascati>', methods=['GET']) 
 def contarMediosPublicacionCitacionPorAreaFrascatiPorAnio(anio_publicacion_desde, anio_publicacion_hasta, id_area_frascati):
     return conteoMediosPublicacionCitacionPorAreaFrascatiPorAnio(anio_publicacion_desde, anio_publicacion_hasta, id_area_frascati)

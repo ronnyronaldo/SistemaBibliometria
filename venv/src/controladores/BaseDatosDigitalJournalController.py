@@ -1,4 +1,5 @@
 from modelos.BaseDatosDigitalJournal import BaseDatosDigitalJournal 
+from modelos.BaseDatosDigital import BaseDatosDigital 
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify, make_response
 from marshmallow_sqlalchemy import ModelSchema
@@ -19,6 +20,11 @@ def existeRelacion(id_base_datos_digital, id_journal):
     get_bd_journal = BaseDatosDigitalJournal.query.filter((BaseDatosDigitalJournal.id_base_datos_digital == id_base_datos_digital) & (BaseDatosDigitalJournal.id_journal == id_journal))
     bd_journal_schema = BaseDatosDigitalJournalSchema(many=True)
     bd_journal = bd_journal_schema.dump(get_bd_journal)
+    return bd_journal
+
+def baseDatosDigitalPorJournal(id_journal):
+    bd_journal = (db.session.query(BaseDatosDigitalJournal, BaseDatosDigital).filter((BaseDatosDigitalJournal.id_journal == id_journal) & (BaseDatosDigitalJournal.id_base_datos_digital == BaseDatosDigital.id_base_datos_digital))
+    .with_entities(BaseDatosDigitalJournal.id_base_datos_digital, BaseDatosDigital.nombre_base_datos_digital)).all()
     return bd_journal
 
 

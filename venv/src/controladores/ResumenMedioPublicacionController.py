@@ -1,4 +1,7 @@
 from modelos.ResumenMediosPublicacion import ResumenMediosPublicacion
+from modelos.Journal import Journal
+from modelos.BaseDatosDigitalJournal import BaseDatosDigitalJournal
+from modelos.BaseDatosDigital import BaseDatosDigital
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify, make_response
 from marshmallow_sqlalchemy import ModelSchema
@@ -8,6 +11,7 @@ from controladores.SJRController import listaSJRPorId
 from controladores.MedioPublicacionPublicacionController import listaMedioPublicacionPublicacionPorId
 from controladores.MedioPublicacionCitacionController import listaMedioPublicacionCitacionPorId
 from controladores.MedioPublicacionBusquedaController import listaMedioPublicacionBusquedaPorId
+from controladores.BaseDatosDigitalJournalController import  baseDatosDigitalPorJournal
 
 
 db = SQLAlchemy()
@@ -28,6 +32,10 @@ def listaResumenMediosPublicacion():
     resumen_medios_publicacion =  resumen_medios_publicacion_schema.dump(get_resumen_medios_publicacion)
     respuestaFinal = []
     for item in resumen_medios_publicacion:
+        baseDatosDigitalJournal = baseDatosDigitalPorJournal(item['indexado'])
+        nombreBasesDatosDigital = ""
+        for itemBaseDatosDigital in baseDatosDigitalJournal:
+            nombreBasesDatosDigital = nombreBasesDatosDigital + itemBaseDatosDigital[1]+","
         listadoMediosCitacion = []
         listadoMediosPublicacion = []
         listadoMediosBusqueda = []
@@ -58,7 +66,8 @@ def listaResumenMediosPublicacion():
             "citacion": listadoMediosCitacion,
             "busqueda": listadoMediosBusqueda,
             "sjr" : listadoMediosSJR,
-            "indexado" : item['indexado']
+            "indexado" : item['indexado'],
+            "bases_datos_digital": nombreBasesDatosDigital
         }
         respuestaFinal.append(respuesta)
     return make_response(jsonify({"respuesta": {"valor":"Datos procesados exitosamente.", "error":"False"}, "datos": respuestaFinal}))
