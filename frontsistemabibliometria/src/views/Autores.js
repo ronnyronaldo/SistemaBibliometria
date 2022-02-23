@@ -309,9 +309,9 @@ function Autores() {
       let listaSegundoAutor = [];
       let listaTercerAutor = [];
       let listaCuartoAutor = [];
-      let listaQuintoAutor = [];
+      let listaUltimoAutor = [];
       // Aqui se cambia la longitud de los autores para no tener delay en la vista
-      let longitud = (listaAutores.length) / 4;
+      let longitud = (listaAutores.length);
       for (let i = 0; i < longitud; i++) {
         if (listaOrdenAutores[i] == 1) {
           let primerAutor = { "name": listaAutores[i], "value": listaNumPub[i] }
@@ -330,8 +330,8 @@ function Autores() {
           listaCuartoAutor.push(cuartoAutor);
         }
         if (listaOrdenAutores[i] == 5) {
-          let quintoAutor = { "name": listaAutores[i], "value": listaNumPub[i] }
-          listaQuintoAutor.push(quintoAutor);
+          let UltimoAutor = { "name": listaAutores[i], "value": listaNumPub[i] }
+          listaUltimoAutor.push(UltimoAutor);
         }
 
       }
@@ -341,12 +341,12 @@ function Autores() {
       // setDetalleDatosClusterCuartilFI(value)
 
       // setGrafo(listaPrimerAutor);
-      graficarGrafo(listaPrimerAutor, listaSegundoAutor, listaTercerAutor, listaCuartoAutor, listaQuintoAutor);
+      graficarGrafo(listaPrimerAutor, listaSegundoAutor, listaTercerAutor, listaCuartoAutor, listaUltimoAutor);
       setLoading(false);
     });
   }
 
-  function graficarGrafo(primerAutor, segundoAutor, tercerAutor, cuartoAutor, quintoAutor) {
+  function graficarGrafo(primerAutor, segundoAutor, tercerAutor, cuartoAutor, ultimoAutor) {
     Highcharts.charts.map(value => { if (value != undefined) { value.destroy(); } console.log(value); });
 
     Highcharts.chart( {
@@ -379,7 +379,7 @@ function Autores() {
             filter: {
               property: 'y',
               operator: '>',
-              value: 3
+              value: 1
             },
             style: {
               color: 'black',
@@ -396,7 +396,7 @@ function Autores() {
       { name: 'Segundo Autor', data: segundoAutor },
       { name: 'Tercer Autor', data: tercerAutor },
       { name: 'Cuarto Autor', data: cuartoAutor },
-      { name: 'Quinto Autor', data: quintoAutor }
+      { name: 'Ultimo Autor', data: ultimoAutor }
 
       ]
     });
@@ -457,7 +457,6 @@ function Autores() {
       { name: 'Entre 11 y 16 Pub', data: moderada },
       { name: 'De 17 Pub en adelante', data: alta }]
     });
-
   }
 
   React.useEffect(() => {
