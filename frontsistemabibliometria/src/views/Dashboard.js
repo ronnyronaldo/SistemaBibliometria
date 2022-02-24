@@ -1,13 +1,13 @@
 import React from "react";
 import ChartistGraph from "react-chartist";
-import { publicacionService } from '../_services/publicacion.service';
-import { referenciaService } from '../_services/referencia.service';
-import { leyBradfordService } from '../_services/ley_bradford.service';
-import { detalleReferenciaService } from '../_services/detalle_referencia.service';
-import { tablaPaginacionService } from '../utils/tablaPaginacion.service';
+import { publicacionService } from "../_services/publicacion.service";
+import { referenciaService } from "../_services/referencia.service";
+import { leyBradfordService } from "../_services/ley_bradford.service";
+import { detalleReferenciaService } from "../_services/detalle_referencia.service";
+import { tablaPaginacionService } from "../utils/tablaPaginacion.service";
 import { areaFrascatiService } from "_services/areaFrascati.service";
 import { areaUnescoService } from "_services/areaUnesco.service";
-import { medioPublicacionService } from '../_services/medio_publicacion.service';
+import { medioPublicacionService } from "../_services/medio_publicacion.service";
 // react plugin for creating notifications over the dashboard
 import NotificationAlert from "react-notification-alert";
 /**Spinner */
@@ -17,7 +17,7 @@ import { Link } from "react-router-dom";
 const override = css`
   display: block;
   margin: 0 auto;
-  border-color: #212F3C;
+  border-color: #212f3c;
 `;
 /**Spinner */
 
@@ -38,8 +38,6 @@ import {
 } from "react-bootstrap";
 
 function Dashboard() {
-
-
   /**Spinner */
   let [loading, setLoading] = React.useState(false);
   /**Spinner */
@@ -48,7 +46,7 @@ function Dashboard() {
   const notificationAlertRef = React.useRef(null);
   const [datoReferencia, setDatoReferencia] = React.useState({
     idArticulo: 0,
-    referencia: ""
+    referencia: "",
   });
   const notify = (place, mensaje, type) => {
     var options = {};
@@ -56,9 +54,7 @@ function Dashboard() {
       place: place,
       message: (
         <div>
-          <div>
-            {mensaje}
-          </div>
+          <div>{mensaje}</div>
         </div>
       ),
       type: type,
@@ -69,9 +65,13 @@ function Dashboard() {
   };
 
   const [numeroPublicaciones, setNumeroPublicaciones] = React.useState(0);
-  const [numeroPublicacionesSinReferencias, setNumeroPublicacionesSinReferencias] = React.useState(0);
+  const [
+    numeroPublicacionesSinReferencias,
+    setNumeroPublicacionesSinReferencias,
+  ] = React.useState(0);
   const [numeroReferencias, setNumeroReferencias] = React.useState(0);
-  const [numeroDetalleReferencias, setNumeroDetalleReferencias] = React.useState(0);
+  const [numeroDetalleReferencias, setNumeroDetalleReferencias] =
+    React.useState(0);
   const [numeroOrdenAutor, setnumeroOrdenAutor] = React.useState("");
   const [redesAreas, setRedesAreas] = React.useState("");
   const [redesAreasOrden, setRedesAreasOrden] = React.useState("");
@@ -80,58 +80,69 @@ function Dashboard() {
   const [grafo, setGrafo] = React.useState([]);
   const [datosLeyBradford, setDatosLeyBradford] = React.useState([]);
   const handleCargarTotalesArticulosReferencias = () => {
-    setLoading(true)
-    publicacionService.numeroArticulosIngresados().then(value => {
+    setLoading(true);
+    publicacionService.numeroArticulosIngresados().then((value) => {
       setNumeroPublicaciones(value.totalArticulos);
-      setLoading(false)
-    })
+      setLoading(false);
+    });
 
-    setLoading(true)
-    publicacionService.numeroArticulosNoTienenReferencias().then(value => {
-      setNumeroPublicacionesSinReferencias(value.numeroArticulosNoTienenReferencias);
-      setLoading(false)
-    })
+    setLoading(true);
+    publicacionService.numeroArticulosNoTienenReferencias().then((value) => {
+      setNumeroPublicacionesSinReferencias(
+        value.numeroArticulosNoTienenReferencias
+      );
+      setLoading(false);
+    });
 
-    setLoading(true)
-    referenciaService.numeroReferencias().then(value => {
+    setLoading(true);
+    referenciaService.numeroReferencias().then((value) => {
       setNumeroReferencias(value.numeroReferenciasIngresadas);
-      setLoading(false)
-    })
+      setLoading(false);
+    });
 
-    setLoading(true)
-    detalleReferenciaService.numeroDetalleReferencia().then(value => {
+    setLoading(true);
+    detalleReferenciaService.numeroDetalleReferencia().then((value) => {
       setNumeroDetalleReferencias(value.numeroDetalleReferenciaIngresadas);
-      setLoading(false)
-    })
-  }
+      setLoading(false);
+    });
+  };
 
   async function handleCargarRedesDeAutores() {
-    setLoading(true)
+    setLoading(true);
     let orden_autor = document.getElementById("idOrdenAutor").value;
-    await clusteringService.ejecutarclusteringRedesAutores(orden_autor).then(value => {
-      setnumeroOrdenAutor(value.valorimagen);
-      setLoading(false)
-    });
+    await clusteringService
+      .ejecutarclusteringRedesAutores(orden_autor)
+      .then((value) => {
+        setnumeroOrdenAutor(value.valorimagen);
+        setLoading(false);
+      });
   }
 
   async function handleCargarRedesDeAutoresAreas() {
-    setLoading(true)
-    let idAreaUnesco = parseInt(document.getElementById("idAreaUnescoGrafo").value);
-    await clusteringService.ejecutarclusteringRedesAutoresAreas(idAreaUnesco).then(value => {
-      setRedesAreas(value.valorimagenarea);
-      setLoading(false)
-    });
+    setLoading(true);
+    let idAreaUnesco = parseInt(
+      document.getElementById("idAreaUnescoGrafo").value
+    );
+    await clusteringService
+      .ejecutarclusteringRedesAutoresAreas(idAreaUnesco)
+      .then((value) => {
+        setRedesAreas(value.valorimagenarea);
+        setLoading(false);
+      });
   }
-  
-  async function handleCargarRedesDeAutoresAreasOrden() {
-    setLoading(true)
-    let orden_autor = document.getElementById("idOrdenAutor").value;
-    let idAreaUnesco = parseInt(document.getElementById("idAreaUnescoGrafo").value);
-    await clusteringService.ejecutarclusteringRedesAutoresAreasOrden(orden_autor, idAreaUnesco).then(value => {
-      setRedesAreasOrden(value.valorimagenarea);
-      setLoading(false)
-    });
 
+  async function handleCargarRedesDeAutoresAreasOrden() {
+    setLoading(true);
+    let orden_autor = document.getElementById("idOrdenAutor").value;
+    let idAreaUnesco = parseInt(
+      document.getElementById("idAreaUnescoGrafo").value
+    );
+    await clusteringService
+      .ejecutarclusteringRedesAutoresAreasOrden(orden_autor, idAreaUnesco)
+      .then((value) => {
+        setRedesAreasOrden(value.valorimagenarea);
+        setLoading(false);
+      });
   }
 
   async function handleCalcularPrcentajesLeyBradford(datos) {
@@ -145,12 +156,12 @@ function Dashboard() {
     for (var i = 0; i < datos.length; i++) {
       suma = suma + datos[i].contador;
       let dato = {
-        "id_referencia": datos[i].id_referencia,
-        "venue": datos[i].venue,
-        "contador": datos[i].contador,
-        "numeroAcumuladoCitas": suma,
-        "procentajeAcumuladoCitas": (suma / totalCitas * 100).toFixed(2)
-      }
+        id_referencia: datos[i].id_referencia,
+        venue: datos[i].venue,
+        contador: datos[i].contador,
+        numeroAcumuladoCitas: suma,
+        procentajeAcumuladoCitas: ((suma / totalCitas) * 100).toFixed(2),
+      };
       datosYPorcentajes.push(dato);
     }
     //console.log(datosYPorcentajes)
@@ -169,12 +180,12 @@ function Dashboard() {
     for (var i = 0; i < datos.length; i++) {
       suma = suma + datos[i].contador;
       let dato = {
-        "id_referencia": datos[i].id_articulo,
-        "venue": datos[i].medioPublicacion,
-        "contador": datos[i].contador,
-        "numeroAcumuladoCitas": suma,
-        "procentajeAcumuladoCitas": (suma / totalCitas * 100).toFixed(2)
-      }
+        id_referencia: datos[i].id_articulo,
+        venue: datos[i].medioPublicacion,
+        contador: datos[i].contador,
+        numeroAcumuladoCitas: suma,
+        procentajeAcumuladoCitas: ((suma / totalCitas) * 100).toFixed(2),
+      };
       datosYPorcentajes.push(dato);
     }
     //console.log(datosYPorcentajes)
@@ -182,78 +193,153 @@ function Dashboard() {
     return datosYPorcentajes;
   }
 
-
   async function handleCargarDatosLeyBradford() {
     setDatosLeyBradford([]);
     let idAnioDesde = parseInt(document.getElementById("idAnioDesde").value);
     let idAnioHasta = parseInt(document.getElementById("idAnioHasta").value);
     let idAreaUnesco = parseInt(document.getElementById("idAreaUnesco").value);
-    let idAreaFrascati = parseInt(document.getElementById("idAreaFrascati").value);
-    let idPublicacionCorrespondiente = document.getElementById("idPublicacionCorrespondiente").value;
+    let idAreaFrascati = parseInt(
+      document.getElementById("idAreaFrascati").value
+    );
+    let idPublicacionCorrespondiente = document.getElementById(
+      "idPublicacionCorrespondiente"
+    ).value;
 
-  
-    if (idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati == 0 && idAreaUnesco == 0) {
-      setLoading(true)
-      await medioPublicacionService.actualizarMediosPublicacionCitacion().then(async(value) => { 
-        console.log(value);
-        await medioPublicacionService.actualizarMediosPublicacionPublicacion().then(value => {
+    if (
+      idAnioDesde == 0 &&
+      idAnioHasta == 0 &&
+      idAreaFrascati == 0 &&
+      idAreaUnesco == 0
+    ) {
+      setLoading(true);
+      await medioPublicacionService
+        .actualizarMediosPublicacionCitacion()
+        .then(async (value) => {
           console.log(value);
-          setLoading(false);
+          await medioPublicacionService
+            .actualizarMediosPublicacionPublicacion()
+            .then((value) => {
+              console.log(value);
+              setLoading(false);
+            });
         });
-      });
-    }
-    else if (idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati == 0 && idAreaUnesco == 0) {
-      setLoading(true)
-      await medioPublicacionService.actualizarMediosPublicacionCitacionPorAnio(idAnioDesde, idAnioHasta).then(async(value) => { 
-        console.log(value);
-        await medioPublicacionService.actualizarMediosPublicacionPublicacionPorAnio(idAnioDesde, idAnioHasta).then(value => {
+    } else if (
+      idAnioDesde != 0 &&
+      idAnioHasta != 0 &&
+      idAreaFrascati == 0 &&
+      idAreaUnesco == 0
+    ) {
+      setLoading(true);
+      await medioPublicacionService
+        .actualizarMediosPublicacionCitacionPorAnio(idAnioDesde, idAnioHasta)
+        .then(async (value) => {
           console.log(value);
-          setLoading(false);
+          await medioPublicacionService
+            .actualizarMediosPublicacionPublicacionPorAnio(
+              idAnioDesde,
+              idAnioHasta
+            )
+            .then((value) => {
+              console.log(value);
+              setLoading(false);
+            });
         });
-      });
-    }
-    else if (idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati != 0 && idAreaUnesco == 0) {
-      setLoading(true)
-      await medioPublicacionService.actualizarMediosPublicacionCitacionPorAreaFrascati(idAreaFrascati).then(async(value) => { 
-        console.log(value);
-        await medioPublicacionService.actualizarMediosPublicacionPublicacionPorAreaFrascati(idAreaFrascati).then(value => {
+    } else if (
+      idAnioDesde == 0 &&
+      idAnioHasta == 0 &&
+      idAreaFrascati != 0 &&
+      idAreaUnesco == 0
+    ) {
+      setLoading(true);
+      await medioPublicacionService
+        .actualizarMediosPublicacionCitacionPorAreaFrascati(idAreaFrascati)
+        .then(async (value) => {
           console.log(value);
-          setLoading(false);
+          await medioPublicacionService
+            .actualizarMediosPublicacionPublicacionPorAreaFrascati(
+              idAreaFrascati
+            )
+            .then((value) => {
+              console.log(value);
+              setLoading(false);
+            });
         });
-      });
-    }
-    else if (idAnioDesde == 0 && idAnioHasta == 0 && idAreaFrascati == 0 && idAreaUnesco != 0) {
-      setLoading(true)
-      await medioPublicacionService.actualizarMediosPublicacionCitacionPorAreaUnesco(idAreaUnesco).then(async(value) => { 
-        console.log(value);
-        await medioPublicacionService.actualizarMediosPublicacionPublicacionPorAreaUnesco(idAreaUnesco).then(value => {
+    } else if (
+      idAnioDesde == 0 &&
+      idAnioHasta == 0 &&
+      idAreaFrascati == 0 &&
+      idAreaUnesco != 0
+    ) {
+      setLoading(true);
+      await medioPublicacionService
+        .actualizarMediosPublicacionCitacionPorAreaUnesco(idAreaUnesco)
+        .then(async (value) => {
           console.log(value);
-          setLoading(false);
+          await medioPublicacionService
+            .actualizarMediosPublicacionPublicacionPorAreaUnesco(idAreaUnesco)
+            .then((value) => {
+              console.log(value);
+              setLoading(false);
+            });
         });
-      });
-    }
-    else if (idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati != 0 && idAreaUnesco == 0) {
-      setLoading(true)
-      await medioPublicacionService.actualizarMediosPublicacionCitacionPorAreaFrascatiPorAnio(idAnioDesde, idAnioHasta, idAreaFrascati).then(async(value) => { 
-        console.log(value);
-        await medioPublicacionService.actualizarMediosPublicacionPublicacionPorAreaFrascatiPorAnio(idAnioDesde, idAnioHasta, idAreaFrascati).then(value => {
+    } else if (
+      idAnioDesde != 0 &&
+      idAnioHasta != 0 &&
+      idAreaFrascati != 0 &&
+      idAreaUnesco == 0
+    ) {
+      setLoading(true);
+      await medioPublicacionService
+        .actualizarMediosPublicacionCitacionPorAreaFrascatiPorAnio(
+          idAnioDesde,
+          idAnioHasta,
+          idAreaFrascati
+        )
+        .then(async (value) => {
           console.log(value);
-          setLoading(false);
+          await medioPublicacionService
+            .actualizarMediosPublicacionPublicacionPorAreaFrascatiPorAnio(
+              idAnioDesde,
+              idAnioHasta,
+              idAreaFrascati
+            )
+            .then((value) => {
+              console.log(value);
+              setLoading(false);
+            });
         });
-      });
-    }
-    else if (idAnioDesde != 0 && idAnioHasta != 0 && idAreaFrascati == 0 && idAreaUnesco != 0) {
-      setLoading(true)
-      await medioPublicacionService.actualizarMediosPublicacionCitacionPorAreaUnescoPorAnio(idAnioDesde, idAnioHasta, idAreaUnesco).then(async(value) => { 
-        console.log(value);
-        await medioPublicacionService.actualizarMediosPublicacionPublicacionPorAreaUnescoPorAnio(idAnioDesde, idAnioHasta, idAreaUnesco).then(value => {
+    } else if (
+      idAnioDesde != 0 &&
+      idAnioHasta != 0 &&
+      idAreaFrascati == 0 &&
+      idAreaUnesco != 0
+    ) {
+      setLoading(true);
+      await medioPublicacionService
+        .actualizarMediosPublicacionCitacionPorAreaUnescoPorAnio(
+          idAnioDesde,
+          idAnioHasta,
+          idAreaUnesco
+        )
+        .then(async (value) => {
           console.log(value);
-          setLoading(false);
+          await medioPublicacionService
+            .actualizarMediosPublicacionPublicacionPorAreaUnescoPorAnio(
+              idAnioDesde,
+              idAnioHasta,
+              idAreaUnesco
+            )
+            .then((value) => {
+              console.log(value);
+              setLoading(false);
+            });
         });
-      });
-    }
-    else if (idAreaUnesco != 0 && idAreaFrascati != 0) {
-      notify("tr", 'Solo puede seleccionar un filtro de área (Frascati o Unesco).', "danger");
+    } else if (idAreaUnesco != 0 && idAreaFrascati != 0) {
+      notify(
+        "tr",
+        "Solo puede seleccionar un filtro de área (Frascati o Unesco).",
+        "danger"
+      );
     }
   }
 
@@ -280,7 +366,9 @@ function Dashboard() {
                   <Col xs="7">
                     <div className="numbers">
                       <p className="card-category">TOTAL PUBLICACIONES</p>
-                      <Card.Title as="h4">{numeroPublicaciones + "  (100%)"}</Card.Title>
+                      <Card.Title as="h4">
+                        {numeroPublicaciones + "  (100%)"}
+                      </Card.Title>
                     </div>
                   </Col>
                 </Row>
@@ -298,8 +386,18 @@ function Dashboard() {
                   </Col>
                   <Col xs="7">
                     <div className="numbers">
-                      <p className="card-category">TOTAL PUBLICACIONES SIN REFERENCIAS</p>
-                      <Card.Title as="h4">{numeroPublicacionesSinReferencias + " (" + parseFloat(numeroPublicacionesSinReferencias * 100 / numeroPublicaciones).toFixed(2) + "%)"}</Card.Title>
+                      <p className="card-category">
+                        TOTAL PUBLICACIONES SIN REFERENCIAS
+                      </p>
+                      <Card.Title as="h4">
+                        {numeroPublicacionesSinReferencias +
+                          " (" +
+                          parseFloat(
+                            (numeroPublicacionesSinReferencias * 100) /
+                              numeroPublicaciones
+                          ).toFixed(2) +
+                          "%)"}
+                      </Card.Title>
                     </div>
                   </Col>
                 </Row>
@@ -318,7 +416,9 @@ function Dashboard() {
                   <Col xs="7">
                     <div className="numbers">
                       <p className="card-category">TOTAL REFERENCIAS</p>
-                      <Card.Title as="h4">{numeroReferencias + "  (100%)"}</Card.Title>
+                      <Card.Title as="h4">
+                        {numeroReferencias + "  (100%)"}
+                      </Card.Title>
                     </div>
                   </Col>
                 </Row>
@@ -337,13 +437,26 @@ function Dashboard() {
                   <Col xs="7">
                     <div className="numbers">
                       <p className="card-category">TOTAL DETALLE REFERENCIAS</p>
-                      <Card.Title as="h4">{numeroDetalleReferencias + "  (" + parseFloat(numeroDetalleReferencias * 100 / numeroReferencias).toFixed(2) + "%)"}</Card.Title>
+                      <Card.Title as="h4">
+                        {numeroDetalleReferencias +
+                          "  (" +
+                          parseFloat(
+                            (numeroDetalleReferencias * 100) / numeroReferencias
+                          ).toFixed(2) +
+                          "%)"}
+                      </Card.Title>
                     </div>
                   </Col>
                 </Row>
               </Card.Body>
             </Card>
           </Col>
+        </Row>
+        <Row>
+          <Card.Img
+            src="https://www.kaleidos.ec/wp-content/uploads/2018/08/logo-color-ucuenc.png"
+            height={"700px"}
+          ></Card.Img>
         </Row>
       </Container>
     </>
